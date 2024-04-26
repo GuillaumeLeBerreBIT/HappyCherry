@@ -18,8 +18,11 @@ form_data = {
     'original_title': movie['results'][0]['original_title'],
     'overview': movie['results'][0]['overview'],
     'release_date': movie['results'][0]['release_date'],
-    'poster_path': movie['results'][0]['poster_path'],
 }
+
+# GET THE POSTER TO DISPLAY THE PICTURE
+# Can use the Poster path to show the Image. 
+form_data['poster_path'] = f"https://image.tmdb.org/t/p/w500/{movie['results'][0]['poster_path']}"
 
 # GET THE CREDITS OF THE MOVIE. 
 url = f"https://api.themoviedb.org/3/movie/{movie['results'][0]['id']}/credits?language=en-US"
@@ -37,11 +40,6 @@ for castmember in credits_dict['cast'][0:6]:
     cast.append(castmember['name'])
     
 form_data['cast'] = cast
-
-# GET THE POSTER TO DISPLAY THE PICTURE
-url = f"https://image.tmdb.org/t/p/w500/{movie['results'][0]['poster_path']}"
-
-# NOW NEED TO DOWNLOAD THE PICTURE
 
 # GENRES >> Need to convert 
 url = "https://api.themoviedb.org/3/genre/movie/list?language=en"
