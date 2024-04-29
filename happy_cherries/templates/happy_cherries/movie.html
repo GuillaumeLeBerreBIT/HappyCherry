@@ -1,0 +1,35 @@
+{% extends "happy_cherries/base.html" %}
+
+{% block content %}
+
+    <h2>Movie: {{ movie.title }}</h2>
+
+        <p>{{ movie.release_date }}</p>
+
+        <p>{{ movie.overview }}</p>
+        
+        <h4>Actors</h4>
+        <ul>
+            {% for actor in cast %}
+                <li>{{ actor }}</li>
+            {% endfor %}
+        </ul>
+        
+        <h4>Genres</h4>
+        <ul>
+            {% for genre in genres %}
+                <li>{{ genre }}</li>
+            {% endfor %}
+        </ul>
+
+    <h3>Review</h3>
+    <ul>
+        {% for review in reviews %}
+            <li>{{review.text}}</li>
+        {% empty %}
+            <li>No review left</li>
+        {% endfor %}
+    </ul>
+
+
+{% endblock content %}

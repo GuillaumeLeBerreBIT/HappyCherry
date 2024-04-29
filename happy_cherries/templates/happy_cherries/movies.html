@@ -1,0 +1,17 @@
+{% extends "happy_cherries/base.html" %}
+
+{% block content %}
+
+    <h2>Movies:</h2>
+
+    <ul>
+        {% for movie in movies %}
+            <li>
+                <a href="{% url 'happy_cherries:movie' movie.id %}">{{movie.title}}</a>
+            </li> 
+        {% empty %}
+            <li>No movies added yet</li>
+        {% endfor %}
+    </ul>
+
+{% endblock content %}

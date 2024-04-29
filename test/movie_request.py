@@ -1,7 +1,7 @@
 import requests, json
 
 # GET THE MOVIE ID
-url = "https://api.themoviedb.org/3/search/movie?query=Saving%20Private%20Ryan&include_adult=false&language=en-US&page=1"
+url = "https://api.themoviedb.org/3/search/movie?query=Civil%20War&include_adult=false&language=en-US&page=1"
 
 headers = {
     "accept": "application/json",
