@@ -2,11 +2,14 @@
 
 {% block content %}
 
+    <a href="{% url 'happy_cherries:add_movie_manual' %}">Add Movie manual</a> -
+    <a href="{% url 'happy_cherries:movie_search' %}">Movie search</a>
+
     <h2>Movies:</h2>
 
     <ul>
         {% for movie in movies %}
-            <li>
+            <li> <!--Parse the movie ID saved in the dictionary as value to function -->
                 <a href="{% url 'happy_cherries:movie' movie.id %}">{{movie.title}}</a>
             </li> 
         {% empty %}
