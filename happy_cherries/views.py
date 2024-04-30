@@ -131,11 +131,17 @@ def requested_movie(request, movie_id):
     response = requests.get(f"https://api.themoviedb.org/3/movie/{movie_id}?language=en-US", 
                          headers=headers).json()
     
+    genre_name = []
+    #This will return multiple dictionarys
+    for genre in response['genres']:
+        
+        genre_name.append(genre['name'])
+    
     movie = {
         'id': response['id'],
-        'poster': response['poster_path'],
+        'poster': f"https://image.tmdb.org/t/p/w500/{response['poster_path']}",
         'overview': response['overview'],
-        'genres': response['genres'],
+        'genres': genre_name,
         'original_title': response['original_title'],
         'release_date': response['release_date'],
     }

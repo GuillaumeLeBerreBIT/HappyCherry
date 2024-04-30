@@ -2,6 +2,18 @@
 
 {% block content %}
 
+<h2>{{ movie.original_title }}</h2>
 
+<img src={{movie.poster}} alt="movie_poster">
+
+<p>{{ movie.overview }}</p>
+
+<p>{{ movie.release_date }}</p>
+
+<ul>
+    {% for genre in movie.genres %}
+        <li>{{genre}}</li>
+    {% endfor %}
+</ul>
 
 {% endblock content %}
