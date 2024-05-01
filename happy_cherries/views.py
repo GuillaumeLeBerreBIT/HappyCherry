@@ -1,4 +1,6 @@
 from django.shortcuts import render, redirect
+from django.http import HttpResponseRedirect
+from django.urls import reverse
 
 from .models import Movie, Review
 from .forms import MovieForm
@@ -77,6 +79,7 @@ def movie_search(request):
     # Fetch the cast members of the movie
     url_credits_movie = "https://api.themoviedb.org/3/movie/{}/credits?language=en-US"
     
+    # If searching for a movie then get the name and view all movies related to search. 
     if request.method == 'POST':
         
         movie_search = request.POST['movie_query']
@@ -88,7 +91,7 @@ def movie_search(request):
         }
 
         return render (request, 'happy_cherries/search_movie.html', context)
-    # IF it is a GET request
+    # IF it is a GET request just loading page. 
     else: 
         return render(request, 'happy_cherries/search_movie.html')
     
@@ -122,31 +125,67 @@ def requested_movie(request, movie_id):
     Will be able to view the details about the movie.
     Finally will also be able to add to the database/Movie page. 
     """
-    # Now I need to get access to the contents of the dictionary from movie_list based on the clicked movie
-    headers = {
-        "accept": "application/json",
-        "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIwOTEwZTMzYzBiNzM5NWJhYWI2Nzg4MDJlOTkzMTJlYiIsInN1YiI6IjY2MjkxM2I5ZTI5NWI0MDE4NzllMTBiYSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.IwgWzjezREKj75fLbuLlK-Kp03z_yRyRcQaUJai68l0"
-    }
-    # Get the detailed information of the movie
-    response = requests.get(f"https://api.themoviedb.org/3/movie/{movie_id}?language=en-US", 
-                         headers=headers).json()
+    movie = {}
     
-    genre_name = []
-    #This will return multiple dictionarys
-    for genre in response['genres']:
+    if request.method != "POST":
         
-        genre_name.append(genre['name'])
-    
-    movie = {
-        'id': response['id'],
-        'poster': f"https://image.tmdb.org/t/p/w500/{response['poster_path']}",
-        'overview': response['overview'],
-        'genres': genre_name,
-        'original_title': response['original_title'],
-        'release_date': response['release_date'],
-    }
-    
-    context = {'movie': movie}
-    return render(request, 'happy_cherries/requested_movie.html', context)
+        # Now I need to get access to the contents of the dictionary from movie_list based on the clicked movie
+        headers = {
+            "accept": "application/json",
+            "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIwOTEwZTMzYzBiNzM5NWJhYWI2Nzg4MDJlOTkzMTJlYiIsInN1YiI6IjY2MjkxM2I5ZTI5NWI0MDE4NzllMTBiYSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.IwgWzjezREKj75fLbuLlK-Kp03z_yRyRcQaUJai68l0"
+        }
+        # Get the detailed information of the movie
+        response = requests.get(f"https://api.themoviedb.org/3/movie/{movie_id}?language=en-US", 
+                            headers=headers).json()
+        
+        genre_name = []
+        #This will return multiple dictionarys
+        for genre in response['genres']:
+            
+            genre_name.append(genre['name'])
+        
+        movie = {
+            'id': response['id'],
+            'poster': f"https://image.tmdb.org/t/p/w500/{response['poster_path']}",
+            'overview': response['overview'],
+            'genres': genre_name,
+            'original_title': response['original_title'],
+            'release_date': response['release_date'],
+        }
+        
+        context = {'movie': movie}
+        return render(request, 'happy_cherries/requested_movie.html', context)
 
-    
+    else: 
+        
+        # Now I need to get access to the contents of the dictionary from movie_list based on the clicked movie
+        headers = {
+            "accept": "application/json",
+            "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIwOTEwZTMzYzBiNzM5NWJhYWI2Nzg4MDJlOTkzMTJlYiIsInN1YiI6IjY2MjkxM2I5ZTI5NWI0MDE4NzllMTBiYSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.IwgWzjezREKj75fLbuLlK-Kp03z_yRyRcQaUJai68l0"
+        }
+        # Get the detailed information of the movie
+        response = requests.get(f"https://api.themoviedb.org/3/movie/{movie_id}?language=en-US", 
+                            headers=headers).json()
+        
+        m = Movie(title=response['original_title'],
+                  poster_path=f"https://image.tmdb.org/t/p/w500/{response['poster_path']}",
+                  overview=response['overview'],
+                  release_date=response['release_date'],
+                  cast='cast',
+                  genre='genre')
+        m.save()
+        """
+        form = MovieForm()
+        
+        form.fields['title'] = response['original_title']
+        form.fields['poster_path'] = f"https://image.tmdb.org/t/p/w500/{response['poster_path']}"
+        form.fields['overview'] = response['overview']
+        form.fields['release_date'] = response['release_date']
+        form.fields['cast'] = 'cast'
+        form.fields['genre'] ='genres'
+        if form.is_valid():
+            
+            form.save()
+            """
+        # Redirect to the movies page after saving
+        return redirect('happy_cherries:movies')
