@@ -1,9 +1,7 @@
 from django.shortcuts import render, redirect
-from django.http import HttpResponseRedirect
-from django.urls import reverse
 
 from .models import Movie, Review
-from .forms import MovieForm
+from .forms import MovieForm, ReviewForm
 import json, requests # This is to send a request to the URLs defined (Not a Django request)
 
 # Create your views here.
@@ -74,10 +72,6 @@ def movie_search(request):
     }
     # Query results for a movie search
     url_movie_search = "https://api.themoviedb.org/3/search/movie?query={}&include_adult=false&language=en-US&page=1"
-    # Fetch the poster image of the movie
-    url_poster_image = "https://image.tmdb.org/t/p/w500/{}"
-    # Fetch the cast members of the movie
-    url_credits_movie = "https://api.themoviedb.org/3/movie/{}/credits?language=en-US"
     
     # If searching for a movie then get the name and view all movies related to search. 
     if request.method == 'POST':
@@ -110,7 +104,7 @@ def fetch_movies(headers, movie_query, url_movie_search):
             'id': sq['id'],
             'poster': sq['poster_path'],
             'genre_ids': sq['genre_ids'],
-            'original_title': sq['original_title'],
+            'title': sq['title'],
             'release_date': sq['release_date'],
         }
         # Add each movie to a list.
@@ -125,67 +119,114 @@ def requested_movie(request, movie_id):
     Will be able to view the details about the movie.
     Finally will also be able to add to the database/Movie page. 
     """
-    movie = {}
-    
-    if request.method != "POST":
-        
-        # Now I need to get access to the contents of the dictionary from movie_list based on the clicked movie
-        headers = {
+    # Now I need to get access to the contents of the dictionary from movie_list based on the clicked movie
+    headers = {
             "accept": "application/json",
             "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIwOTEwZTMzYzBiNzM5NWJhYWI2Nzg4MDJlOTkzMTJlYiIsInN1YiI6IjY2MjkxM2I5ZTI5NWI0MDE4NzllMTBiYSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.IwgWzjezREKj75fLbuLlK-Kp03z_yRyRcQaUJai68l0"
         }
-        # Get the detailed information of the movie
-        response = requests.get(f"https://api.themoviedb.org/3/movie/{movie_id}?language=en-US", 
-                            headers=headers).json()
+    # URLs
+    url_det_movie = "https://api.themoviedb.org/3/movie/{}?language=en-US"
+    url_credits_movie = "https://api.themoviedb.org/3/movie/{}/credits?language=en-US"
+    url_poster = "https://image.tmdb.org/t/p/w500/{}"
+    
+    if request.method != "POST":
         
-        genre_name = []
-        #This will return multiple dictionarys
-        for genre in response['genres']:
-            
-            genre_name.append(genre['name'])
-        
-        movie = {
-            'id': response['id'],
-            'poster': f"https://image.tmdb.org/t/p/w500/{response['poster_path']}",
-            'overview': response['overview'],
-            'genres': genre_name,
-            'original_title': response['original_title'],
-            'release_date': response['release_date'],
-        }
+        movie = fetch_detailed_movie(headers=headers, 
+                                     url_movie=url_det_movie, 
+                                     url_cast=url_credits_movie, 
+                                     url_poster=url_poster, 
+                                     movie_id=movie_id)
+        # Because the Cast and Genres are saved in a long string splitted by ',' to save easily in the model direclty.
+        # We split the string to then iterate over a list in the HTML file.  
+        movie['cast'], movie['genres'] = movie['cast'].split(','), movie['genres'].split(',')
         
         context = {'movie': movie}
         return render(request, 'happy_cherries/requested_movie.html', context)
 
     else: 
         
-        # Now I need to get access to the contents of the dictionary from movie_list based on the clicked movie
-        headers = {
-            "accept": "application/json",
-            "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIwOTEwZTMzYzBiNzM5NWJhYWI2Nzg4MDJlOTkzMTJlYiIsInN1YiI6IjY2MjkxM2I5ZTI5NWI0MDE4NzllMTBiYSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.IwgWzjezREKj75fLbuLlK-Kp03z_yRyRcQaUJai68l0"
-        }
-        # Get the detailed information of the movie
-        response = requests.get(f"https://api.themoviedb.org/3/movie/{movie_id}?language=en-US", 
-                            headers=headers).json()
+        movie = fetch_detailed_movie(headers=headers, 
+                                     url_movie=url_det_movie, 
+                                     url_cast=url_credits_movie, 
+                                     url_poster=url_poster, 
+                                     movie_id=movie_id)
         
-        m = Movie(title=response['original_title'],
-                  poster_path=f"https://image.tmdb.org/t/p/w500/{response['poster_path']}",
-                  overview=response['overview'],
-                  release_date=response['release_date'],
-                  cast='cast',
-                  genre='genre')
+        # Create an instance of the model to save all the information directly into the database. 
+        # No need to create Form since have the values predefined.s
+        m = Movie(title=movie['title'],
+                  release_date=movie['release_date'],
+                  poster_path=movie['poster'],
+                  overview=movie['overview'],
+                  runtime= movie['runtime'],
+                  status= movie['status'],
+                  tagline= movie['tagline'],
+                  cast=movie['cast'],
+                  genre=movie['genres'],
+                )
         m.save()
-        """
-        form = MovieForm()
         
-        form.fields['title'] = response['original_title']
-        form.fields['poster_path'] = f"https://image.tmdb.org/t/p/w500/{response['poster_path']}"
-        form.fields['overview'] = response['overview']
-        form.fields['release_date'] = response['release_date']
-        form.fields['cast'] = 'cast'
-        form.fields['genre'] ='genres'
-        if form.is_valid():
-            
-            form.save()
-            """
         # Redirect to the movies page after saving
         return redirect('happy_cherries:movies')
+    
+    
+def fetch_detailed_movie(headers, url_movie, url_cast, url_poster, movie_id):
+    """
+    This function will manage to get all the essential information of a specific movie. 
+    """
+    # API Request using the movie ID and convert JSON-format into Dictionary.
+    response = requests.get(url_movie.format(movie_id), headers=headers).json()
+    
+    # Genre
+    # Because easy to save the genres in the Model Movie as a string seperated by ','.
+    genres = ""
+    for genre in response['genres']:
+        genres += f"{genre['name']},"
+    # Remove the last ',' from the string
+    genres = genres[:-1]
+
+    # Cast -- > API Request using the movie ID and convert JSON-format into Dictionary.
+    response_credits = requests.get(url_cast.format(movie_id), headers=headers).json()
+    # Because easy to save the genres in the Model Movie as a string seperated by ','.
+    actors = ""
+    for c in response_credits['cast']:
+        actors += f"{c['name']},"
+    # Remove the last ',' from the string
+    actors = actors[:-1]
+    
+    # Save all the necassary information in a dictionary. 
+    movie_info = {
+        'id': response['id'],
+        'title': response['title'],
+        'release_date': response['release_date'],
+        'poster': url_poster.format(response['poster_path']),
+        'runtime': response['runtime'],
+        'status': response['status'],
+        'tagline': response['tagline'],
+        'overview': response['overview'],
+        'genres': genres,
+        'cast': actors,
+    }
+    
+    return movie_info
+
+def add_review(request, movie_id):
+    """The user can leave a review about the movie as well as a score to view the movie as."""
+    movie = Movie.objects.get(id=movie_id)
+    
+    if request.method != 'POST':
+        # Creating a blank form
+        form = ReviewForm()
+    
+    else:
+        form = ReviewForm(data=request.POST)
+        
+        if form.is_valid():
+            new_review = form.save(commit=False)
+            # Save the review under the PK linked to specific movie
+            new_review.movie = movie
+            new_review.save()
+            
+            return redirect('happy_cherries:movie', movie_id=movie_id)
+    
+    context = {'form': form, 'movie': movie}
+    return render(request, 'happy_cherries/add_review.html', context)

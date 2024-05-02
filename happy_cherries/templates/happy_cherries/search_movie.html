@@ -13,7 +13,7 @@
     <ul>
         {% for movie in movie_list %}
             <li>
-                <a href="{% url 'happy_cherries:requested_movie' movie.id %}">{{ movie.original_title }}</a></li>
+                <a href="{% url 'happy_cherries:requested_movie' movie.id %}">{{ movie.title }}</a></li>
         {% endfor %}
     </ul>
     {% endif %}

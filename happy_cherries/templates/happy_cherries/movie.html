@@ -4,9 +4,17 @@
 
     <h2>Movie: {{ movie.title }}</h2>
 
+        <img src={{movie.poster_path}} alt="movie_poster">
+
         <p>{{ movie.release_date }}</p>
 
         <p>{{ movie.overview }}</p>
+
+        <p>{{ movie.runtime }} min</p>
+
+        <p>{{ movie.tagline }}</p>
+
+        <p>{{ movie.status }}</p>
         
         <h4>Actors</h4>
         <ul>
@@ -24,9 +32,12 @@
         </ul>
 
     <h3>Review</h3>
+
+    <a href="{% url 'happy_cherries:add_review' movie.id %}">Add review</a>
+
     <ul>
         {% for review in reviews %}
-            <li>{{review.text}}</li>
+            <li>{{review.score}} % - {{review.review}}</li>
         {% empty %}
             <li>No review left</li>
         {% endfor %}

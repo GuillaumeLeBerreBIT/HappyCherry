@@ -12,6 +12,8 @@ urlpatterns = [
     path('movies/', views.movies, name='movies'),
     # Detail page for a single movie
     path('movies/<int:movie_id>/', views.movie, name='movie'),
+    # Detail page for a single movie
+    path('movies/<int:movie_id>/add_review', views.add_review, name='add_review'),
     # Add a movie to the page. 
     path('movies/add_movie_manual/', views.add_movie_manual, name='add_movie_manual'),
     # Add a movie to the page. 

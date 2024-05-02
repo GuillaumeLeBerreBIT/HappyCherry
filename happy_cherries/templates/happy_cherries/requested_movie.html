@@ -2,13 +2,25 @@
 
 {% block content %}
 
-<h2>{{ movie.original_title }}</h2>
+<h2>{{ movie.title }}</h2>
 
 <img src={{movie.poster}} alt="movie_poster">
 
 <p>{{ movie.overview }}</p>
 
 <p>{{ movie.release_date }}</p>
+
+<p>{{ movie.runtime }} min</p>
+
+<p>{{ movie.tagline }}</p>
+
+<p>{{ movie.status }}</p>
+
+<ul>
+    {% for actor in movie.cast %}
+        <li>{{actor}}</li>
+    {% endfor %}
+</ul>
 
 <ul>
     {% for genre in movie.genres %}

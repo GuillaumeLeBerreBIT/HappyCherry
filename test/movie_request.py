@@ -26,7 +26,6 @@ for sq in response['results']:
     movie_list.append(form_data)
 #print(movie_list)
 
-# GET THE MOVIE ID
 url = "https://api.themoviedb.org/3/movie/929590?language=en-US"
 
 headers = {
@@ -36,6 +35,19 @@ headers = {
 
 response = requests.get(url, headers=headers).json()
 print(response)
+
+#genres = ""
+#for genre in response['genres']:
+#    genres += f"{genre['name']},"
+#genres = genres[:-1]
+#print(genres)
+
+#response = requests.get(f"https://api.themoviedb.org/3/movie/929590/credits?language=en-US", 
+#                            headers=headers).json()
+#print(response)
+
+#for actor in response['cast']:
+    #print(actor['name'])
 
 
 """
