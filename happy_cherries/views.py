@@ -230,3 +230,23 @@ def add_review(request, movie_id):
     
     context = {'form': form, 'movie': movie}
     return render(request, 'happy_cherries/add_review.html', context)
+
+def edit_review(request, review_id):
+    """Want the user to be able to edit the score or review."""
+    review = Review.objects.get(id=review_id)
+    movie = review.movie
+    
+    if request.method != 'POST':
+        
+        form = ReviewForm(instance=review)
+    else:
+        
+        form = ReviewForm(instance=review, data=request.POST)
+        
+        if form.is_valid():
+            form.save()
+            return redirect('happy_cherries:movie', movie_id=movie.id)
+    
+    context = {'form': form, 'movie': movie, 'review': review}
+    return render(request, 'happy_cherries/edit_review.html', context)
+    

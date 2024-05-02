@@ -37,7 +37,7 @@
 
     <ul>
         {% for review in reviews %}
-            <li>{{review.score}} % - {{review.review}}</li>
+            <li>{{review.score}} % - {{review.review}} - <a href="{% url 'happy_cherries:edit_review' review.id %}">Edit</a></li>
         {% empty %}
             <li>No review left</li>
         {% endfor %}
