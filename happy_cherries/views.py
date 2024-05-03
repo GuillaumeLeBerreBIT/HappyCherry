@@ -32,7 +32,8 @@ def movie(request, movie_id):
     cast_spl = movie.cast.split(',')
     genre_spl = movie.genre.split(',')
     
-    reviews = Review.objects.order_by('date_added')
+    #Get the reviews linked to specific movie. 
+    reviews = movie.review_set.order_by('-date_added')
     context = {'movie': movie, 
                'reviews': reviews, 
                'cast_spl': cast_spl,
