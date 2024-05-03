@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 
-from .models import Movie, Review
-from .forms import MovieForm, ReviewForm
+from .models import Movie, Review, TvShow
+from .forms import MovieForm, ReviewForm, TvShowForm
 import json, requests # This is to send a request to the URLs defined (Not a Django request)
 
 # Create your views here.
@@ -9,6 +9,7 @@ def index(request):
     """Show the Home page for Happy Cherry."""
     return render(request, 'happy_cherries/index.html')
 
+# MOVIES
 def movies(request):
     """
     List all the movies that have been added.
@@ -74,6 +75,8 @@ def movie_search(request):
     # Query results for a movie search
     url_movie_search = "https://api.themoviedb.org/3/search/movie?query={}&include_adult=false&language=en-US&page=1"
     
+    url_trending = "https://api.themoviedb.org/3/trending/movie/week?language=en-US"
+    
     # If searching for a movie then get the name and view all movies related to search. 
     if request.method == 'POST':
         
@@ -88,7 +91,13 @@ def movie_search(request):
         return render (request, 'happy_cherries/search_movie.html', context)
     # IF it is a GET request just loading page. 
     else: 
-        return render(request, 'happy_cherries/search_movie.html')
+        # Get all the trending movies so the home page does not look empty. 
+        movie_list = fetch_trending_movies(headers, url_trending)
+        
+        context = {
+            'movie_list': movie_list
+        }
+        return render(request, 'happy_cherries/search_movie.html', context)
     
 
 def fetch_movies(headers, movie_query, url_movie_search):
@@ -113,6 +122,24 @@ def fetch_movies(headers, movie_query, url_movie_search):
     
     # Return the movie list.
     return movie_list
+
+def fetch_trending_movies(headers, url_trending):
+    """Get all the trending movies to show on the page when searching for a movie."""
+    response = requests.get(url_trending, headers=headers).json()
+    
+    movie_list = []
+    for sq in response['results']:
+        requested_data = {
+            'id': sq['id'],
+                'poster': sq['poster_path'],
+                'genre_ids': sq['genre_ids'],
+                'title': sq['title'],
+                'release_date': sq['release_date'],
+        }
+        movie_list.append(requested_data)
+    
+    return movie_list
+
 
 def requested_movie(request, movie_id):
     """
@@ -250,4 +277,38 @@ def edit_review(request, review_id):
     
     context = {'form': form, 'movie': movie, 'review': review}
     return render(request, 'happy_cherries/edit_review.html', context)
+
+# TV SHOWS
+def tvshows(request):
+    """
+    Want to shows all the TV shows that you have added to your list.
+    User can select a Tv Show that has been added to your list.
+    """
+        
+    tv_shows = TvShow.objects.order_by('date_added')
+    
+    context = {'tv_shows': tv_shows}
+    return render(request, 'happy_cherries/tvshows.html', context)
+
+def tvshow(request, tvshow_id):
+    """
+    Want to be able to get the detailed information of a Specific movie added.
+    """
+
+def add_tvshow_manual(request):
+    """The user will be able to manually fill in a TvShow"""
+    if request.method != 'POST':
+        
+        form = TvShowForm()
+    
+    else:
+        
+        form = TvShowForm(data=request.POST)
+        
+        if form.is_valid():
+            form.save()
+            return redirect('happy_cherries:tvshows')
+    
+    context = {'form': form}
+    return render(request, 'happy_cherries/add_tvshow.html', context)
     

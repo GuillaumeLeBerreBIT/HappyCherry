@@ -8,10 +8,10 @@ headers = {
     "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIwOTEwZTMzYzBiNzM5NWJhYWI2Nzg4MDJlOTkzMTJlYiIsInN1YiI6IjY2MjkxM2I5ZTI5NWI0MDE4NzllMTBiYSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.IwgWzjezREKj75fLbuLlK-Kp03z_yRyRcQaUJai68l0"
 }
 
-response = requests.get(url, headers=headers).json()
+#response = requests.get(url, headers=headers).json()
 
 #print(response['results'][0:10])
-
+"""
 movie_list = []
 for sq in response['results']:
     
@@ -25,16 +25,15 @@ for sq in response['results']:
     }
     movie_list.append(form_data)
 #print(movie_list)
-
+"""
 url = "https://api.themoviedb.org/3/movie/929590?language=en-US"
 
-headers = {
-    "accept": "application/json",
-    "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIwOTEwZTMzYzBiNzM5NWJhYWI2Nzg4MDJlOTkzMTJlYiIsInN1YiI6IjY2MjkxM2I5ZTI5NWI0MDE4NzllMTBiYSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.IwgWzjezREKj75fLbuLlK-Kp03z_yRyRcQaUJai68l0"
-}
+url = "https://api.themoviedb.org/3/trending/movie/week?language=en-US"
 
 response = requests.get(url, headers=headers).json()
 print(response)
+
+
 
 #genres = ""
 #for genre in response['genres']:

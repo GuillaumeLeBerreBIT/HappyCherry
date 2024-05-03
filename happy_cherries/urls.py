@@ -23,4 +23,8 @@ urlpatterns = [
     # Add a movie to the page. 
     # Make sure the movie_id is parsed to the URL as well otherwise get an error no reverse match
     path('movies/movie_search/requested_movie/<int:movie_id>/', views.requested_movie, name='requested_movie'),
+    # Page for showing all the tvshows added to your list.
+    path('tvshows/', views.tvshows, name='tvshows'),
+    # Adding the form to manually fill in the TV shows
+    path('tvshows/add_manual_tvshow/', views.add_tvshow_manual, name='add_tvshow_manual'),
 ]

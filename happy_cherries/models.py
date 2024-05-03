@@ -23,6 +23,11 @@ class Movie(models.Model):
         """Return a string representation of the model"""
         return self.title
     
+class TvShow(models.Model):
+    """The repersenation of all the details of a TvSow"""
+    
+    title = models.CharField(max_length=150)
+    date_added = models.DateTimeField(auto_now_add=True)
     
 class Review(models.Model):
     """The user can leave a review about the movie he has seen."""
