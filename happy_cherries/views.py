@@ -292,7 +292,9 @@ def tvshows(request):
 
 def tvshow(request, tvshow_id):
     """
-    Want to be able to get the detailed information of a Specific movie added.
+    Want to be able to get the detailed information of a specific TvShow.
+    
+    
     """
 
 def add_tvshow_manual(request):
@@ -313,7 +315,7 @@ def add_tvshow_manual(request):
     return render(request, 'happy_cherries/add_tvshow.html', context)
 
 
-def tvshow_search(request):
+def search_tvshow(request):
     """Want to show all the results from the search query."""
     
     url_tvshow = "https://api.themoviedb.org/3/search/tv?query={}&include_adult=false&language=en-US&page=1"

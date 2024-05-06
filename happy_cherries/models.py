@@ -8,9 +8,9 @@ class Movie(models.Model):
     title = models.CharField(max_length=150)
     date_added = models.DateTimeField(auto_now_add=True)
     
-    poster_path = models.CharField(max_length=100)
+    poster_path = models.CharField(blank=True, max_length=100)
     overview = models.TextField()
-    release_date = models.DateField(db_comment="Date when the movie was released")
+    release_date = models.DateField()
     
     genre = models.CharField(max_length=500) 
     cast = models.TextField()
@@ -28,6 +28,17 @@ class TvShow(models.Model):
     
     title = models.CharField(max_length=150)
     date_added = models.DateTimeField(auto_now_add=True)
+    
+    poster_path = models.CharField(max_length=100, blank=True)
+    overview = models.TextField(blank=True)
+    release_date = models.DateField(null=True)
+    
+    genre = models.CharField(blank=True, max_length=500) 
+    cast = models.TextField(blank=True)
+    
+    def __str__(self):
+        """String representation of model"""
+        return self.title
     
 class Review(models.Model):
     """The user can leave a review about the movie he has seen."""

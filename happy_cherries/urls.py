@@ -18,7 +18,7 @@ urlpatterns = [
     path('movies/<int:review_id>/edit_review', views.edit_review, name='edit_review'),
     # Add a movie to the page. 
     path('movies/add_movie_manual/', views.add_movie_manual, name='add_movie_manual'),
-    # Add a movie to the page. 
+    # Search for a specific movie
     path('movies/movie_search/', views.movie_search, name='movie_search'),
     # Add a movie to the page. 
     # Make sure the movie_id is parsed to the URL as well otherwise get an error no reverse match
@@ -27,4 +27,6 @@ urlpatterns = [
     path('tvshows/', views.tvshows, name='tvshows'),
     # Adding the form to manually fill in the TV shows
     path('tvshows/add_manual_tvshow/', views.add_tvshow_manual, name='add_tvshow_manual'),
+    # search for a specific TvShow.
+    path('tvshows/search_tvshow/', views.search_tvshow, name='search_tvshow'),
 ]
