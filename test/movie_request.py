@@ -1,12 +1,21 @@
 import requests, json
 
-# GET THE MOVIE ID
-url = "https://api.themoviedb.org/3/search/movie?query=Civil%20War&include_adult=false&language=en-US&page=1"
-
 headers = {
     "accept": "application/json",
     "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIwOTEwZTMzYzBiNzM5NWJhYWI2Nzg4MDJlOTkzMTJlYiIsInN1YiI6IjY2MjkxM2I5ZTI5NWI0MDE4NzllMTBiYSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.IwgWzjezREKj75fLbuLlK-Kp03z_yRyRcQaUJai68l0"
 }
+
+# SEARCH FOR THE MOVIE
+
+url = "https://api.themoviedb.org/3/search/tv?query={}&include_adult=false&language=en-US&page=1"
+
+response = requests.get(url.format("Peaky Blinders"), headers=headers).json()
+
+print(response)
+
+
+# GET THE MOVIE ID
+url = "https://api.themoviedb.org/3/search/movie?query=Civil%20War&include_adult=false&language=en-US&page=1"
 
 #response = requests.get(url, headers=headers).json()
 
@@ -25,15 +34,14 @@ for sq in response['results']:
     }
     movie_list.append(form_data)
 #print(movie_list)
-"""
+
 url = "https://api.themoviedb.org/3/movie/929590?language=en-US"
 
 url = "https://api.themoviedb.org/3/trending/movie/week?language=en-US"
 
 response = requests.get(url, headers=headers).json()
 print(response)
-
-
+"""
 
 #genres = ""
 #for genre in response['genres']:

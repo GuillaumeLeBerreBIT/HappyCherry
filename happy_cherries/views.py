@@ -311,4 +311,33 @@ def add_tvshow_manual(request):
     
     context = {'form': form}
     return render(request, 'happy_cherries/add_tvshow.html', context)
+
+
+def tvshow_search(request):
+    """Want to show all the results from the search query."""
     
+    url_tvshow = "https://api.themoviedb.org/3/search/tv?query={}&include_adult=false&language=en-US&page=1"
+    
+
+def fetch_tvshow(headers, url_tvshow):
+    """Want to get all the results from the search query."""
+    
+    response = requests.get(url_tvshow.format("Peaky Blinders"), headers=headers).json()
+    
+    tvshow_list = []
+    for sq in response['results']:
+        
+        requested_data = {
+            'id': sq['id'],
+            'poster': sq['poster_path'],
+            'genre_ids': sq['genre_ids'],
+            'name': sq['name'],
+            'first_air_date': sq['first_air_date'],
+        }
+        
+        tvshow_list.append(requested_data)
+    
+    return tvshow_list
+        
+        
+        
