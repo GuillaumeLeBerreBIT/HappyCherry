@@ -28,5 +28,7 @@ urlpatterns = [
     # Adding the form to manually fill in the TV shows
     path('tvshows/add_manual_tvshow/', views.add_tvshow_manual, name='add_tvshow_manual'),
     # search for a specific TvShow.
-    path('tvshows/search_tvshow/', views.search_tvshow, name='search_tvshow'),
+    path('tvshows/search_tvshow/', views.tvshow_search, name='tvshow_search'),
+    # Get the detailed information of a TV Show.
+    path('tvshows/search_tvshow/requested_tvshow/<int:tvshow_id>', views.requested_tvshow, name='requested_tvshow'),
 ]

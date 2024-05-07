@@ -1,0 +1,22 @@
+{% extends "happy_cherries/base.html" %}
+
+{% block content %}
+
+    <form method="post">
+        {% csrf_token %}
+        <input type="text" name="tvshow_query" placeholder="Search TvShow">
+        <button type="submit">Search</button>
+    </form>
+
+    <!--If this list exists -->
+    {% if tvshow_list %}
+    <ul>
+        <!--The ID is the one parsed in the dictionary saved from the request response results.-->
+        {% for tvshow in tvshow_list %}
+            <li>
+                <a href="{% url 'happy_cherries:requested_tvshow' tvshow.id %}">{{ tvshow.name }}</a></li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
+{% endblock content %}

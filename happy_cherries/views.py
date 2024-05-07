@@ -10,6 +10,7 @@ def index(request):
     return render(request, 'happy_cherries/index.html')
 
 # MOVIES
+# Show all the movies that you ahve saved. 
 def movies(request):
     """
     List all the movies that have been added.
@@ -88,7 +89,7 @@ def movie_search(request):
             'movie_list': movie_list
         }
 
-        return render (request, 'happy_cherries/search_movie.html', context)
+        return render(request, 'happy_cherries/search_movie.html', context)
     # IF it is a GET request just loading page. 
     else: 
         # Get all the trending movies so the home page does not look empty. 
@@ -101,6 +102,7 @@ def movie_search(request):
     
 
 def fetch_movies(headers, movie_query, url_movie_search):
+    """Will show the movies through dynamic search on the page."""
     # Want the response to be in JSON format. 
     response = requests.get(url_movie_search.format(movie_query), headers=headers).json() 
 
@@ -146,6 +148,7 @@ def requested_movie(request, movie_id):
     When the user has found the movie he has been interested in. 
     Will be able to view the details about the movie.
     Finally will also be able to add to the database/Movie page. 
+    This does not show the reviews and a score yet!
     """
     # Now I need to get access to the contents of the dictionary from movie_list based on the clicked movie
     headers = {
@@ -293,8 +296,8 @@ def tvshows(request):
 def tvshow(request, tvshow_id):
     """
     Want to be able to get the detailed information of a specific TvShow.
-    
-    
+    The user can leave a review as well as a score behond.
+    Can also leave a note saying an what episode currently he is.    
     """
 
 def add_tvshow_manual(request):
@@ -315,16 +318,39 @@ def add_tvshow_manual(request):
     return render(request, 'happy_cherries/add_tvshow.html', context)
 
 
-def search_tvshow(request):
-    """Want to show all the results from the search query."""
+def tvshow_search(request):
+    """
+    Want to show all the results from the search query.
+    Show a list with all the movies matching the search query. 
+    """
+    
+    # Now I need to get access to the contents of the dictionary from movie_list based on the clicked movie
+    headers = {
+            "accept": "application/json",
+            "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIwOTEwZTMzYzBiNzM5NWJhYWI2Nzg4MDJlOTkzMTJlYiIsInN1YiI6IjY2MjkxM2I5ZTI5NWI0MDE4NzllMTBiYSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.IwgWzjezREKj75fLbuLlK-Kp03z_yRyRcQaUJai68l0"
+        }
     
     url_tvshow = "https://api.themoviedb.org/3/search/tv?query={}&include_adult=false&language=en-US&page=1"
     
-
-def fetch_tvshow(headers, url_tvshow):
-    """Want to get all the results from the search query."""
+    if request.method == 'POST':
+        
+        tvshow_search = request.POST['tvshow_query']
+        
+        tvshow_list = fetch_tvshow(headers, url_tvshow, tvshow_search)
+        
+        context = {'tvshow_list': tvshow_list}
+        
+        return render(request, 'happy_cherries/search_tvshow.html', context)
+        
+    else: # GET request
     
-    response = requests.get(url_tvshow.format("Peaky Blinders"), headers=headers).json()
+        return render(request, 'happy_cherries/search_tvshow.html')
+        
+
+def fetch_tvshow(headers, url_tvshow, search):
+    """Want to get all the results from the search query."""
+    # Using the input name, will return a Dynamic search with all Shows related to the name
+    response = requests.get(url_tvshow.format(search), headers=headers).json()
     
     tvshow_list = []
     for sq in response['results']:
@@ -341,5 +367,11 @@ def fetch_tvshow(headers, url_tvshow):
     
     return tvshow_list
         
-        
-        
+def requested_tvshow(request, tvshow_id):
+    """
+    
+    """
+    
+    # GET request -- > Show all the detailed information of Tv Show
+    
+    # POST request -- > Save the Tv Show into a model which then redirected to tvshow homepage.    
