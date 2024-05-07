@@ -9,13 +9,18 @@ headers = {
 
 url = "https://api.themoviedb.org/3/search/tv?query={}&include_adult=false&language=en-US&page=1"
 
-response = requests.get(url.format("Peaky Blinders"), headers=headers).json()
+#response = requests.get(url.format("Peaky Blinders"), headers=headers).json()
+
+#print(response)
+
+url = "https://api.themoviedb.org/3/tv/{}?language=en-US"
+
+response = requests.get(url.format("60574"), headers=headers).json()
 
 print(response)
 
-
 # GET THE MOVIE ID
-url = "https://api.themoviedb.org/3/search/movie?query=Civil%20War&include_adult=false&language=en-US&page=1"
+#url = "https://api.themoviedb.org/3/search/movie?query=Civil%20War&include_adult=false&language=en-US&page=1"
 
 #response = requests.get(url, headers=headers).json()
 

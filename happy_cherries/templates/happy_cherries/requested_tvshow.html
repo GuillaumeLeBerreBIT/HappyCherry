@@ -1,0 +1,38 @@
+{% extends "happy_cherries/base.html" %}
+
+{% block content %}
+
+    <h2>{{ tvshow.name }}</h2>
+
+    <img src={{tvshow.poster}} alt="tvshow_poster">
+
+    <p>{{ tvshow.overview }}</p>
+
+    <p>{{ tvshow.first_air_date }}</p>
+
+    <p>{{ tvshow.last_air_date }}</p>
+
+    <p>Next episode to air: {{ tvshow.next_episode_to_air }}</p>
+
+    <p>Number of seasons: {{ tvshow.number_of_seasons }}</p>
+
+    <p>Number of episodes: {{ tvshow.number_of_episodes }}</p>
+
+    <ul>
+        {% for actor in tvshow.cast %}
+            <li>{{actor}}</li>
+        {% endfor %}
+    </ul>
+    
+    <ul>
+        {% for genre in tvshow.genres %}
+            <li>{{genre}}</li>
+        {% endfor %}
+    </ul>
+
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit">Save</button>
+    </form>
+
+{% endblock content %}

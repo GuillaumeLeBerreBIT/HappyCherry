@@ -161,7 +161,8 @@ def requested_movie(request, movie_id):
     url_poster = "https://image.tmdb.org/t/p/w500/{}"
     
     if request.method != "POST":
-        
+        # Using the Movie ID which has been saved from teh request response and parsed to the URL. 
+        # Can use it to get the detailed information of a Tv Show
         movie = fetch_detailed_movie(headers=headers, 
                                      url_movie=url_det_movie, 
                                      url_cast=url_credits_movie, 
@@ -369,9 +370,73 @@ def fetch_tvshow(headers, url_tvshow, search):
         
 def requested_tvshow(request, tvshow_id):
     """
-    
+    Want to show a detailed information of all the TvShow.
+    This also having the user the option to save the information to his list.
     """
+    # Now I need to get access to the contents of the dictionary from movie_list based on the clicked movie
+    headers = {
+            "accept": "application/json",
+            "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIwOTEwZTMzYzBiNzM5NWJhYWI2Nzg4MDJlOTkzMTJlYiIsInN1YiI6IjY2MjkxM2I5ZTI5NWI0MDE4NzllMTBiYSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.IwgWzjezREKj75fLbuLlK-Kp03z_yRyRcQaUJai68l0"
+        }
+    # URLs
+    url_det_tvshow = "https://api.themoviedb.org/3/tv/{}?language=en-US"
+    url_credits_tvshow = "https://api.themoviedb.org/3/tv/{}/credits?language=en-US"
+    url_poster = "https://image.tmdb.org/t/p/w500/{}"
     
     # GET request -- > Show all the detailed information of Tv Show
-    
+    if request.method != 'POST':
+        # Want to get all the detailed information of a movie. 
+        
+        tvshow = fetch_detailed_tvshow(headers, tvshow_id, url_det_tvshow, url_credits_tvshow, url_poster)
+        
+        # Because the Cast and Genres are saved in a long string splitted by ',' to save easily in the model direclty.
+        # We split the string to then iterate over a list in the HTML file.  
+        tvshow['cast'], tvshow['genres'] = tvshow['cast'].split(','), tvshow['genres'].split(',')
+        
+        context = {'tvshow': tvshow}
+        return render(request, 'happy_cherries/requested_tvshow.html', context)
     # POST request -- > Save the Tv Show into a model which then redirected to tvshow homepage.    
+    else:
+        
+        return redirect('happy_cherries:tvshows')
+
+def fetch_detailed_tvshow(headers, tvshow_id, url_tvshow, url_cast, url_poster):
+    """Get all the information of a specific Tv Show."""
+    
+    # API Request using the movie ID and convert JSON-format into Dictionary.
+    response = requests.get(url_tvshow.format(tvshow_id), headers=headers).json()
+    
+    # Genre
+    # Because easy to save the genres in the Model Movie as a string seperated by ','.
+    genres = ""
+    for genre in response['genres']:
+        genres += f"{genre['name']},"
+    # Remove the last ',' from the string
+    genres = genres[:-1]
+
+    # Cast -- > API Request using the movie ID and convert JSON-format into Dictionary.
+    response_credits = requests.get(url_cast.format(tvshow_id), headers=headers).json()
+    # Because easy to save the genres in the Model Movie as a string seperated by ','.
+    actors = ""
+    for c in response_credits['cast']:
+        actors += f"{c['name']},"
+    # Remove the last ',' from the string
+    actors = actors[:-1]
+    
+    # Save all the necassary information in a dictionary. 
+    tvshow_info = {
+        'id': response['id'],
+        'name': response['name'],
+        'first_air_date': response['first_air_date'],
+        'last_air_date': response['last_air_date'],
+        'poster': url_poster.format(response['poster_path']),
+        'next_episode_to_air': response['next_episode_to_air'],
+        'number_of_seasons': response['number_of_seasons'],
+        'number_of_episodes': response['number_of_episodes'],
+        'overview': response['overview'],
+        'genres': genres,
+        'cast': actors,
+        #'seasons':response['seasons']
+    }
+    
+    return tvshow_info
