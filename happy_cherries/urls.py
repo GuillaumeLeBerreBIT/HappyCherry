@@ -11,11 +11,12 @@ urlpatterns = [
     # Page for showing all the movies
     path('movies/', views.movies, name='movies'),
     # Detail page for a single movie
+    # When parsing an id with the url, need to save it into the HTTP path.
     path('movies/<int:movie_id>/', views.movie, name='movie'),
-    # Detail page for a single movie
-    path('movies/<int:movie_id>/add_review', views.add_review, name='add_review'),
+    # Add a review to a movie
+    path('movies/<int:movie_id>/add_review/', views.add_review_movie, name='add_review_movie'),
     # Edit a review given to a Movie
-    path('movies/<int:review_id>/edit_review', views.edit_review, name='edit_review'),
+    path('movies/<int:review_id>/edit_review/', views.edit_review_movie, name='edit_review_movie'),
     # Add a movie to the page. 
     path('movies/add_movie_manual/', views.add_movie_manual, name='add_movie_manual'),
     # Search for a specific movie
@@ -25,10 +26,16 @@ urlpatterns = [
     path('movies/movie_search/requested_movie/<int:movie_id>/', views.requested_movie, name='requested_movie'),
     # Page for showing all the tvshows added to your list.
     path('tvshows/', views.tvshows, name='tvshows'),
+    # Page for showing all the tvshows added to your list.
+    path('tvshows/<int:tvshow_id>/', views.tvshow, name='tvshow'),
     # Adding the form to manually fill in the TV shows
     path('tvshows/add_manual_tvshow/', views.add_tvshow_manual, name='add_tvshow_manual'),
     # search for a specific TvShow.
     path('tvshows/search_tvshow/', views.tvshow_search, name='tvshow_search'),
     # Get the detailed information of a TV Show.
-    path('tvshows/search_tvshow/requested_tvshow/<int:tvshow_id>', views.requested_tvshow, name='requested_tvshow'),
+    path('tvshows/search_tvshow/requested_tvshow/<int:tvshow_id>/', views.requested_tvshow, name='requested_tvshow'),
+    # Add a review to a TvShow
+    path('tvshows/<int:tvshow_id>/add_review/', views.add_review_tvshow, name='add_review_tvshow'),
+    # Edit a review given to a TvShow
+    path('tvshows/<int:review_id>/edit_review/', views.edit_review_tvshow, name='edit_review_tvshow'),
 ]

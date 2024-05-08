@@ -2,6 +2,8 @@ from django.shortcuts import render, redirect
 
 from .models import Movie, Review, TvShow
 from .forms import MovieForm, ReviewForm, TvShowForm
+from .tmdb import fetch_movies, fetch_trending_movies, fetch_detailed_movie, fetch_tvshow, fetch_detailed_tvshow
+
 import json, requests # This is to send a request to the URLs defined (Not a Django request)
 
 # Create your views here.
@@ -34,7 +36,7 @@ def movie(request, movie_id):
     cast_spl = movie.cast.split(',')
     genre_spl = movie.genre.split(',')
     
-    #Get the reviews linked to specific movie. 
+    # Get the reviews linked to specific movie. 
     reviews = movie.review_set.order_by('-date_added')
     context = {'movie': movie, 
                'reviews': reviews, 
@@ -99,49 +101,6 @@ def movie_search(request):
             'movie_list': movie_list
         }
         return render(request, 'happy_cherries/search_movie.html', context)
-    
-
-def fetch_movies(headers, movie_query, url_movie_search):
-    """Will show the movies through dynamic search on the page."""
-    # Want the response to be in JSON format. 
-    response = requests.get(url_movie_search.format(movie_query), headers=headers).json() 
-
-    movie_list = []
-    for sq in response['results']:
-        
-        # Fetch all essential information. 
-        # A trick: in the HTML when wanting to parse specific information such as an id.
-        # Can then make a link directly to specific item using the ID given to the object or movie.  
-        requested_data = {
-            'id': sq['id'],
-            'poster': sq['poster_path'],
-            'genre_ids': sq['genre_ids'],
-            'title': sq['title'],
-            'release_date': sq['release_date'],
-        }
-        # Add each movie to a list.
-        movie_list.append(requested_data)
-    
-    # Return the movie list.
-    return movie_list
-
-def fetch_trending_movies(headers, url_trending):
-    """Get all the trending movies to show on the page when searching for a movie."""
-    response = requests.get(url_trending, headers=headers).json()
-    
-    movie_list = []
-    for sq in response['results']:
-        requested_data = {
-            'id': sq['id'],
-                'poster': sq['poster_path'],
-                'genre_ids': sq['genre_ids'],
-                'title': sq['title'],
-                'release_date': sq['release_date'],
-        }
-        movie_list.append(requested_data)
-    
-    return movie_list
-
 
 def requested_movie(request, movie_id):
     """
@@ -184,7 +143,7 @@ def requested_movie(request, movie_id):
                                      movie_id=movie_id)
         
         # Create an instance of the model to save all the information directly into the database. 
-        # No need to create Form since have the values predefined.s
+        # No need to create Form since have the values predefined
         m = Movie(title=movie['title'],
                   release_date=movie['release_date'],
                   poster_path=movie['poster'],
@@ -199,88 +158,6 @@ def requested_movie(request, movie_id):
         
         # Redirect to the movies page after saving
         return redirect('happy_cherries:movies')
-    
-    
-def fetch_detailed_movie(headers, url_movie, url_cast, url_poster, movie_id):
-    """
-    This function will manage to get all the essential information of a specific movie. 
-    """
-    # API Request using the movie ID and convert JSON-format into Dictionary.
-    response = requests.get(url_movie.format(movie_id), headers=headers).json()
-    
-    # Genre
-    # Because easy to save the genres in the Model Movie as a string seperated by ','.
-    genres = ""
-    for genre in response['genres']:
-        genres += f"{genre['name']},"
-    # Remove the last ',' from the string
-    genres = genres[:-1]
-
-    # Cast -- > API Request using the movie ID and convert JSON-format into Dictionary.
-    response_credits = requests.get(url_cast.format(movie_id), headers=headers).json()
-    # Because easy to save the genres in the Model Movie as a string seperated by ','.
-    actors = ""
-    for c in response_credits['cast']:
-        actors += f"{c['name']},"
-    # Remove the last ',' from the string
-    actors = actors[:-1]
-    
-    # Save all the necassary information in a dictionary. 
-    movie_info = {
-        'id': response['id'],
-        'title': response['title'],
-        'release_date': response['release_date'],
-        'poster': url_poster.format(response['poster_path']),
-        'runtime': response['runtime'],
-        'status': response['status'],
-        'tagline': response['tagline'],
-        'overview': response['overview'],
-        'genres': genres,
-        'cast': actors,
-    }
-    
-    return movie_info
-
-def add_review(request, movie_id):
-    """The user can leave a review about the movie as well as a score to view the movie as."""
-    movie = Movie.objects.get(id=movie_id)
-    
-    if request.method != 'POST':
-        # Creating a blank form
-        form = ReviewForm()
-    
-    else:
-        form = ReviewForm(data=request.POST)
-        
-        if form.is_valid():
-            new_review = form.save(commit=False)
-            # Save the review under the PK linked to specific movie
-            new_review.movie = movie
-            new_review.save()
-            
-            return redirect('happy_cherries:movie', movie_id=movie_id)
-    
-    context = {'form': form, 'movie': movie}
-    return render(request, 'happy_cherries/add_review.html', context)
-
-def edit_review(request, review_id):
-    """Want the user to be able to edit the score or review."""
-    review = Review.objects.get(id=review_id)
-    movie = review.movie
-    
-    if request.method != 'POST':
-        
-        form = ReviewForm(instance=review)
-    else:
-        
-        form = ReviewForm(instance=review, data=request.POST)
-        
-        if form.is_valid():
-            form.save()
-            return redirect('happy_cherries:movie', movie_id=movie.id)
-    
-    context = {'form': form, 'movie': movie, 'review': review}
-    return render(request, 'happy_cherries/edit_review.html', context)
 
 # TV SHOWS
 def tvshows(request):
@@ -300,6 +177,15 @@ def tvshow(request, tvshow_id):
     The user can leave a review as well as a score behond.
     Can also leave a note saying an what episode currently he is.    
     """
+    
+    tvshow = TvShow.objects.get(id=tvshow_id)
+    reviews = tvshow.review_set.order_by('date_added')
+    
+    cast_spl, genres_spl = tvshow.cast.split(','), tvshow.genre.split(',')
+    
+    context = {'tvshow': tvshow, 'cast_spl': cast_spl, 'genres_spl': genres_spl, 'reviews': reviews}
+    
+    return render(request, 'happy_cherries/tvshow.html', context)
 
 def add_tvshow_manual(request):
     """The user will be able to manually fill in a TvShow"""
@@ -347,27 +233,6 @@ def tvshow_search(request):
     
         return render(request, 'happy_cherries/search_tvshow.html')
         
-
-def fetch_tvshow(headers, url_tvshow, search):
-    """Want to get all the results from the search query."""
-    # Using the input name, will return a Dynamic search with all Shows related to the name
-    response = requests.get(url_tvshow.format(search), headers=headers).json()
-    
-    tvshow_list = []
-    for sq in response['results']:
-        
-        requested_data = {
-            'id': sq['id'],
-            'poster': sq['poster_path'],
-            'genre_ids': sq['genre_ids'],
-            'name': sq['name'],
-            'first_air_date': sq['first_air_date'],
-        }
-        
-        tvshow_list.append(requested_data)
-    
-    return tvshow_list
-        
 def requested_tvshow(request, tvshow_id):
     """
     Want to show a detailed information of all the TvShow.
@@ -398,45 +263,109 @@ def requested_tvshow(request, tvshow_id):
     # POST request -- > Save the Tv Show into a model which then redirected to tvshow homepage.    
     else:
         
+        tvshow = fetch_detailed_tvshow(headers, tvshow_id, url_det_tvshow, url_credits_tvshow, url_poster)
+            
+        # Create an instance of the model to save all the information directly into the database. 
+        # No need to create Form since have the values predefined
+        s = TvShow(name=tvshow['name'],
+                   id_tvshow=tvshow['id'],
+                   poster_path=tvshow['poster_path'],
+                   overview=tvshow['overview'],
+                   first_air_date=tvshow['first_air_date'],
+                   last_air_date=tvshow['last_air_date'],
+                   next_episode_to_air=tvshow['next_episode_to_air'],
+                   number_of_episodes=tvshow['number_of_episodes'],
+                   number_of_seasons=tvshow['number_of_seasons'],
+                   cast=tvshow['cast'],
+                   genre=tvshow['genres']
+                   )
+        
+        s.save()
+        
         return redirect('happy_cherries:tvshows')
 
-def fetch_detailed_tvshow(headers, tvshow_id, url_tvshow, url_cast, url_poster):
-    """Get all the information of a specific Tv Show."""
-    
-    # API Request using the movie ID and convert JSON-format into Dictionary.
-    response = requests.get(url_tvshow.format(tvshow_id), headers=headers).json()
-    
-    # Genre
-    # Because easy to save the genres in the Model Movie as a string seperated by ','.
-    genres = ""
-    for genre in response['genres']:
-        genres += f"{genre['name']},"
-    # Remove the last ',' from the string
-    genres = genres[:-1]
 
-    # Cast -- > API Request using the movie ID and convert JSON-format into Dictionary.
-    response_credits = requests.get(url_cast.format(tvshow_id), headers=headers).json()
-    # Because easy to save the genres in the Model Movie as a string seperated by ','.
-    actors = ""
-    for c in response_credits['cast']:
-        actors += f"{c['name']},"
-    # Remove the last ',' from the string
-    actors = actors[:-1]
+
+# REVIEW - MOVIES
+def add_review_movie(request, movie_id):
+    """The user can leave a review about the movie as well as a score to view the movie as."""
+    movie = Movie.objects.get(id=movie_id)
     
-    # Save all the necassary information in a dictionary. 
-    tvshow_info = {
-        'id': response['id'],
-        'name': response['name'],
-        'first_air_date': response['first_air_date'],
-        'last_air_date': response['last_air_date'],
-        'poster': url_poster.format(response['poster_path']),
-        'next_episode_to_air': response['next_episode_to_air'],
-        'number_of_seasons': response['number_of_seasons'],
-        'number_of_episodes': response['number_of_episodes'],
-        'overview': response['overview'],
-        'genres': genres,
-        'cast': actors,
-        #'seasons':response['seasons']
-    }
+    if request.method != 'POST':
+        # Creating a blank form
+        form = ReviewForm()
     
-    return tvshow_info
+    else:
+        form = ReviewForm(data=request.POST)
+        
+        if form.is_valid():
+            new_review = form.save(commit=False)
+            # Save the review under the PK linked to specific movie
+            new_review.movie = movie
+            new_review.save()
+            
+            return redirect('happy_cherries:movie', movie_id=movie_id)
+    
+    context = {'form': form, 'movie': movie}
+    return render(request, 'happy_cherries/add_review_movie.html', context)
+
+def edit_review_movie(request, review_id):
+    """Want the user to be able to edit the score or review."""
+    review = Review.objects.get(id=review_id)
+    movie = review.movie
+    
+    if request.method != 'POST':
+        
+        form = ReviewForm(instance=review)
+    else:
+        
+        form = ReviewForm(instance=review, data=request.POST)
+        
+        if form.is_valid():
+            form.save()
+            return redirect('happy_cherries:movie', movie_id=movie.id)
+    
+    context = {'form': form, 'movie': movie, 'review': review}
+    return render(request, 'happy_cherries/edit_review_movie.html', context)
+
+# REVIEW - TVSHOW
+def add_review_tvshow(request, tvshow_id):
+    """The user can leave a review about the movie as well as a score to view the movie as."""
+    tvshow = TvShow.objects.get(id=tvshow_id)
+    
+    if request.method != 'POST':
+        # Creating a blank form
+        form = ReviewForm()
+    
+    else:
+        form = ReviewForm(data=request.POST)
+        
+        if form.is_valid():
+            new_review = form.save(commit=False)
+            # Save the review under the PK linked to specific movie
+            new_review.tvshow = tvshow
+            new_review.save()
+            
+            return redirect('happy_cherries:tvshow', tvshow_id=tvshow_id)
+    
+    context = {'form': form, 'tvshow': tvshow}
+    return render(request, 'happy_cherries/add_review_tvshow.html', context)
+
+def edit_review_tvshow(request, review_id):
+    """Want the user to be able to edit the score or review."""
+    review = Review.objects.get(id=review_id)
+    tvshow = review.tvshow
+    
+    if request.method != 'POST':
+        
+        form = ReviewForm(instance=review)
+    else:
+        
+        form = ReviewForm(instance=review, data=request.POST)
+        
+        if form.is_valid():
+            form.save()
+            return redirect('happy_cherries:tvshow', tvshow_id=tvshow.id)
+    
+    context = {'form': form, 'tvshow': tvshow, 'review': review}
+    return render(request, 'happy_cherries/edit_review_tvshow.html', context)

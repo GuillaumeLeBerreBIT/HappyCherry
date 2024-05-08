@@ -26,24 +26,31 @@ class Movie(models.Model):
 class TvShow(models.Model):
     """The repersenation of all the details of a TvSow"""
     
-    title = models.CharField(max_length=150)
+    name = models.CharField(max_length=150)
+    id_tvshow = models.IntegerField(blank=True, null=True)
     date_added = models.DateTimeField(auto_now_add=True)
     
     poster_path = models.CharField(max_length=100, blank=True)
     overview = models.TextField(blank=True)
-    release_date = models.DateField(null=True)
+    first_air_date = models.DateField(null=True)
+    last_air_date = models.DateField(null=True)
+    next_episode_to_air = models.DateField(null=True)
+    
+    number_of_episodes = models.IntegerField()
+    number_of_seasons = models.IntegerField()
     
     genre = models.CharField(blank=True, max_length=500) 
     cast = models.TextField(blank=True)
     
     def __str__(self):
         """String representation of model"""
-        return self.title
+        return self.name
     
 class Review(models.Model):
-    """The user can leave a review about the movie he has seen."""
+    """The user can leave a review about the movie/TvShow he has seen."""
     
-    movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
+    movie = models.ForeignKey(Movie, on_delete=models.CASCADE, blank=True, null=True)
+    tvshow = models.ForeignKey(TvShow, on_delete=models.CASCADE, blank=True, null=True)
     score = models.PositiveIntegerField(default=50, validators=[MinValueValidator(1), MaxValueValidator(100)])
     review = models.TextField()
     date_added = models.DateTimeField(auto_now_add=True)

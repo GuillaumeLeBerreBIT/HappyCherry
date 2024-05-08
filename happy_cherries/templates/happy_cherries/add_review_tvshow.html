@@ -4,7 +4,7 @@
 
 <h2>Review</h2>
 
-<form action="{% url 'happy_cherries:add_review' movie.id %}" method='post'>
+<form action="{% url 'happy_cherries:add_review_tvshow' tvshow.id %}" method='post'>
     {% csrf_token %}
     {{ form.as_p}}
     <button name="submit">Add Review</button>

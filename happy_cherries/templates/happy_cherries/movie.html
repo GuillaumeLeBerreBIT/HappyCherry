@@ -33,11 +33,11 @@
 
     <h3>Review</h3>
 
-    <a href="{% url 'happy_cherries:add_review' movie.id %}">Add review</a>
+    <a href="{% url 'happy_cherries:add_review_movie' movie.id %}">Add review</a>
 
     <ul>
         {% for review in reviews %}
-            <li>{{review.score}} % - {{review.review}} - <a href="{% url 'happy_cherries:edit_review' review.id %}">Edit</a></li>
+            <li>{{review.score}} % - {{review.review}} - <a href="{% url 'happy_cherries:edit_review_movie' review.id %}">Edit</a></li>
         {% empty %}
             <li>No review left</li>
         {% endfor %}

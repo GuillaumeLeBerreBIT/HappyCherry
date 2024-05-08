@@ -19,20 +19,27 @@
     <p>Number of episodes: {{ tvshow.number_of_episodes }}</p>
 
     <ul>
-        {% for actor in tvshow.cast %}
+        {% for actor in cast_spl %}
             <li>{{actor}}</li>
         {% endfor %}
     </ul>
-    
+
     <ul>
-        {% for genre in tvshow.genres %}
+        {% for genre in genres_spl %}
             <li>{{genre}}</li>
         {% endfor %}
     </ul>
 
-    <form method="post">
-        {% csrf_token %}
-        <button type="submit">Save</button>
-    </form>
+    <h2>Review</h2>
+
+    <a href="{% url 'happy_cherries:add_review_tvshow' tvshow.id %}">Add Review</a>
+
+    <ul>
+        {% for review in reviews %}
+            <li>{{ review.score }} % - {{ review.review }} - <a href="{% url 'happy_cherries:edit_review_tvshow' review.id %}">Edit</a></li>
+        {% empty %}
+            <li>Nothing been added yet</li>
+        {% endfor %}
+    </ul>
 
 {% endblock content %}

@@ -5,11 +5,13 @@
 <a href="{% url 'happy_cherries:add_tvshow_manual' %}">Add Tv Show</a> - 
 <a href="{% url 'happy_cherries:tvshow_search' %}">Search Tv Show</a>
 
-<h2>TV Shows</h2>
+<h2>TV Shows:</h2>
 
 <ul>
     {% for shows in tv_shows %}
-        <li>{{shows.title}}</li>
+        <li>
+            <a href="{% url 'happy_cherries:tvshow' shows.id %}">{{shows.name}}</a>
+        </li>
     {% empty %}
         <li>No TV shows have been added yet.</li>
     {% endfor %}

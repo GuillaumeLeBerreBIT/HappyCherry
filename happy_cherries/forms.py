@@ -15,5 +15,6 @@ class ReviewForm(forms.ModelForm):
 class TvShowForm(forms.ModelForm):
     class Meta():
         model = TvShow
-        fields = ['title', 'poster_path', 'overview', 'release_date',
-                  'cast', 'genre']
+        fields = ['name', 'poster_path', 'overview', 'first_air_date',
+                  'last_air_date', 'next_episode_to_air', 'number_of_episodes', 
+                  'number_of_seasons', 'cast', 'genre']
