@@ -37,11 +37,26 @@ def movie(request, movie_id):
     genre_spl = movie.genre.split(',')
     
     # Get the reviews linked to specific movie. 
+    # This is the model object, iterate to get all the reviews which then can access the score attr
     reviews = movie.review_set.order_by('-date_added')
+    # Get the average score of all the reviews
+    total_sum, num_rev = 0, 0
+    # Iterate over all reviews
+    for review in reviews:
+        total_sum += review.score
+        num_rev += 1
+    
+    # Get the avg score
+    if num_rev != 0:
+        avg_score = total_sum/num_rev    
+    else: avg_score = 0
+    
+    
     context = {'movie': movie, 
                'reviews': reviews, 
                'cast_spl': cast_spl,
-               'genre_spl': genre_spl}
+               'genre_spl': genre_spl, 
+               'avg_score': avg_score}
     
     return render(request, 'happy_cherries/movie.html', context)
 

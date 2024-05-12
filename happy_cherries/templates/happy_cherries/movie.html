@@ -6,6 +6,10 @@
 
         <img src={{movie.poster_path}} alt="movie_poster">
 
+        {% if reviews %}
+            <p>{{ avg_score }}<p>
+        {% endif %}
+
         <p>{{ movie.release_date }}</p>
 
         <p>{{ movie.overview }}</p>
