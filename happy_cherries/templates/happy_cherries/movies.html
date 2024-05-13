@@ -10,7 +10,7 @@
     <ul>
         {% for movie in movies %}
             <li> <!--Parse the movie ID saved in the dictionary as value to function -->
-                <a href="{% url 'happy_cherries:movie' movie.id %}">{{movie.title}}</a>
+                <a href="{% url 'happy_cherries:movie' movie.id %}">{{movie.title}}{% if movie.avg_score %} - {{ movie.avg_score }}{% endif %}</a>
             </li> 
         {% empty %}
             <li>No movies added yet</li>

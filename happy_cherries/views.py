@@ -21,6 +21,17 @@ def movies(request):
     
     movies = Movie.objects.order_by('date_added')
     
+    for movie in movies:
+        # Gets all the reviews per movie
+        reviews = movie.review_set.all()
+        # If there are existing reviews for a movie.
+        if reviews:
+            # Iterate over the reviews per movie and calculate the total score
+            total_sum = sum(review.score for review in reviews)
+            # Direclty assign the value to the saved model in the dictionary.
+            movie.avg_score = round(total_sum / len(reviews), None)
+            #print(dir(movie))
+    
     context = {'movies': movies}
     
     return render(request, 'happy_cherries/movies.html', context)
@@ -39,24 +50,19 @@ def movie(request, movie_id):
     # Get the reviews linked to specific movie. 
     # This is the model object, iterate to get all the reviews which then can access the score attr
     reviews = movie.review_set.order_by('-date_added')
-    # Get the average score of all the reviews
-    total_sum, num_rev = 0, 0
-    # Iterate over all reviews
-    for review in reviews:
-        total_sum += review.score
-        num_rev += 1
-    
-    # Get the avg score
-    if num_rev != 0:
-        avg_score = total_sum/num_rev    
-    else: avg_score = 0
+
+    # If there are existing reviews for a movie.
+    if reviews:
+        # Iterate over the reviews per movie and calculate the total score
+        total_sum = sum(review.score for review in reviews)
+        # Direclty assign the value to the saved model in the dictionary.
+        movie.avg_score = round(total_sum / len(reviews), None)
     
     
     context = {'movie': movie, 
                'reviews': reviews, 
                'cast_spl': cast_spl,
-               'genre_spl': genre_spl, 
-               'avg_score': avg_score}
+               'genre_spl': genre_spl}
     
     return render(request, 'happy_cherries/movie.html', context)
 
@@ -183,6 +189,13 @@ def tvshows(request):
         
     tv_shows = TvShow.objects.order_by('date_added')
     
+    for tv_show in tv_shows:
+        reviews = tv_show.review_set.all()
+        # Firstly check if there are any reviews left behind. 
+        if reviews:
+            total_sum = sum(review.score for review in reviews)
+            tv_show.avg_score = round(total_sum / len(reviews), None)
+    
     context = {'tv_shows': tv_shows}
     return render(request, 'happy_cherries/tvshows.html', context)
 
@@ -194,11 +207,22 @@ def tvshow(request, tvshow_id):
     """
     
     tvshow = TvShow.objects.get(id=tvshow_id)
+    
+    # Get the reviews linked to specific Tv Show. 
+    # This is the model object, iterate to get all the reviews which then can access the score attr
     reviews = tvshow.review_set.order_by('date_added')
     
     cast_spl, genres_spl = tvshow.cast.split(','), tvshow.genre.split(',')
     
-    context = {'tvshow': tvshow, 'cast_spl': cast_spl, 'genres_spl': genres_spl, 'reviews': reviews}
+    # Check if there are any reviews. 
+    if reviews:
+        # Iterate over all reviews
+        total_sum = sum(review.score for review in reviews)
+        avg_score = round(total_sum/len(reviews), None)    
+    else: 
+        avg_score = 0
+    
+    context = {'tvshow': tvshow, 'cast_spl': cast_spl, 'genres_spl': genres_spl, 'reviews': reviews, 'avg_score': avg_score}
     
     return render(request, 'happy_cherries/tvshow.html', context)
 
