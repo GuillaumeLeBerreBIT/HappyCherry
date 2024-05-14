@@ -1,0 +1,13 @@
+{% extends "happy_cherries/base.html" %}
+
+{% block content %}
+
+    <h2>Edit Note</h2>
+
+    <form method='post' action="{% url 'happy_cherries:edit_note_tvshow' note.id %}">
+        {% csrf_token %}
+        {{ form.as_p}}
+        <button name="submit">Save</button>
+    </form>
+
+{% endblock content %}

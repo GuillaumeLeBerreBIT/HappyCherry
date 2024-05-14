@@ -1,0 +1,13 @@
+{% extends "happy_cherries/base.html" %}
+
+{% block content %}
+
+    <h2>Note Episode/Season</h2>
+    <!--From the context dictionary get the TvShow ID, parse into URL and view function-->
+    <form method="post" action="{% url 'happy_cherries:add_note_tvshow' tvshow.id %}">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button name="submit">Add Note</button>
+    </form>
+
+{% endblock content %}

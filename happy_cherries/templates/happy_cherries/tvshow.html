@@ -6,7 +6,16 @@
 
     <img src={{tvshow.poster_path}} alt="tvshow_poster">
 
-    <p>{{ avg_score }}</p>
+    {% if note %}
+        <p><a href="{% url 'happy_cherries:edit_note_tvshow' note.id %}">Edit Note</a></p>
+        <p>{{ note.note }}</p>
+    {% else %}
+        <p><a href="{% url 'happy_cherries:add_note_tvshow' tvshow.id %}">Add Note</a></p>
+    {% endif %}
+
+    {% if review %}
+        <p>{{ avg_score }}</p>
+    {% endif %}
 
     <p>{{ tvshow.overview }}</p>
 

@@ -10,7 +10,9 @@
 <ul>
     {% for show in tv_shows %}
         <li>
-            <a href="{% url 'happy_cherries:tvshow' show.id %}">{{show.name}}{% if show.avg_score %} - {{show.avg_score}}{% endif %}</a>
+            <a href="{% url 'happy_cherries:tvshow' show.id %}">{{show.name}}
+                {% if show.avg_score %} - {{show.avg_score}}{% endif %}
+                {% if show.note %} - {{ show.note }}{% endif %}</a>
         </li>
     {% empty %}
         <li>No TV shows have been added yet.</li>

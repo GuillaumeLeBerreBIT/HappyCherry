@@ -1,7 +1,7 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 
-from .models import Movie, Review, TvShow
-from .forms import MovieForm, ReviewForm, TvShowForm
+from .models import Movie, Review, TvShow, Note
+from .forms import MovieForm, ReviewForm, TvShowForm, NoteForm
 from .tmdb import fetch_movies, fetch_trending_movies, fetch_detailed_movie, fetch_tvshow, fetch_detailed_tvshow, fetch_trending_tvshows
 
 import json, requests # This is to send a request to the URLs defined (Not a Django request)
@@ -188,13 +188,18 @@ def tvshows(request):
     """
         
     tv_shows = TvShow.objects.order_by('date_added')
-    
+
     for tv_show in tv_shows:
         reviews = tv_show.review_set.all()
         # Firstly check if there are any reviews left behind. 
         if reviews:
             total_sum = sum(review.score for review in reviews)
             tv_show.avg_score = round(total_sum / len(reviews), None)
+        
+        note = tv_show.note_set.first()
+        
+        if note:
+            tv_show.note = note
     
     context = {'tv_shows': tv_shows}
     return render(request, 'happy_cherries/tvshows.html', context)
@@ -207,6 +212,9 @@ def tvshow(request, tvshow_id):
     """
     
     tvshow = TvShow.objects.get(id=tvshow_id)
+    
+    # Get the note linked to a specific Movie
+    note = tvshow.note_set.order_by('-date_added').first() # To get the newest note added first
     
     # Get the reviews linked to specific Tv Show. 
     # This is the model object, iterate to get all the reviews which then can access the score attr
@@ -222,18 +230,64 @@ def tvshow(request, tvshow_id):
     else: 
         avg_score = 0
     
-    context = {'tvshow': tvshow, 'cast_spl': cast_spl, 'genres_spl': genres_spl, 'reviews': reviews, 'avg_score': avg_score}
+    context = {'tvshow': tvshow, 'cast_spl': cast_spl, 'genres_spl': genres_spl, 
+               'reviews': reviews, 'avg_score': avg_score, 'note': note}
     
     return render(request, 'happy_cherries/tvshow.html', context)
 
+def add_note_tvshow(request, tvshow_id):
+    """The user can leave a Note behind on what episode/season he is currently at."""
+    tvshow = TvShow.objects.get(id=tvshow_id)
+    
+    if request.method != 'POST':
+        form = NoteForm()
+    
+    else:
+        form = NoteForm(data=request.POST)
+
+        if form.is_valid():
+            
+            # Delete the existing note if it exists
+            existing_note = tvshow.note_set.order_by('date_added').first()
+            if existing_note:
+                existing_note.delete()
+            # Do not save it direclty ito the database
+            new_note = form.save(commit=False)
+            # Set the primary key of 
+            new_note.tvshow = tvshow
+            new_note.save()
+            return redirect('happy_cherries:tvshow', tvshow_id = tvshow_id)
+        
+    context = {'form': form, 'tvshow': tvshow}
+    return render(request, 'happy_cherries/add_note_tvshow.html', context)
+
+def edit_note_tvshow(request, note_id):
+    """Edit the note the user left behind on the page."""
+    
+    note = get_object_or_404(Note, id=note_id)
+    tvshow = note.tvshow
+    
+    if request.method != 'POST':
+        form = NoteForm(instance=note)
+    
+    else: 
+        form = NoteForm(instance=note, data=request.POST)
+        
+        if form.is_valid():
+            
+            form.save()
+            return redirect('happy_cherries:tvshow', tvshow_id=tvshow.id)
+        
+    context = {'form': form, 'note': note, 'tvshow': tvshow}
+    return render(request, 'happy_cherries/edit_note_tvshow.html', context)
+    
+    
 def add_tvshow_manual(request):
     """The user will be able to manually fill in a TvShow"""
     if request.method != 'POST':
-        
         form = TvShowForm()
     
     else:
-        
         form = TvShowForm(data=request.POST)
         
         if form.is_valid():

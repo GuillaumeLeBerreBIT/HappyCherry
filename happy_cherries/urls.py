@@ -28,6 +28,10 @@ urlpatterns = [
     path('tvshows/', views.tvshows, name='tvshows'),
     # Page for showing all the tvshows added to your list.
     path('tvshows/<int:tvshow_id>/', views.tvshow, name='tvshow'),
+    # Page for showing all the tvshows added to your list.
+    path('tvshows/<int:tvshow_id>/add_note_tvshow/', views.add_note_tvshow, name='add_note_tvshow'),
+    # Page for showing all the tvshows added to your list.
+    path('tvshows/<int:note_id>/edit_note_tvshow/', views.edit_note_tvshow, name='edit_note_tvshow'),
     # Adding the form to manually fill in the TV shows
     path('tvshows/add_manual_tvshow/', views.add_tvshow_manual, name='add_tvshow_manual'),
     # search for a specific TvShow.

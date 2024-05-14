@@ -67,11 +67,12 @@ class Note(models.Model):
     """The user can leave a Note on what episode he is currently is stuck watching."""
     
     tvshow = models.ForeignKey(TvShow, on_delete=models.CASCADE)
+    date_added = models.DateTimeField(auto_now_add=True, blank=True, null=True)
     note = models.CharField(max_length=100)
     
     def __str__(self):
         
         if len(self.note) > 50:
-            return f"{self.note[50]}"
+            return f"{self.note[:50]}"
         else:
             return f"{self.note}"
