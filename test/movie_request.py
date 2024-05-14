@@ -12,10 +12,14 @@ url = "https://api.themoviedb.org/3/search/tv?query={}&include_adult=false&langu
 #response = requests.get(url.format("Peaky Blinders"), headers=headers).json()
 
 #print(response)
-
+#Details of a TvShow
 url = "https://api.themoviedb.org/3/tv/{}?language=en-US"
 
-response = requests.get(url.format("60574"), headers=headers).json()
+# TVSHOW Popular
+
+url = "https://api.themoviedb.org/3/tv/popular?language=en-US&page=1"
+
+response = requests.get(url, headers=headers).json()
 
 print(response)
 

@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 
 from .models import Movie, Review, TvShow
 from .forms import MovieForm, ReviewForm, TvShowForm
-from .tmdb import fetch_movies, fetch_trending_movies, fetch_detailed_movie, fetch_tvshow, fetch_detailed_tvshow
+from .tmdb import fetch_movies, fetch_trending_movies, fetch_detailed_movie, fetch_tvshow, fetch_detailed_tvshow, fetch_trending_tvshows
 
 import json, requests # This is to send a request to the URLs defined (Not a Django request)
 
@@ -257,6 +257,7 @@ def tvshow_search(request):
         }
     
     url_tvshow = "https://api.themoviedb.org/3/search/tv?query={}&include_adult=false&language=en-US&page=1"
+    url_trending_tvshows = "https://api.themoviedb.org/3/tv/popular?language=en-US&page=1"
     
     if request.method == 'POST':
         
@@ -269,8 +270,12 @@ def tvshow_search(request):
         return render(request, 'happy_cherries/search_tvshow.html', context)
         
     else: # GET request
-    
-        return render(request, 'happy_cherries/search_tvshow.html')
+        
+        tvshow_list = fetch_trending_tvshows(headers, url_trending_tvshows)
+        
+        context = {'tvshow_list': tvshow_list}
+        
+        return render(request, 'happy_cherries/search_tvshow.html', context)
         
 def requested_tvshow(request, tvshow_id):
     """

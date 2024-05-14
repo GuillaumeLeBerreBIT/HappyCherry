@@ -49,7 +49,7 @@ class TvShow(models.Model):
 class Review(models.Model):
     """The user can leave a review about the movie/TvShow he has seen."""
     
-    movie = models.ForeignKey(Movie, on_delete=models.CASCADE, blank=True, null=True)
+    movie = models.ForeignKey(Movie, on_delete=models.CASCADE, blank=True, null=True)  # Can have the option to have it blank so can choose between Tvshow or Movie
     tvshow = models.ForeignKey(TvShow, on_delete=models.CASCADE, blank=True, null=True)
     score = models.PositiveIntegerField(default=50, validators=[MinValueValidator(1), MaxValueValidator(100)])
     review = models.TextField()
@@ -62,3 +62,16 @@ class Review(models.Model):
             return f"{self.review[:50]}..."
         else: 
             return f"{self.review}"
+        
+class Note(models.Model):
+    """The user can leave a Note on what episode he is currently is stuck watching."""
+    
+    tvshow = models.ForeignKey(TvShow, on_delete=models.CASCADE)
+    note = models.CharField(max_length=100)
+    
+    def __str__(self):
+        
+        if len(self.note) > 50:
+            return f"{self.note[50]}"
+        else:
+            return f"{self.note}"

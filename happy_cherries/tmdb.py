@@ -32,7 +32,7 @@ def fetch_trending_movies(headers, url_trending):
     movie_list = []
     for sq in response['results']:
         requested_data = {
-            'id': sq['id'],
+                'id': sq['id'],
                 'poster': sq['poster_path'],
                 'genre_ids': sq['genre_ids'],
                 'title': sq['title'],
@@ -103,6 +103,27 @@ def fetch_tvshow(headers, url_tvshow, search):
         tvshow_list.append(requested_data)
     
     return tvshow_list
+
+def fetch_trending_tvshows(headers, url_trending):
+    """Get a list of all the trending Tv Shows to show on the search page."""
+    
+    response = requests.get(url_trending, headers=headers).json()
+    
+    tvshow_list = []
+    for tvshow in response['results']:
+        
+        tvshow = {
+            "id": tvshow['id'],
+            "poster": tvshow['poster_path'],
+            "name": tvshow['name'],
+            "genre_ids": tvshow['genre_ids'],
+            "first_air_date": tvshow['first_air_date']
+        }
+        
+        tvshow_list.append(tvshow)
+    
+    return tvshow_list
+    
 
 def fetch_detailed_tvshow(headers, tvshow_id, url_tvshow, url_cast, url_poster):
     """Get all the information of a specific Tv Show."""
