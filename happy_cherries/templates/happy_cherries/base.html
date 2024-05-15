@@ -2,10 +2,15 @@
     <a href="{% url 'happy_cherries:index' %}">Home</a> -
     <a href="{% url 'happy_cherries:movies' %}">Movies</a> -
     <a href="{% url 'happy_cherries:tvshows' %}">TV Shows</a>
-    {% if user.authenticated %}
-        Hello {{ user.username }}
+    {% if user.is_authenticated %}
+        - Hello {{ user.username }}
+        <form action="{% url 'users:logout' %}" method='post'>
+            {% csrf_token %}
+            <button type="submit">Log out</button>
+        </form>
     {% else %}
-        <a href="{% url 'users:login' %}">Log In</a>
+        - <a href="{% url 'users:register' %}">Register</a> 
+        - <a href="{% url 'users:login' %}">Log In</a>
     {% endif %}
 </p>
 
