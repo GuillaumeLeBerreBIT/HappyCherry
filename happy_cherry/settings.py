@@ -33,6 +33,7 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     # My Apps
     'happy_cherries',
+    'users',
     
     # Default Apps
     'django.contrib.admin',

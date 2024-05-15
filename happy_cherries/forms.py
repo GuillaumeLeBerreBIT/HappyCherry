@@ -6,6 +6,8 @@ class MovieForm(forms.ModelForm):
         model = Movie
         fields = ['title', 'poster_path', 'overview', 'release_date',
                   'cast', 'genre', 'status', 'runtime', 'tagline']
+        #labels = {'title': ''}
+        widgets = {'overview': forms.Textarea(attrs={'cols': 80})}
         
 class TvShowForm(forms.ModelForm):
     class Meta():
