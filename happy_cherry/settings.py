@@ -34,6 +34,8 @@ INSTALLED_APPS = [
     # My Apps
     'happy_cherries',
     'users',
+    # Third party apps
+    'django_bootstrap5',
     
     # Default Apps
     'django.contrib.admin',

@@ -1,17 +1,77 @@
-<p>
-    <a href="{% url 'happy_cherries:index' %}">Home</a> -
-    <a href="{% url 'happy_cherries:movies' %}">Movies</a> -
-    <a href="{% url 'happy_cherries:tvshows' %}">TV Shows</a>
-    {% if user.is_authenticated %}
-        - Hello {{ user.username }}
-        <form action="{% url 'users:logout' %}" method='post'>
-            {% csrf_token %}
-            <button type="submit">Log out</button>
-        </form>
-    {% else %}
-        - <a href="{% url 'users:register' %}">Register</a> 
-        - <a href="{% url 'users:login' %}">Log In</a>
-    {% endif %}
-</p>
+{% load django_bootstrap5 %}
 
-{% block content %}{% endblock content %}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1,
+        shrink-to-fit=no">
+    <title>Happy Cherries</title>
+
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
+    
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark mb-4">
+        <a class="navbar-brand ms-4" href="{% url 'happy_cherries:index' %}">Home</a>
+
+        <button class="navbar-toggler me-2" type="button" data-bs-toggle="collapse" 
+            data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" 
+            aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse ms-4" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'happy_cherries:movies' %}">Movies</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'happy_cherries:tvshows' %}">Tv Shows</a>
+                </li>
+            </ul>
+            <ul class="navbar-nav ms-auto me-4">
+                {% if user.is_authenticated %}
+                <li class="nav-item">
+                    <span class="navbar-text">{{ user.username }}</span>
+                </li>
+                <li class="nav-item">
+                    <form action="{% url 'users:logout' %}" method='post'>
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-link nav-link">Log out</button>
+                    </form>
+                </li>
+                {% else %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'users:login' %}">Log in</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'users:register' %}">Register</a>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+
+    <main role="main" class="container">
+        <div class="mb-2 pb-2">
+            {% block page_header %}{% endblock page_header %}
+        </div>
+        <div>
+            {% block content %}{% endblock content %}
+        </div>
+    </main>
+
+</body>
+</html>
+
+
+
+<!--
+    In the context of the navbar, using ms-auto on a <ul> element inside the navbar 
+    means that the list of items will be pushed to the right side of the navbar, 
+    as the left margin (start margin in LTR) is set to auto, taking up all the 
+    available space to the left.
+    Spacing: https://getbootstrap.com/docs/5.3/utilities/spacing/#margin-and-padding
+-->
