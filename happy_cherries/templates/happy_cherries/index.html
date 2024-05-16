@@ -1,12 +1,24 @@
 {% extends "happy_cherries/base.html" %}
 
+{% block page_header %}
+
+<div class="row align-items-md-stretch">
+    <div class="col-md-10 container-fluid">
+        <div class="h-100 p-5 text-bg-dark rounded-3">
+            <h2>Happy Cherry</h2>
+                <p>
+                    This is the home page for Happy Cherry. You can add a movie you have seen, leave a Review behind,
+                    indicate a score for the movie.
+                </p>
+            <a class="btn btn-outline-light" role="button" 
+            href="{% url 'users:register' %}">Register &raquo;</a>
+        </div>
+    </div>
+</div>
+
+{% endblock page_header %}
+
 {% block content %}
 
-<h1>Happy Cherry</h1>
-
-<p>
-    This is the home page for Happy Cherry. You can add a movie you have seen, leave a Review behind,
-    indicate a score for the movie.
-</p>
 
 {% endblock content %}
