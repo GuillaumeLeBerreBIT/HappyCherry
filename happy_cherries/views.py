@@ -31,6 +31,9 @@ def movies(request):
             # Direclty assign the value to the saved model in the dictionary.
             movie.avg_score = round(total_sum / len(reviews), None)
             #print(dir(movie))
+        # Convert the text to a list.
+        movie.genres = movie.genre.split(',')
+        movie.genres.sort()
     
     context = {'movies': movies}
     
