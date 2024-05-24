@@ -203,6 +203,10 @@ def tvshows(request):
         
         if note:
             tv_show.note = note
+        
+        # Convert the text to a list.
+        tv_show.genres = tv_show.genre.split(',')
+        tv_show.genres.sort()
     
     context = {'tv_shows': tv_shows}
     return render(request, 'happy_cherries/tvshows.html', context)

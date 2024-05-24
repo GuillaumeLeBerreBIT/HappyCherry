@@ -1,22 +1,55 @@
 {% extends "happy_cherries/base.html" %}
 
+{% block page_header %}
+    <h2 class="display-5 fw-bold text-body-emphasis mb-0 text-center">Tv Shows</h2>
+    <a class="btn btn-dark rounded-pill px-3" href="{% url 'happy_cherries:tvshow_search' %}">TvShow Search</a>
+{% endblock page_header %}
+
 {% block content %}
-
-<a href="{% url 'happy_cherries:add_tvshow_manual' %}">Add Tv Show</a> - 
-<a href="{% url 'happy_cherries:tvshow_search' %}">Search Tv Show</a>
-
-<h2>TV Shows:</h2>
-
-<ul>
-    {% for show in tv_shows %}
-        <li>
-            <a href="{% url 'happy_cherries:tvshow' show.id %}">{{show.name}}
-                {% if show.avg_score %} - {{show.avg_score}}{% endif %}
-                {% if show.note %} - {{ show.note }}{% endif %}</a>
-        </li>
-    {% empty %}
-        <li>No TV shows have been added yet.</li>
-    {% endfor %}
-</ul>
-
+<div class="container">
+    <!--When on xsmall screen only one col, small 2 col, medium 3 columns, ... -->
+    <div class="row row-cols-auto">
+        {% for show in tv_shows %}
+            <div class="col mb-2">
+                <!--Remove the blue underline from the link as well as give it the same text color as original-->
+                <a href="{% url 'happy_cherries:tvshow' show.id %}" class="text-decoration-none text-reset">
+                    <div class="card h-100" style="max-width: 220px;">
+                        {% if show.avg_score %}
+                            {% if show.avg_score < 50 %}
+                                <!--Can sett style > position: absolute to fit the badge on top of the image.-->
+                                <span class="badge text-bg-danger" style="position: absolute; top: 10px; right: 10px; font-size: 12px;">
+                                    {{ show.avg_score}} %
+                                </span>
+                            {% else %}
+                                <span class="badge text-bg-success" style="position: absolute; top: 10px; right: 10px; font-size: 12px;">
+                                    {{ show.avg_score}} %
+                                </span>
+                            {% endif %}
+                        {% endif %}
+                        <img src="{{ show.poster_path }}" class="card-img-top" alt="poster_image">
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title">
+                                {{ show.name }}
+                            </h5>
+                            <p class="card-text">
+                                {{ show.tagline }}
+                                {% if show.note %} - {{ show.note }}{% endif %}
+                            </p>
+                        </div>
+                        <!--Set the margin top auto-->
+                        <div class="mt-auto">
+                            <div class="card-footer">
+                                {% for genre in show.genres %}
+                                    <span class="badge rounded-pill text-bg-dark">{{ genre }}</span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        {% empty %}
+            <p>No TvShows added yet.</p>
+        {% endfor %}
+    </div>
+</div>  
 {% endblock content %}
