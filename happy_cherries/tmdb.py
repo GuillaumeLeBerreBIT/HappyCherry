@@ -1,7 +1,7 @@
 import requests, json
 
 # MOVIES 
-def fetch_movies(headers, movie_query, url_movie_search):
+def fetch_movies(headers, movie_query, url_movie_search, url_poster):
     """Will show the movies through dynamic search on the page."""
     # Want the response to be in JSON format. 
     response = requests.get(url_movie_search.format(movie_query), headers=headers).json() 
@@ -14,7 +14,7 @@ def fetch_movies(headers, movie_query, url_movie_search):
         # Can then make a link directly to specific item using the ID given to the object or movie.  
         requested_data = {
             'id': sq['id'],
-            'poster': sq['poster_path'],
+            'poster': url_poster.format(sq['poster_path']),
             'genre_ids': sq['genre_ids'],
             'title': sq['title'],
             'release_date': sq['release_date'],
@@ -25,15 +25,17 @@ def fetch_movies(headers, movie_query, url_movie_search):
     # Return the movie list.
     return movie_list
 
-def fetch_trending_movies(headers, url_trending):
+def fetch_trending_movies(headers, url_trending, url_poster):
     """Get all the trending movies to show on the page when searching for a movie."""
     response = requests.get(url_trending, headers=headers).json()
+    
+    print(response)
     
     movie_list = []
     for sq in response['results']:
         requested_data = {
                 'id': sq['id'],
-                'poster': sq['poster_path'],
+                'poster': url_poster.format(sq['poster_path']),
                 'genre_ids': sq['genre_ids'],
                 'title': sq['title'],
                 'release_date': sq['release_date'],

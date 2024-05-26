@@ -104,12 +104,14 @@ def movie_search(request):
     
     url_trending = "https://api.themoviedb.org/3/trending/movie/week?language=en-US"
     
+    url_poster = "https://image.tmdb.org/t/p/w500/{}"
+    
     # If searching for a movie then get the name and view all movies related to search. 
     if request.method == 'POST':
         
         movie_search = request.POST['movie_query']
         # Get all the movies through Dynamic search. 
-        movie_list = fetch_movies(headers, movie_search, url_movie_search)
+        movie_list = fetch_movies(headers, movie_search, url_movie_search, url_poster)
         
         context = {
             'movie_list': movie_list
@@ -119,7 +121,7 @@ def movie_search(request):
     # IF it is a GET request just loading page. 
     else: 
         # Get all the trending movies so the home page does not look empty. 
-        movie_list = fetch_trending_movies(headers, url_trending)
+        movie_list = fetch_trending_movies(headers, url_trending, url_poster)
         
         context = {
             'movie_list': movie_list
