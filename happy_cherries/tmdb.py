@@ -1,5 +1,105 @@
 import requests, json
 
+# VARIABLES
+genres_movies = [
+    {'id': 28, 'name': 'Action'},
+    {'id': 12, 'name': 'Adventure'},
+    {'id': 16, 'name': 'Animation'},
+    {'id': 35, 'name': 'Comedy'},
+    {'id': 80, 'name': 'Crime'},
+    {'id': 99, 'name': 'Documentary'},
+    {'id': 18, 'name': 'Drama'},
+    {'id': 10751, 'name': 'Family'},
+    {'id': 14, 'name': 'Fantasy'},
+    {'id': 36, 'name': 'History'},
+    {'id': 27, 'name': 'Horror'},
+    {'id': 10402, 'name': 'Music'},
+    {'id': 9648, 'name': 'Mystery'},
+    {'id': 10749, 'name': 'Romance'},
+    {'id': 878, 'name': 'Science Fiction'},
+    {'id': 10770, 'name': 'TV Movie'},
+    {'id': 53, 'name': 'Thriller'},
+    {'id': 10752, 'name': 'War'},
+    {'id': 37, 'name': 'Western'}
+    ]
+
+genres_tvshows = [
+    {
+      "id": 10759,
+      "name": "Action & Adventure"
+    },
+    {
+      "id": 16,
+      "name": "Animation"
+    },
+    {
+      "id": 35,
+      "name": "Komödie"
+    },
+    {
+      "id": 80,
+      "name": "Krimi"
+    },
+    {
+      "id": 99,
+      "name": "Dokumentarfilm"
+    },
+    {
+      "id": 18,
+      "name": "Drama"
+    },
+    {
+      "id": 10751,
+      "name": "Familie"
+    },
+    {
+      "id": 10762,
+      "name": "Kids"
+    },
+    {
+      "id": 9648,
+      "name": "Mystery"
+    },
+    {
+      "id": 10763,
+      "name": "News"
+    },
+    {
+      "id": 10764,
+      "name": "Reality"
+    },
+    {
+      "id": 10765,
+      "name": "Sci-Fi & Fantasy"
+    },
+    {
+      "id": 10766,
+      "name": "Soap"
+    },
+    {
+      "id": 10767,
+      "name": "Talk"
+    },
+    {
+      "id": 10768,
+      "name": "War & Politics"
+    },
+    {
+      "id": 37,
+      "name": "Western"
+    }
+]
+def convert_ids_genre(ids, genres):
+    """Need to convert the ids to representative genre"""
+    
+    genre_list = []
+    for i in ids:
+        for genre in genres:
+            if i == genre['id']:
+                genre_list.append(genre["name"])
+    
+    return genre_list
+
 # MOVIES 
 def fetch_movies(headers, movie_query, url_movie_search, url_poster):
     """Will show the movies through dynamic search on the page."""
@@ -19,6 +119,9 @@ def fetch_movies(headers, movie_query, url_movie_search, url_poster):
             'title': sq['title'],
             'release_date': sq['release_date'],
         }
+        
+        requested_data["genres"] = convert_ids_genre(requested_data["genre_ids"], genres_movies)
+        
         # Add each movie to a list.
         movie_list.append(requested_data)
     
@@ -29,8 +132,6 @@ def fetch_trending_movies(headers, url_trending, url_poster):
     """Get all the trending movies to show on the page when searching for a movie."""
     response = requests.get(url_trending, headers=headers).json()
     
-    print(response)
-    
     movie_list = []
     for sq in response['results']:
         requested_data = {
@@ -40,6 +141,9 @@ def fetch_trending_movies(headers, url_trending, url_poster):
                 'title': sq['title'],
                 'release_date': sq['release_date'],
         }
+        
+        requested_data["genres"] = convert_ids_genre(requested_data["genre_ids"], genres_movies)
+        
         movie_list.append(requested_data)
     
     return movie_list
@@ -86,7 +190,7 @@ def fetch_detailed_movie(headers, url_movie, url_cast, url_poster, movie_id):
 
 
 # TVSHOWS
-def fetch_tvshow(headers, url_tvshow, search):
+def fetch_tvshow(headers, url_tvshow, search, url_poster):
     """Want to get all the results from the search query."""
     # Using the input name, will return a Dynamic search with all Shows related to the name
     response = requests.get(url_tvshow.format(search), headers=headers).json()
@@ -96,17 +200,19 @@ def fetch_tvshow(headers, url_tvshow, search):
         
         requested_data = {
             'id': sq['id'],
-            'poster': sq['poster_path'],
+            'poster': url_poster.format(sq['poster_path']),
             'genre_ids': sq['genre_ids'],
             'name': sq['name'],
             'first_air_date': sq['first_air_date'],
         }
         
+        requested_data["genres"] = convert_ids_genre(requested_data["genre_ids"], genres_tvshows)
+        
         tvshow_list.append(requested_data)
     
     return tvshow_list
 
-def fetch_trending_tvshows(headers, url_trending):
+def fetch_trending_tvshows(headers, url_trending, url_poster):
     """Get a list of all the trending Tv Shows to show on the search page."""
     
     response = requests.get(url_trending, headers=headers).json()
@@ -116,11 +222,13 @@ def fetch_trending_tvshows(headers, url_trending):
         
         tvshow = {
             "id": tvshow['id'],
-            "poster": tvshow['poster_path'],
+            "poster": url_poster.format(tvshow['poster_path']),
             "name": tvshow['name'],
             "genre_ids": tvshow['genre_ids'],
             "first_air_date": tvshow['first_air_date']
         }
+        
+        tvshow["genres"] = convert_ids_genre(tvshow["genre_ids"], genres_tvshows)
         
         tvshow_list.append(tvshow)
     

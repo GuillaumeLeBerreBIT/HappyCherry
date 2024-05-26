@@ -321,12 +321,13 @@ def tvshow_search(request):
     
     url_tvshow = "https://api.themoviedb.org/3/search/tv?query={}&include_adult=false&language=en-US&page=1"
     url_trending_tvshows = "https://api.themoviedb.org/3/tv/popular?language=en-US&page=1"
+    url_poster = "https://image.tmdb.org/t/p/w500/{}"
     
     if request.method == 'POST':
         
         tvshow_search = request.POST['tvshow_query']
         
-        tvshow_list = fetch_tvshow(headers, url_tvshow, tvshow_search)
+        tvshow_list = fetch_tvshow(headers, url_tvshow, tvshow_search, url_poster)
         
         context = {'tvshow_list': tvshow_list}
         
@@ -334,7 +335,7 @@ def tvshow_search(request):
         
     else: # GET request
         
-        tvshow_list = fetch_trending_tvshows(headers, url_trending_tvshows)
+        tvshow_list = fetch_trending_tvshows(headers, url_trending_tvshows, url_poster)
         
         context = {'tvshow_list': tvshow_list}
         

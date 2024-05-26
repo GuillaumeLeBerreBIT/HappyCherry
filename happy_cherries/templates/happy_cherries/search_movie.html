@@ -2,10 +2,7 @@
 
 {% block page_header %}
 
-
-{% endblock page_header %}
-
-{% block content %}
+    <h2 class="display-5 fw-bold text-body-emphasis mb-0 text-center">Movies Search</h2>
 
     <form class="row g-2" method="post">
         {% csrf_token %}
@@ -16,6 +13,10 @@
             <button type="submit" class="btn btn-dark rounded-pill px-3">Search</button>
         </div>
     </form>
+
+{% endblock page_header %}
+
+{% block content %}
 
     {% if movie_list %}
         <div class="container">
@@ -38,7 +39,7 @@
                                 <!--Set the margin top auto-->
                                 <div class="mt-auto">
                                     <div class="card-footer">
-                                        {% for genre in movie.genre_ids %}
+                                        {% for genre in movie.genres %}
                                             <span class="badge rounded-pill text-bg-dark">{{ genre }}</span>
                                         {% endfor %}
                                     </div>
