@@ -156,6 +156,9 @@ def requested_movie(request, movie_id):
         # Because the Cast and Genres are saved in a long string splitted by ',' to save easily in the model direclty.
         # We split the string to then iterate over a list in the HTML file.  
         movie['cast'], movie['genres'] = movie['cast'].split(','), movie['genres'].split(',')
+        # Only show the first 6 six actors if it exceeds limits
+        if len(movie['cast']) > 6:
+            movie["cast"] = movie["cast"][0:6]
         
         context = {'movie': movie}
         return render(request, 'happy_cherries/requested_movie.html', context)
@@ -365,6 +368,10 @@ def requested_tvshow(request, tvshow_id):
         # Because the Cast and Genres are saved in a long string splitted by ',' to save easily in the model direclty.
         # We split the string to then iterate over a list in the HTML file.  
         tvshow['cast'], tvshow['genres'] = tvshow['cast'].split(','), tvshow['genres'].split(',')
+        
+        # Only show the first 6 six actors if it exceeds limits
+        if len(tvshow['cast']) > 6:
+            tvshow["cast"] = tvshow["cast"][0:6]
         
         context = {'tvshow': tvshow}
         return render(request, 'happy_cherries/requested_tvshow.html', context)

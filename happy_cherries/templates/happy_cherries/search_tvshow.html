@@ -2,10 +2,16 @@
 
 {% block page_header %}
 
-<form method="post">
+<h2 class="display-5 fw-bold text-body-emphasis mb-0 text-center">TvShow Search</h2>
+
+<form class="row g-2" method="post">
     {% csrf_token %}
-    <input type="text" name="tvshow_query" placeholder="Search TvShow">
-    <button type="submit">Search</button>
+    <div class="mb-3 col-auto">
+        <input type="text" name="tvshow_query" class="form-control" placeholder="Search TvShow">
+    </div>
+    <div class="mb-3 col-auto">
+        <button type="submit" class="btn btn-dark rounded-pill px-3">Search</button>
+    </div>
 </form>
 
 {% endblock page_header %}

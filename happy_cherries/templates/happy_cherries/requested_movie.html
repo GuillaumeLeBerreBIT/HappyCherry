@@ -1,36 +1,45 @@
 {% extends "happy_cherries/base.html" %}
 
+{% block page_header %}
+{% endblock page_header %}
+
 {% block content %}
 
-<h2>{{ movie.title }}</h2>
+<div class="container text-center mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-12 position-relative">
+            <div class="row align-items-center text-bg-dark border rounded-3 p-3 position-relative">
+                <div class="col-md-4 text-center">
+                    <img src="{{ movie.poster }}" class="img-fluid rounded float-start" alt="movie_poster">
+                </div>
+                <div class="col-md-1"></div>
+                <div class="col-md-7 text-start">
+                    <form method="post" class="position-absolute top-0 end-0 m-3">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-success">Save</button>
+                    </form>
 
-<img src={{movie.poster}} alt="movie_poster">
-
-<p>{{ movie.overview }}</p>
-
-<p>{{ movie.release_date }}</p>
-
-<p>{{ movie.runtime }} min</p>
-
-<p>{{ movie.tagline }}</p>
-
-<p>{{ movie.status }}</p>
-
-<ul>
-    {% for actor in movie.cast %}
-        <li>{{actor}}</li>
-    {% endfor %}
-</ul>
-
-<ul>
-    {% for genre in movie.genres %}
-        <li>{{genre}}</li>
-    {% endfor %}
-</ul>
-
-<form method="post">
-    {% csrf_token %}
-    <button type="submit">Save</button>
-</form>
+                    <h1 class="text-center border-bottom border-white mb-4">{{ movie.title }}</h1>
+                    <p>Release date: <span class="fw-bold">{{ movie.release_date }}</span></p>
+                    <p>Runtime: <span class="fw-bold">{{ movie.runtime }}</span></p>
+                    <p>{{ movie.overview }}</p>
+                    <p class="fw-bold">Actors</p>
+                    <p>
+                        {% for cast in movie.cast %}
+                            <span class="badge rounded-pill text-bg-danger">{{ cast }}</span>
+                        {% endfor %}
+                    </p>
+                    <p class="fw-bold">Genres</p>
+                    <p>
+                        {% for genre in movie.genres %}
+                            <span class="badge rounded-pill text-bg-primary">{{ genre }}</span>
+                        {% endfor %}
+                    </p>
+                    <p class="fw-lighter mt-4">{{ movie.tagline }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 {% endblock content %}
