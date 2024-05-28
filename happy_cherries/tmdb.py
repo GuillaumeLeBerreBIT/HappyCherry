@@ -257,7 +257,7 @@ def fetch_detailed_tvshow(headers, tvshow_id, url_tvshow, url_cast, url_poster):
         actors += f"{c['name']},"
     # Remove the last ',' from the string
     actors = actors[:-1]
-    
+    print(actors)
     # Save all the necassary information in a dictionary. 
     tvshow_info = {
         'id': response['id'],

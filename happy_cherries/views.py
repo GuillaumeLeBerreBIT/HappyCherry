@@ -47,12 +47,17 @@ def movie(request, movie_id):
         
     movie = Movie.objects.get(id=movie_id)
     # Split the saved lists and parse them in the context dictionary
-    cast_spl = movie.cast.split(',')
-    genre_spl = movie.genre.split(',')
+    movie.cast_spl, movie.genre_spl = movie.cast.split(','), movie.genre.split(',')
     
     # Get the reviews linked to specific movie. 
     # This is the model object, iterate to get all the reviews which then can access the score attr
     reviews = movie.review_set.order_by('-date_added')
+    
+    # Only show the first 6 six actors if it exceeds limits
+    # Because want to acces an object use a dot hore to get acces to the attribute. 
+    if len(movie.cast_spl) > 6:
+        movie.cast_spl = movie.cast_spl[0:6]
+        movie.cast_spl.append('...')
 
     # If there are existing reviews for a movie.
     if reviews:
@@ -63,9 +68,7 @@ def movie(request, movie_id):
     
     
     context = {'movie': movie, 
-               'reviews': reviews, 
-               'cast_spl': cast_spl,
-               'genre_spl': genre_spl}
+               'reviews': reviews}
     
     return render(request, 'happy_cherries/movie.html', context)
 
@@ -159,6 +162,7 @@ def requested_movie(request, movie_id):
         # Only show the first 6 six actors if it exceeds limits
         if len(movie['cast']) > 6:
             movie["cast"] = movie["cast"][0:6]
+            movie["cast"].append('...')
         
         context = {'movie': movie}
         return render(request, 'happy_cherries/requested_movie.html', context)
@@ -232,7 +236,13 @@ def tvshow(request, tvshow_id):
     # This is the model object, iterate to get all the reviews which then can access the score attr
     reviews = tvshow.review_set.order_by('date_added')
     
-    cast_spl, genres_spl = tvshow.cast.split(','), tvshow.genre.split(',')
+    tvshow.cast_spl, tvshow.genres_spl = tvshow.cast.split(','), tvshow.genre.split(',')
+    
+    # Only show the first 6 six actors if it exceeds limits
+    # Because want to acces an object use a dot hore to get acces to the attribute. 
+    if len(tvshow.cast_spl) > 6:
+        tvshow.cast_spl = tvshow.cast_spl[0:6]
+        tvshow.cast_spl.append('...')
     
     # Check if there are any reviews. 
     if reviews:
@@ -242,8 +252,7 @@ def tvshow(request, tvshow_id):
     else: 
         avg_score = 0
     
-    context = {'tvshow': tvshow, 'cast_spl': cast_spl, 'genres_spl': genres_spl, 
-               'reviews': reviews, 'avg_score': avg_score, 'note': note}
+    context = {'tvshow': tvshow, 'reviews': reviews, 'avg_score': avg_score, 'note': note}
     
     return render(request, 'happy_cherries/tvshow.html', context)
 
@@ -372,6 +381,7 @@ def requested_tvshow(request, tvshow_id):
         # Only show the first 6 six actors if it exceeds limits
         if len(tvshow['cast']) > 6:
             tvshow["cast"] = tvshow["cast"][0:6]
+            tvshow["cast"].append('...')
         
         context = {'tvshow': tvshow}
         return render(request, 'happy_cherries/requested_tvshow.html', context)

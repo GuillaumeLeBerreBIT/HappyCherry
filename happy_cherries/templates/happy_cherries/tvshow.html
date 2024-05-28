@@ -2,10 +2,6 @@
 
 {% block content %}
 
-    <h2>{{ tvshow.name }}</h2>
-
-    <img src={{tvshow.poster_path}} alt="tvshow_poster">
-
     {% if note %}
         <p><a href="{% url 'happy_cherries:edit_note_tvshow' note.id %}">Edit Note</a></p>
         <p>{{ note.note }}</p>
@@ -13,33 +9,50 @@
         <p><a href="{% url 'happy_cherries:add_note_tvshow' tvshow.id %}">Add Note</a></p>
     {% endif %}
 
-    {% if review %}
-        <p>{{ avg_score }}</p>
-    {% endif %}
 
-    <p>{{ tvshow.overview }}</p>
-
-    <p>{{ tvshow.first_air_date }}</p>
-
-    <p>{{ tvshow.last_air_date }}</p>
-
-    <p>Next episode to air: {{ tvshow.next_episode_to_air }}</p>
-
-    <p>Number of seasons: {{ tvshow.number_of_seasons }}</p>
-
-    <p>Number of episodes: {{ tvshow.number_of_episodes }}</p>
-
-    <ul>
-        {% for actor in cast_spl %}
-            <li>{{actor}}</li>
-        {% endfor %}
-    </ul>
-
-    <ul>
-        {% for genre in genres_spl %}
-            <li>{{genre}}</li>
-        {% endfor %}
-    </ul>
+    <div class="container text-center mt-4">
+        <div class="row justify-content-center">
+            <div class="col-md-12 position-relative">
+                <div class="row align-items-center text-bg-dark border rounded-3 p-3 position-relative">
+                    <div class="col-md-4 text-center">
+                        <img src="{{ tvshow.poster_path }}" class="img-fluid rounded float-start" alt="tvshow_poster">
+                    </div>
+                    <div class="col-md-1"></div>
+                    <div class="col-md-7 text-start">
+                        <form method="post" class="position-absolute top-0 end-0 m-3">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-success">Save</button>
+                        </form>
+    
+                        <h1 class="text-center border-bottom border-white mb-4">{{ tvshow.name }}</h1>
+                        <p>First Air Date: <span class="fw-bold">{{ tvshow.first_air_date }}</span></p>
+                        <p>Last Air date: <span class="fw-bold">{{ tvshow.last_air_date }}</span></p>
+                        <p>Next Episode to Air: <span class="fw-bold">
+                            {% if tvshow.next_episode_to_air == None %}
+                                Finished
+                            {% else %}
+                                {{ tvshow.next_episode_to_air }}
+                            {% endif %}</span></p>
+                        <p>Number of episodes: <span class="fw-bold">{{ tvshow.number_of_episodes }}</span></p>
+                        <p>Number of seasons: <span class="fw-bold">{{ tvshow.number_of_seasons }}</span></p>
+                        <p> {{ tvshow.overview }} </p>
+                        <p class="fw-bold">Actors</p>
+                        <p>
+                            {% for actor in tvshow.cast_spl %}
+                                <span class="badge rounded-pill text-bg-danger">{{ actor }}</span>
+                            {% endfor %}
+                        </p>
+                        <p class="fw-bold">Genres</p>
+                        <p>
+                            {% for genre in tvshow.genres_spl %}
+                                <span class="badge rounded-pill text-bg-primary">{{ genre }}</span>
+                            {% endfor %}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <h2>Review</h2>
 
