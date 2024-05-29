@@ -61,9 +61,9 @@
         <div class="position-absolute top-0 end-0 m-3">
             <a class="btn btn-primary fw-bold mx-2" href="{% url 'happy_cherries:add_review_tvshow' tvshow.id %}">Add Review</a>
         </div>
-        <ul>
+        <div class="row">
             {% for review in reviews %}
-                <div class="container">
+                <div class="col-md-6">
                     <section class="mx-auto my-4">
                         <div class="card position-relative">
                             <div class="card-header d-flex align-items-center">
@@ -85,12 +85,10 @@
                         </div>
                     </section>
                 </div>
-            
             {% empty %}
                 <p>No reviews have been added</p>
             {% endfor %}
-        </ul>
-
+        </div>
     </div>  
 
 {% endblock content %}
