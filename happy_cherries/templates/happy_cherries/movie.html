@@ -2,50 +2,80 @@
 
 {% block content %}
 
-    <h2>Movie: {{ movie.title }}</h2>
+    <div class="container text-center mt-4">
+        <div class="row justify-content-center">
+            <div class="col-md-12 position-relative">
+                <div class="row position-relative align-items-start text-bg-dark border rounded-3 p-3">
+                    <div class="col-md-4 text-center d-flex flex-column">
+                        <img src="{{ movie.poster_path }}" class="img-fluid rounded float-start" alt="tvshow_poster">
+                    </div>
+                    <div class="col-md-1"></div>
+                    <div class="col-md-7 text-start">
+                        <form method="post" class="position-absolute top-0 end-0 m-2">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-success fw-bold">Save</button>
+                        </form>
+    
+                        <h1 class="text-center border-bottom border-white my-2">{{ movie.title }}</h1>
+                        <p>Release Date: <span class="fw-bold">{{ movie.release_date }}</span></p>
+                        <p>Duration: <span class="fw-bold">{{ movie.runtime }} min</span></p>
+                        <p> {{ movie.overview }} </p>
+                        <p class="fw-bold">Actors</p>
+                        <p>
+                            {% for actor in movie.cast_spl %}
+                                <span class="badge rounded-pill text-bg-danger">{{ actor }}</span>
+                            {% endfor %}
+                        </p>
+                        <p class="fw-bold">Genres</p>
+                        <p>
+                            {% for genre in movie.genre_spl %}
+                                <span class="badge rounded-pill text-bg-primary">{{ genre }}</span>
+                            {% endfor %}
+                        </p>
+                        <p class="fw-lighter fst-italic text-center mt-5">
+                            {{ movie.tagline}}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-        <img src={{movie.poster_path}} alt="movie_poster">
+    <!--Ensure the box has a position property set that allows position within it.-->
+    <div class="position-relative bg-dark text-bg-dark border rounded-2 mt-4 p-2">
+        <h2 class="text-center">Reviews</h2>
 
-        {% if reviews %}
-            <p>{{ movie.avg_score }}<p>
-        {% endif %}
-
-        <p>{{ movie.release_date }}</p>
-
-        <p>{{ movie.overview }}</p>
-
-        <p>{{ movie.runtime }} min</p>
-
-        <p>{{ movie.tagline }}</p>
-
-        <p>{{ movie.status }}</p>
-        
-        <h4>Actors</h4>
-        <ul>
-            {% for actor in movie.cast_spl %}
-                <li>{{ actor }}</li>
+        <div class="position-absolute top-0 end-0 m-3">
+            <a class="btn btn-primary fw-bold mx-2" href="{% url 'happy_cherries:add_review_movie' movie.id %}">Add Review</a>
+        </div>
+        <div class="row">
+            {% for review in reviews %}
+                <div class="col-md-6">
+                    <section class="mx-auto my-4">
+                        <div class="card position-relative">
+                            <div class="card-header d-flex align-items-center">
+                                <h5 class="card-title font-weight-bold mb-0">User</h5> 
+                                <!--ms-auto pushes it to the far right within the flex container, ensuring it aligns horizontally with the "User" title.-->
+                                <a class="btn btn-warning fw-bold ms-auto" href="{% url 'happy_cherries:edit_review_tvshow' review.id %}">Edit</a> 
+                            </div>
+                            <div class="card-body">
+                                <div class="card-text mb-0">
+                                    <p>
+                                      {{ review.review|linebreaks }}
+                                    </p>
+                                    <hr>
+                                    <p class="fw-bold">
+                                    {{ review.score }} %
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            {% empty %}
+                <p>No reviews have been added</p>
             {% endfor %}
-        </ul>
-        
-
-        <h4>Genres</h4>
-        <ul>
-            {% for genre in movie.genre_spl %}
-                <li>{{ genre }}</li>
-            {% endfor %}
-        </ul>
-
-    <h3>Review</h3>
-
-    <a href="{% url 'happy_cherries:add_review_movie' movie.id %}">Add review</a>
-
-    <ul>
-        {% for review in reviews %}
-            <li>{{review.score}} % - {{review.review}} - <a href="{% url 'happy_cherries:edit_review_movie' review.id %}">Edit</a></li>
-        {% empty %}
-            <li>No review left</li>
-        {% endfor %}
-    </ul>
-
+        </div>
+    </div>  
 
 {% endblock content %}
