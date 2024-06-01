@@ -6,16 +6,25 @@
         <div class="row justify-content-center">
             <div class="col-md-12 position-relative">
                 <div class="row position-relative align-items-start text-bg-dark border rounded-3 p-3">
+                    <div class="d-flex align-items-center mb-3 w-100">
+                    {% if movie.avg_score %}
+                        {% if movie.avg_score < 50 %}
+                            <!--Can sett style > position: absolute to fit the badge on top of the image.-->
+                            <span class="badge text-bg-danger position-absolute" style="top: 50px; left: 50px; font-size: 16px;">
+                                {{ movie.avg_score}} %
+                            </span>
+                        {% else %}
+                            <span class="badge text-bg-success position-absolute" style="top: 50px; left: 50px; font-size: 16px;">
+                                {{ movie.avg_score}} %
+                            </span>
+                        {% endif %}
+                    {% endif %}
+                    </div>
                     <div class="col-md-4 text-center d-flex flex-column">
                         <img src="{{ movie.poster_path }}" class="img-fluid rounded float-start" alt="tvshow_poster">
                     </div>
                     <div class="col-md-1"></div>
-                    <div class="col-md-7 text-start">
-                        <form method="post" class="position-absolute top-0 end-0 m-2">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-success fw-bold">Save</button>
-                        </form>
-    
+                    <div class="col-md-7 text-start">    
                         <h1 class="text-center border-bottom border-white my-2">{{ movie.title }}</h1>
                         <p>Release Date: <span class="fw-bold">{{ movie.release_date }}</span></p>
                         <p>Duration: <span class="fw-bold">{{ movie.runtime }} min</span></p>
