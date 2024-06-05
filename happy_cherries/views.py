@@ -191,7 +191,30 @@ def requested_movie(request, movie_id):
         
         # Redirect to the movies page after saving
         return redirect('happy_cherries:movies')
-
+    
+def top_rated_movies(request):
+    """
+    Get a list of all the trending movies
+    """
+    # API_KEY
+    headers = {
+        "accept": "application/json",
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIwOTEwZTMzYzBiNzM5NWJhYWI2Nzg4MDJlOTkzMTJlYiIsInN1YiI6IjY2MjkxM2I5ZTI5NWI0MDE4NzllMTBiYSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.IwgWzjezREKj75fLbuLlK-Kp03z_yRyRcQaUJai68l0"
+    }
+    
+    url_top_rated = "https://api.themoviedb.org/3/movie/top_rated?language=en-US&page=1"
+    
+    url_poster = "https://image.tmdb.org/t/p/w500/{}"
+    
+    # Get all the trending movies so the home page does not look empty. 
+    movie_list = fetch_trending_movies(headers, url_top_rated, url_poster)
+    
+    context = {
+        'movie_list': movie_list
+    }
+    return render(request, 'happy_cherries/top_rated.html', context)
+    
+    
 # TV SHOWS
 def tvshows(request):
     """

@@ -21,6 +21,8 @@ urlpatterns = [
     path('movies/add_movie_manual/', views.add_movie_manual, name='add_movie_manual'),
     # Search for a specific movie
     path('movies/movie_search/', views.movie_search, name='movie_search'),
+    # View all the Top rated movies
+    path('movies/top_rated/', views.top_rated_movies, name='top_rated_movies'),
     # Add a movie to the page. 
     # Make sure the movie_id is parsed to the URL as well otherwise get an error no reverse match
     path('movies/movie_search/requested_movie/<int:movie_id>/', views.requested_movie, name='requested_movie'),
