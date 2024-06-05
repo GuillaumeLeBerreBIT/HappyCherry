@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 
 from .models import Movie, Review, TvShow, Note
 from .forms import MovieForm, ReviewForm, TvShowForm, NoteForm
-from .tmdb import fetch_movies, fetch_trending_movies, fetch_detailed_movie, fetch_tvshow, fetch_detailed_tvshow, fetch_trending_tvshows
+from .tmdb import fetch_movies, fetch_trending_rated_upcoming_popular_movies, fetch_detailed_movie, fetch_tvshow, fetch_detailed_tvshow, fetch_trending_tvshows
 
 import json, requests # This is to send a request to the URLs defined (Not a Django request)
 
@@ -124,7 +124,7 @@ def movie_search(request):
     # IF it is a GET request just loading page. 
     else: 
         # Get all the trending movies so the home page does not look empty. 
-        movie_list = fetch_trending_movies(headers, url_trending, url_poster)
+        movie_list = fetch_trending_rated_upcoming_popular_movies(headers, url_trending, url_poster)
         
         context = {
             'movie_list': movie_list
@@ -207,12 +207,56 @@ def top_rated_movies(request):
     url_poster = "https://image.tmdb.org/t/p/w500/{}"
     
     # Get all the trending movies so the home page does not look empty. 
-    movie_list = fetch_trending_movies(headers, url_top_rated, url_poster)
+    movie_list = fetch_trending_rated_upcoming_popular_movies(headers, url_top_rated, url_poster)
     
     context = {
         'movie_list': movie_list
     }
-    return render(request, 'happy_cherries/top_rated.html', context)
+    return render(request, 'happy_cherries/top_rated_movies.html', context)
+
+def upcoming_movies(request):
+    """
+    Get a list of all the trending movies
+    """
+    # API_KEY
+    headers = {
+        "accept": "application/json",
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIwOTEwZTMzYzBiNzM5NWJhYWI2Nzg4MDJlOTkzMTJlYiIsInN1YiI6IjY2MjkxM2I5ZTI5NWI0MDE4NzllMTBiYSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.IwgWzjezREKj75fLbuLlK-Kp03z_yRyRcQaUJai68l0"
+    }
+    
+    url_upcoming = "https://api.themoviedb.org/3/movie/upcoming?language=en-US&page=1"
+    
+    url_poster = "https://image.tmdb.org/t/p/w500/{}"
+    
+    # Get all the trending movies so the home page does not look empty. 
+    movie_list = fetch_trending_rated_upcoming_popular_movies(headers, url_upcoming, url_poster)
+    
+    context = {
+        'movie_list': movie_list
+    }
+    return render(request, 'happy_cherries/upcoming_movies.html', context)
+
+def now_playing_movies(request):
+    """
+    Get a list of all the trending movies
+    """
+    # API_KEY
+    headers = {
+        "accept": "application/json",
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIwOTEwZTMzYzBiNzM5NWJhYWI2Nzg4MDJlOTkzMTJlYiIsInN1YiI6IjY2MjkxM2I5ZTI5NWI0MDE4NzllMTBiYSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.IwgWzjezREKj75fLbuLlK-Kp03z_yRyRcQaUJai68l0"
+    }
+    
+    url_playing = "https://api.themoviedb.org/3/movie/now_playing?language=en-US&page=1"
+    
+    url_poster = "https://image.tmdb.org/t/p/w500/{}"
+    
+    # Get all the trending movies so the home page does not look empty. 
+    movie_list = fetch_trending_rated_upcoming_popular_movies(headers, url_playing, url_poster)
+    
+    context = {
+        'movie_list': movie_list
+    }
+    return render(request, 'happy_cherries/now_playing_movies.html', context)
     
     
 # TV SHOWS
@@ -370,7 +414,7 @@ def tvshow_search(request):
         
     else: # GET request
         
-        tvshow_list = fetch_trending_tvshows(headers, url_trending_tvshows, url_poster)
+        tvshow_list = fetch_trending_rated_upcoming_popular_movies(headers, url_trending_tvshows, url_poster)
         
         context = {'tvshow_list': tvshow_list}
         

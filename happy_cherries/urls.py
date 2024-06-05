@@ -23,6 +23,10 @@ urlpatterns = [
     path('movies/movie_search/', views.movie_search, name='movie_search'),
     # View all the Top rated movies
     path('movies/top_rated/', views.top_rated_movies, name='top_rated_movies'),
+    # Show all upcoming movies
+    path('movies/upcoming/', views.upcoming_movies, name='upcoming_movies'),
+    # Show all movies now playing.
+    path('movies/now_playing/', views.now_playing_movies, name='now_playing_movies'),
     # Add a movie to the page. 
     # Make sure the movie_id is parsed to the URL as well otherwise get an error no reverse match
     path('movies/movie_search/requested_movie/<int:movie_id>/', views.requested_movie, name='requested_movie'),
