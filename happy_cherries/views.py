@@ -238,7 +238,7 @@ def upcoming_movies(request):
 
 def now_playing_movies(request):
     """
-    Get a list of all the trending movies
+    Get a list of all the now playing movies
     """
     # API_KEY
     headers = {
@@ -257,6 +257,26 @@ def now_playing_movies(request):
         'movie_list': movie_list
     }
     return render(request, 'happy_cherries/now_playing_movies.html', context)
+
+def popular_movies(request):
+    """List of all the popular movies"""
+    # API_KEY
+    headers = {
+        "accept": "application/json",
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIwOTEwZTMzYzBiNzM5NWJhYWI2Nzg4MDJlOTkzMTJlYiIsInN1YiI6IjY2MjkxM2I5ZTI5NWI0MDE4NzllMTBiYSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.IwgWzjezREKj75fLbuLlK-Kp03z_yRyRcQaUJai68l0"
+    }
+    
+    url_popular = "https://api.themoviedb.org/3/movie/popular"
+    
+    url_poster = "https://image.tmdb.org/t/p/w500/{}"
+    
+    # Get all the trending movies so the home page does not look empty. 
+    movie_list = fetch_trending_rated_upcoming_popular_movies(headers, url_popular, url_poster)
+    
+    context = {
+        'movie_list': movie_list
+    }
+    return render(request, 'happy_cherries/popular_movies.html', context)
     
     
 # TV SHOWS

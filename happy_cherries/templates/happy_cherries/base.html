@@ -11,6 +11,23 @@
     {% bootstrap_css %}
     {% bootstrap_javascript %}
     
+    <!-- Adding some custom styling for the dropdown menu-->
+    <style>
+        .navbar-dark .navbar-nav .nav-link {
+            color: #fff; /* Example text color */
+        }
+        .navbar-dark .navbar-nav .dropdown-menu {
+            background-color: #343a40; /* Same as .bg-dark */
+        }
+        .navbar-dark .navbar-nav .dropdown-item {
+            color: #fff; /* Example text color */
+        }
+        .navbar-dark .navbar-nav .dropdown-item:hover,
+        .navbar-dark .navbar-nav .dropdown-item:focus {
+            background-color: #495057; /* Slightly lighter than .bg-dark for hover */
+        }
+    </style>
+
 </head>
 <body>
 
@@ -27,14 +44,27 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'happy_cherries:movies' %}">Movies</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'happy_cherries:top_rated_movies' %}">Top Rated Movies</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'happy_cherries:upcoming_movies' %}">Upcoming Movies</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'happy_cherries:now_playing_movies' %}">Now Playing Movies</a>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-expanded="false">
+                        Movie List
+                    </a>
+                    <ul class="dropdown-menu" data-bs-popper="static">
+                        <li>
+                            <a class="dropdown-item" href="{% url 'happy_cherries:movie_search' %}">Search</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="{% url 'happy_cherries:top_rated_movies' %}">Top Rated Movies</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="{% url 'happy_cherries:upcoming_movies' %}">Upcoming Movies</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="{% url 'happy_cherries:now_playing_movies' %}">Now Playing Movies</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="{% url 'happy_cherries:popular_movies' %}">Popular Movies</a>
+                        </li>
+                    </ul>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'happy_cherries:tvshows' %}">Tv Shows</a>
