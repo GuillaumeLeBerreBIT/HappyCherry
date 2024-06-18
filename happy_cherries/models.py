@@ -6,6 +6,7 @@ class Movie(models.Model):
     """A movie the user want to write a rating about."""
     
     title = models.CharField(max_length=150)
+    id_movie = models.IntegerField(blank=True, null=True)
     date_added = models.DateTimeField(auto_now_add=True)
     
     poster_path = models.CharField(blank=True, max_length=100)

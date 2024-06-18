@@ -17,8 +17,6 @@ urlpatterns = [
     path('movies/<int:movie_id>/add_review/', views.add_review_movie, name='add_review_movie'),
     # Edit a review given to a Movie
     path('movies/<int:review_id>/edit_review/', views.edit_review_movie, name='edit_review_movie'),
-    # Add a movie to the page. 
-    path('movies/add_movie_manual/', views.add_movie_manual, name='add_movie_manual'),
     # Search for a specific movie
     path('movies/movie_search/', views.movie_search, name='movie_search'),
     # View all the Top rated movies
@@ -40,8 +38,6 @@ urlpatterns = [
     path('tvshows/<int:tvshow_id>/add_note_tvshow/', views.add_note_tvshow, name='add_note_tvshow'),
     # Page for showing all the tvshows added to your list.
     path('tvshows/<int:note_id>/edit_note_tvshow/', views.edit_note_tvshow, name='edit_note_tvshow'),
-    # Adding the form to manually fill in the TV shows
-    path('tvshows/add_manual_tvshow/', views.add_tvshow_manual, name='add_tvshow_manual'),
     # search for a specific TvShow.
     path('tvshows/search_tvshow/', views.tvshow_search, name='tvshow_search'),
     # Get the detailed information of a TV Show.

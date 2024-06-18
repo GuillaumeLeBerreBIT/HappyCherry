@@ -14,10 +14,13 @@
                 </div>
                 <div class="col-md-1"></div>
                 <div class="col-md-7 text-start">
+                    {% if saved == "Saved" %}
+                    {% elif saved == "Unsaved" %}
                     <form method="post" class="position-absolute top-0 end-0 m-3">
                         {% csrf_token %}
                         <button type="submit" class="btn btn-success">Save</button>
                     </form>
+                    {% endif %}
 
                     <h1 class="text-center border-bottom border-white mb-4">{{ movie.title }}</h1>
                     <p>Release date: <span class="fw-bold">{{ movie.release_date }}</span></p>

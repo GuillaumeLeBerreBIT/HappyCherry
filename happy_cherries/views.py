@@ -72,25 +72,6 @@ def movie(request, movie_id):
     
     return render(request, 'happy_cherries/movie.html', context)
 
-def add_movie_manual(request):
-    """
-    The user can add a new movie to the page. 
-    Can manually fill in all the information for the Movie to be added
-    When the correct movie found can add to the home page to leave a review behind. 
-    """
-    if request.method != 'POST':
-        # Create a blank form.
-        form = MovieForm()
-    else: 
-        form = MovieForm(date=request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('happy_cherries:movies')
-    
-    context = {'form': form}
-    return render(request, 'happy_cherries/add_movie.html', context)
-
-
 def movie_search(request):
     """
     The user can search for a movie based on dynamic search term. 
@@ -164,7 +145,20 @@ def requested_movie(request, movie_id):
             movie["cast"] = movie["cast"][0:6]
             movie["cast"].append('...')
         
-        context = {'movie': movie}
+        # Get all the saved Movie objects
+        saved_movies = Movie.objects.all()
+        # Saved all the titles in a list 
+        titles = []
+        for saved in saved_movies:
+            titles.append(saved.title)
+        # Then pass the variable to tell wether the movie is saved or not. 
+        if movie['title'] in titles: saved = "Saved"
+        else: saved  = "Unsaved"
+        
+        context = {
+            'movie': movie,
+            'saved': saved
+            }
         return render(request, 'happy_cherries/requested_movie.html', context)
 
     else: 
@@ -178,14 +172,15 @@ def requested_movie(request, movie_id):
         # Create an instance of the model to save all the information directly into the database. 
         # No need to create Form since have the values predefined
         m = Movie(title=movie['title'],
-                  release_date=movie['release_date'],
-                  poster_path=movie['poster'],
-                  overview=movie['overview'],
-                  runtime= movie['runtime'],
-                  status= movie['status'],
-                  tagline= movie['tagline'],
-                  cast=movie['cast'],
-                  genre=movie['genres'],
+                id_movie=movie['id'],
+                release_date=movie['release_date'],
+                poster_path=movie['poster'],
+                overview=movie['overview'],
+                runtime= movie['runtime'],
+                status= movie['status'],
+                tagline= movie['tagline'],
+                cast=movie['cast'],
+                genre=movie['genres'],
                 )
         m.save()
         
@@ -210,9 +205,10 @@ def top_rated_movies(request):
     movie_list = fetch_trending_rated_upcoming_popular_movies(headers, url_top_rated, url_poster)
     
     context = {
-        'movie_list': movie_list
+        'movie_list': movie_list,
+        'title': "Top Rated Movies"
     }
-    return render(request, 'happy_cherries/top_rated_movies.html', context)
+    return render(request, 'happy_cherries/movies_list.html', context)
 
 def upcoming_movies(request):
     """
@@ -232,9 +228,10 @@ def upcoming_movies(request):
     movie_list = fetch_trending_rated_upcoming_popular_movies(headers, url_upcoming, url_poster)
     
     context = {
-        'movie_list': movie_list
+        'movie_list': movie_list,
+        'title': "Upcoming Movies"
     }
-    return render(request, 'happy_cherries/upcoming_movies.html', context)
+    return render(request, 'happy_cherries/movies_list.html', context)
 
 def now_playing_movies(request):
     """
@@ -254,9 +251,10 @@ def now_playing_movies(request):
     movie_list = fetch_trending_rated_upcoming_popular_movies(headers, url_playing, url_poster)
     
     context = {
-        'movie_list': movie_list
+        'movie_list': movie_list,
+        'title':'Now Playing Movies'
     }
-    return render(request, 'happy_cherries/now_playing_movies.html', context)
+    return render(request, 'happy_cherries/movies_list.html', context)
 
 def popular_movies(request):
     """List of all the popular movies"""
@@ -274,9 +272,10 @@ def popular_movies(request):
     movie_list = fetch_trending_rated_upcoming_popular_movies(headers, url_popular, url_poster)
     
     context = {
-        'movie_list': movie_list
+        'movie_list': movie_list,
+        'title':'Popular Movies'
     }
-    return render(request, 'happy_cherries/popular_movies.html', context)
+    return render(request, 'happy_cherries/movies_list.html', context)
     
     
 # TV SHOWS
@@ -388,23 +387,6 @@ def edit_note_tvshow(request, note_id):
         
     context = {'form': form, 'note': note, 'tvshow': tvshow}
     return render(request, 'happy_cherries/edit_note_tvshow.html', context)
-    
-    
-def add_tvshow_manual(request):
-    """The user will be able to manually fill in a TvShow"""
-    if request.method != 'POST':
-        form = TvShowForm()
-    
-    else:
-        form = TvShowForm(data=request.POST)
-        
-        if form.is_valid():
-            form.save()
-            return redirect('happy_cherries:tvshows')
-    
-    context = {'form': form}
-    return render(request, 'happy_cherries/add_tvshow.html', context)
-
 
 def tvshow_search(request):
     """
@@ -434,7 +416,7 @@ def tvshow_search(request):
         
     else: # GET request
         
-        tvshow_list = fetch_trending_rated_upcoming_popular_movies(headers, url_trending_tvshows, url_poster)
+        tvshow_list = fetch_trending_tvshows(headers, url_trending_tvshows, url_poster)
         
         context = {'tvshow_list': tvshow_list}
         

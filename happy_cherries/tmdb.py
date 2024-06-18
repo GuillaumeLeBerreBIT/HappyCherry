@@ -128,18 +128,19 @@ def fetch_movies(headers, movie_query, url_movie_search, url_poster):
     # Return the movie list.
     return movie_list
 
-def fetch_trending_rated_upcoming_popular_movies(headers, url_trending, url_poster):
+def fetch_trending_rated_upcoming_popular_movies(headers, url, url_poster):
     """Get all the trending movies to show on the page when searching for a movie."""
-    response = requests.get(url_trending, headers=headers).json()
+    response = requests.get(url, headers=headers).json()
     
     movie_list = []
     for sq in response['results']:
+        
         requested_data = {
-                'id': sq['id'],
-                'poster': url_poster.format(sq['poster_path']),
-                'genre_ids': sq['genre_ids'],
-                'title': sq['title'],
-                'release_date': sq['release_date'],
+            'id': sq['id'],
+            'poster': url_poster.format(sq['poster_path']),
+            'genre_ids': sq['genre_ids'],
+            'title': sq['title'],
+            'release_date': sq['release_date'],
         }
         
         requested_data["genres"] = convert_ids_genre(requested_data["genre_ids"], genres_movies)
@@ -212,10 +213,10 @@ def fetch_tvshow(headers, url_tvshow, search, url_poster):
     
     return tvshow_list
 
-def fetch_trending_tvshows(headers, url_trending, url_poster):
+def fetch_trending_tvshows(headers, url, url_poster):
     """Get a list of all the trending Tv Shows to show on the search page."""
     
-    response = requests.get(url_trending, headers=headers).json()
+    response = requests.get(url, headers=headers).json()
     
     tvshow_list = []
     for tvshow in response['results']:
