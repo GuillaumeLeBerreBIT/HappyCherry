@@ -11,7 +11,9 @@
     {% bootstrap_css %}
     {% bootstrap_javascript %}
     
-    <!-- Adding some custom styling for the dropdown menu-->
+    <!-- Adding some custom styling for the dropdown menu
+        Added some styling to make it so can hover over the button.  
+    -->
     <style>
         .navbar-dark .navbar-nav .nav-link {
             color: #fff; /* Example text color */
@@ -26,6 +28,16 @@
         .navbar-dark .navbar-nav .dropdown-item:focus {
             background-color: #495057; /* Slightly lighter than .bg-dark for hover */
         }
+        
+        .dropdown:hover>.dropdown-menu {
+            display: block;
+        }
+          
+        .dropdown>.dropdown-toggle:active {
+            /*Without this, clicking will make it sticky*/
+              pointer-events: none;
+        }
+
     </style>
 
 </head>
@@ -42,7 +54,7 @@
         <div class="collapse navbar-collapse ms-4" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'happy_cherries:movies' %}">Movies</a>
+                    <a class="nav-link" href="{% url 'happy_cherries:movies' %}">Movies Home</a>
                 </li>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-expanded="false">
@@ -67,7 +79,19 @@
                     </ul>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'happy_cherries:tvshows' %}">Tv Shows</a>
+                    <a class="nav-link" href="{% url 'happy_cherries:tvshows' %}">Tv Shows Home</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-expanded="false">
+                        TV Shows List
+                    </a>
+                    <ul class="dropdown-menu" data-bs-popper="static">
+                        <li><a class="dropdown-item" href="{% url 'happy_cherries:tvshow_search' %}">Search</a></li>
+                        <li><a class="dropdown-item" href="{% url 'happy_cherries:top_rated_tvshows' %}">Top Rated TV Shows</a></li>
+                        <li><a class="dropdown-item" href="{% url 'happy_cherries:upcoming_tvshows' %}">Upcoming TV Shows</a></li>
+                        <li><a class="dropdown-item" href="{% url 'happy_cherries:now_airing_tvshows' %}">Now Airing TV Shows</a></li>
+                        <li><a class="dropdown-item" href="{% url 'happy_cherries:popular_tvshows' %}">Popular TV Shows</a></li>
+                    </ul>
                 </li>
             </ul>
             <ul class="navbar-nav ms-auto me-4">

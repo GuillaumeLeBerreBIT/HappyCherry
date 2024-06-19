@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 
 from .models import Movie, Review, TvShow, Note
 from .forms import MovieForm, ReviewForm, TvShowForm, NoteForm
-from .tmdb import fetch_movies, fetch_trending_rated_upcoming_popular_movies, fetch_detailed_movie, fetch_tvshow, fetch_detailed_tvshow, fetch_trending_tvshows
+from .tmdb import fetch_movies, fetch_trending_rated_upcoming_popular_movies, fetch_detailed_movie, fetch_tvshow, fetch_detailed_tvshow, fetch_tvshows_list
 
 import json, requests # This is to send a request to the URLs defined (Not a Django request)
 
@@ -416,7 +416,7 @@ def tvshow_search(request):
         
     else: # GET request
         
-        tvshow_list = fetch_trending_tvshows(headers, url_trending_tvshows, url_poster)
+        tvshow_list = fetch_tvshows_list(headers, url_trending_tvshows, url_poster)
         
         context = {'tvshow_list': tvshow_list}
         
@@ -563,3 +563,91 @@ def edit_review_tvshow(request, review_id):
     
     context = {'form': form, 'tvshow': tvshow, 'review': review}
     return render(request, 'happy_cherries/edit_review_tvshow.html', context)
+
+def top_rated_tvshows(request):
+    """
+    Get a list of all the trending tvshows
+    """
+    # API_KEY
+    headers = {
+        "accept": "application/json",
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIwOTEwZTMzYzBiNzM5NWJhYWI2Nzg4MDJlOTkzMTJlYiIsInN1YiI6IjY2MjkxM2I5ZTI5NWI0MDE4NzllMTBiYSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.IwgWzjezREKj75fLbuLlK-Kp03z_yRyRcQaUJai68l0"
+    }
+    
+    url_top_rated = "https://api.themoviedb.org/3/tv/top_rated?language=en-US&page=1"
+    
+    url_poster = "https://image.tmdb.org/t/p/w500/{}"
+    
+    tvshow_list = fetch_tvshows_list(headers, url_top_rated, url_poster)
+    
+    context = {
+        'tvshow_list': tvshow_list,
+        'title': "Top Rated TV Shows"
+    }
+    return render(request, 'happy_cherries/tvshows_list.html', context)
+
+def upcoming_tvshows(request):
+    """
+    Get a list of all the tvshows airing in the next seven days
+    """
+    # API_KEY
+    headers = {
+        "accept": "application/json",
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIwOTEwZTMzYzBiNzM5NWJhYWI2Nzg4MDJlOTkzMTJlYiIsInN1YiI6IjY2MjkxM2I5ZTI5NWI0MDE4NzllMTBiYSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.IwgWzjezREKj75fLbuLlK-Kp03z_yRyRcQaUJai68l0"
+    }
+    
+    url_on_the_air = "https://api.themoviedb.org/3/tv/on_the_air?language=en-US&page=1"
+    
+    url_poster = "https://image.tmdb.org/t/p/w500/{}"
+    
+    tvshow_list = fetch_tvshows_list(headers, url_on_the_air, url_poster)
+    
+    context = {
+        'tvshow_list': tvshow_list,
+        'title': "On The Air TV Shows"
+    }
+    return render(request, 'happy_cherries/tvshows_list.html', context)
+
+def now_airing_tvshows(request):
+    """
+    Get a list of all the tvshows airing today
+    """
+    # API_KEY
+    headers = {
+        "accept": "application/json",
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIwOTEwZTMzYzBiNzM5NWJhYWI2Nzg4MDJlOTkzMTJlYiIsInN1YiI6IjY2MjkxM2I5ZTI5NWI0MDE4NzllMTBiYSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.IwgWzjezREKj75fLbuLlK-Kp03z_yRyRcQaUJai68l0"
+    }
+    
+    url_airing = "https://api.themoviedb.org/3/tv/airing_today?language=en-US&page=1"
+    
+    url_poster = "https://image.tmdb.org/t/p/w500/{}"
+    
+    tvshow_list = fetch_tvshows_list(headers, url_airing, url_poster)
+    
+    context = {
+        'tvshow_list': tvshow_list,
+        'title': "TV Shows Airing Today"
+    }
+    return render(request, 'happy_cherries/tvshows_list.html', context)
+
+def popular_tvshows(request):
+    """
+    Get a list of all the tvshows airing today
+    """
+    # API_KEY
+    headers = {
+        "accept": "application/json",
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIwOTEwZTMzYzBiNzM5NWJhYWI2Nzg4MDJlOTkzMTJlYiIsInN1YiI6IjY2MjkxM2I5ZTI5NWI0MDE4NzllMTBiYSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.IwgWzjezREKj75fLbuLlK-Kp03z_yRyRcQaUJai68l0"
+    }
+    
+    url_popular = "https://api.themoviedb.org/3/tv/popular?language=en-US&page=1"
+    
+    url_poster = "https://image.tmdb.org/t/p/w500/{}"
+    
+    tvshow_list = fetch_tvshows_list(headers, url_popular, url_poster)
+    
+    context = {
+        'tvshow_list': tvshow_list,
+        'title': "Popular TV Shows"
+    }
+    return render(request, 'happy_cherries/tvshows_list.html', context)

@@ -213,7 +213,7 @@ def fetch_tvshow(headers, url_tvshow, search, url_poster):
     
     return tvshow_list
 
-def fetch_trending_tvshows(headers, url, url_poster):
+def fetch_tvshows_list(headers, url, url_poster):
     """Get a list of all the trending Tv Shows to show on the search page."""
     
     response = requests.get(url, headers=headers).json()

@@ -46,4 +46,12 @@ urlpatterns = [
     path('tvshows/<int:tvshow_id>/add_review/', views.add_review_tvshow, name='add_review_tvshow'),
     # Edit a review given to a TvShow
     path('tvshows/<int:review_id>/edit_review/', views.edit_review_tvshow, name='edit_review_tvshow'),
+    # View all the Top rated movies
+    path('tvshows/top_rated/', views.top_rated_tvshows, name='top_rated_tvshows'),
+    # Show all upcoming movies
+    path('tvshows/upcoming/', views.upcoming_tvshows, name='upcoming_tvshows'),
+    # Show all movies now playing.
+    path('tvshows/now_airing_tvshows/', views.now_airing_tvshows, name='now_airing_tvshows'),
+    # Show all movies now playing.
+    path('tvshows/popular/', views.popular_tvshows, name='popular_tvshows'),
 ]
