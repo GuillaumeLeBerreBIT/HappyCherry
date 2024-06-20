@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 from django.core.validators import MaxValueValidator, MinValueValidator 
 
 # Create your models here.
@@ -8,6 +9,7 @@ class Movie(models.Model):
     title = models.CharField(max_length=150)
     id_movie = models.IntegerField(blank=True, null=True)
     date_added = models.DateTimeField(auto_now_add=True)
+    owner = models.ForeignKey(User, on_delete=models.CASCADE)
     
     poster_path = models.CharField(blank=True, max_length=100)
     overview = models.TextField()
@@ -30,6 +32,7 @@ class TvShow(models.Model):
     name = models.CharField(max_length=150)
     id_tvshow = models.IntegerField(blank=True, null=True)
     date_added = models.DateTimeField(auto_now_add=True)
+    owner = models.ForeignKey(User, on_delete=models.CASCADE)
     
     poster_path = models.CharField(max_length=100, blank=True)
     overview = models.TextField(blank=True)

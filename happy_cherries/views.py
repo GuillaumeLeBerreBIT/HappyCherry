@@ -1,4 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
+# This will restricts the user to access certain data. 
+from django.contrib.auth.decorators import login_required
+from django.http import Http404
 
 from .models import Movie, Review, TvShow, Note
 from .forms import MovieForm, ReviewForm, TvShowForm, NoteForm
@@ -12,14 +15,16 @@ def index(request):
     return render(request, 'happy_cherries/index.html')
 
 # MOVIES
-# Show all the movies that you ahve saved. 
+# Show all the movies that you have saved. 
+# Check if the user is logged in or not. 
+@login_required
 def movies(request):
     """
     List all the movies that have been added.
     The user can select a movie to leave a review behind. 
     """
-    
-    movies = Movie.objects.order_by('date_added')
+    # Retrieve only the objects from database whose owner attribute matches the current user.
+    movies = Movie.objects.filter(owner=request.user).order_by('date_added')
     
     for movie in movies:
         # Gets all the reviews per movie
@@ -39,6 +44,7 @@ def movies(request):
     
     return render(request, 'happy_cherries/movies.html', context)
 
+@login_required
 def movie(request, movie_id):
     """
     Display the most important parts of a movie. 
@@ -46,6 +52,10 @@ def movie(request, movie_id):
     """
         
     movie = Movie.objects.get(id=movie_id)
+    # Make sure the saved movie belongs to the user
+    if movie.owner!= request.user:
+        raise Http404   # Returning the standard error.
+    
     # Split the saved lists and parse them in the context dictionary
     movie.cast_spl, movie.genre_spl = movie.cast.split(','), movie.genre.split(',')
     
@@ -279,6 +289,7 @@ def popular_movies(request):
     
     
 # TV SHOWS
+@login_required
 def tvshows(request):
     """
     Want to shows all the TV shows that you have added to your list.
@@ -306,6 +317,7 @@ def tvshows(request):
     context = {'tv_shows': tv_shows}
     return render(request, 'happy_cherries/tvshows.html', context)
 
+@login_required
 def tvshow(request, tvshow_id):
     """
     Want to be able to get the detailed information of a specific TvShow.
@@ -342,6 +354,7 @@ def tvshow(request, tvshow_id):
     
     return render(request, 'happy_cherries/tvshow.html', context)
 
+@login_required
 def add_note_tvshow(request, tvshow_id):
     """The user can leave a Note behind on what episode/season he is currently at."""
     tvshow = TvShow.objects.get(id=tvshow_id)
@@ -368,6 +381,7 @@ def add_note_tvshow(request, tvshow_id):
     context = {'form': form, 'tvshow': tvshow}
     return render(request, 'happy_cherries/add_note_tvshow.html', context)
 
+@login_required
 def edit_note_tvshow(request, note_id):
     """Edit the note the user left behind on the page."""
     
@@ -478,92 +492,6 @@ def requested_tvshow(request, tvshow_id):
         
         return redirect('happy_cherries:tvshows')
 
-
-
-# REVIEW - MOVIES
-def add_review_movie(request, movie_id):
-    """The user can leave a review about the movie as well as a score to view the movie as."""
-    movie = Movie.objects.get(id=movie_id)
-    
-    if request.method != 'POST':
-        # Creating a blank form
-        form = ReviewForm()
-    
-    else:
-        form = ReviewForm(data=request.POST)
-        
-        if form.is_valid():
-            new_review = form.save(commit=False)
-            # Save the review under the PK linked to specific movie
-            new_review.movie = movie
-            new_review.save()
-            
-            return redirect('happy_cherries:movie', movie_id=movie_id)
-    
-    context = {'form': form, 'movie': movie}
-    return render(request, 'happy_cherries/add_review_movie.html', context)
-
-def edit_review_movie(request, review_id):
-    """Want the user to be able to edit the score or review."""
-    review = Review.objects.get(id=review_id)
-    movie = review.movie
-    
-    if request.method != 'POST':
-        
-        form = ReviewForm(instance=review)
-    else:
-        
-        form = ReviewForm(instance=review, data=request.POST)
-        
-        if form.is_valid():
-            form.save()
-            return redirect('happy_cherries:movie', movie_id=movie.id)
-    
-    context = {'form': form, 'movie': movie, 'review': review}
-    return render(request, 'happy_cherries/edit_review_movie.html', context)
-
-# REVIEW - TVSHOW
-def add_review_tvshow(request, tvshow_id):
-    """The user can leave a review about the movie as well as a score to view the movie as."""
-    tvshow = TvShow.objects.get(id=tvshow_id)
-    
-    if request.method != 'POST':
-        # Creating a blank form
-        form = ReviewForm()
-    
-    else:
-        form = ReviewForm(data=request.POST)
-        
-        if form.is_valid():
-            new_review = form.save(commit=False)
-            # Save the review under the PK linked to specific movie
-            new_review.tvshow = tvshow
-            new_review.save()
-            
-            return redirect('happy_cherries:tvshow', tvshow_id=tvshow_id)
-    
-    context = {'form': form, 'tvshow': tvshow}
-    return render(request, 'happy_cherries/add_review_tvshow.html', context)
-
-def edit_review_tvshow(request, review_id):
-    """Want the user to be able to edit the score or review."""
-    review = Review.objects.get(id=review_id)
-    tvshow = review.tvshow
-    
-    if request.method != 'POST':
-        
-        form = ReviewForm(instance=review)
-    else:
-        
-        form = ReviewForm(instance=review, data=request.POST)
-        
-        if form.is_valid():
-            form.save()
-            return redirect('happy_cherries:tvshow', tvshow_id=tvshow.id)
-    
-    context = {'form': form, 'tvshow': tvshow, 'review': review}
-    return render(request, 'happy_cherries/edit_review_tvshow.html', context)
-
 def top_rated_tvshows(request):
     """
     Get a list of all the trending tvshows
@@ -651,3 +579,91 @@ def popular_tvshows(request):
         'title': "Popular TV Shows"
     }
     return render(request, 'happy_cherries/tvshows_list.html', context)
+
+# REVIEW - MOVIES
+@login_required
+def add_review_movie(request, movie_id):
+    """The user can leave a review about the movie as well as a score to view the movie as."""
+    movie = Movie.objects.get(id=movie_id)
+    
+    if request.method != 'POST':
+        # Creating a blank form
+        form = ReviewForm()
+    
+    else:
+        form = ReviewForm(data=request.POST)
+        
+        if form.is_valid():
+            new_review = form.save(commit=False)
+            # Save the review under the PK linked to specific movie
+            new_review.movie = movie
+            new_review.save()
+            
+            return redirect('happy_cherries:movie', movie_id=movie_id)
+    
+    context = {'form': form, 'movie': movie}
+    return render(request, 'happy_cherries/add_review_movie.html', context)
+
+@login_required
+def edit_review_movie(request, review_id):
+    """Want the user to be able to edit the score or review."""
+    review = Review.objects.get(id=review_id)
+    movie = review.movie
+    
+    if request.method != 'POST':
+        
+        form = ReviewForm(instance=review)
+    else:
+        
+        form = ReviewForm(instance=review, data=request.POST)
+        
+        if form.is_valid():
+            form.save()
+            return redirect('happy_cherries:movie', movie_id=movie.id)
+    
+    context = {'form': form, 'movie': movie, 'review': review}
+    return render(request, 'happy_cherries/edit_review_movie.html', context)
+
+# REVIEW - TVSHOW
+@login_required
+def add_review_tvshow(request, tvshow_id):
+    """The user can leave a review about the movie as well as a score to view the movie as."""
+    tvshow = TvShow.objects.get(id=tvshow_id)
+    
+    if request.method != 'POST':
+        # Creating a blank form
+        form = ReviewForm()
+    
+    else:
+        form = ReviewForm(data=request.POST)
+        
+        if form.is_valid():
+            new_review = form.save(commit=False)
+            # Save the review under the PK linked to specific movie
+            new_review.tvshow = tvshow
+            new_review.save()
+            
+            return redirect('happy_cherries:tvshow', tvshow_id=tvshow_id)
+    
+    context = {'form': form, 'tvshow': tvshow}
+    return render(request, 'happy_cherries/add_review_tvshow.html', context)
+
+@login_required
+def edit_review_tvshow(request, review_id):
+    """Want the user to be able to edit the score or review."""
+    review = Review.objects.get(id=review_id)
+    tvshow = review.tvshow
+    
+    if request.method != 'POST':
+        
+        form = ReviewForm(instance=review)
+    else:
+        
+        form = ReviewForm(instance=review, data=request.POST)
+        
+        if form.is_valid():
+            form.save()
+            return redirect('happy_cherries:tvshow', tvshow_id=tvshow.id)
+    
+    context = {'form': form, 'tvshow': tvshow, 'review': review}
+    return render(request, 'happy_cherries/edit_review_tvshow.html', context)
