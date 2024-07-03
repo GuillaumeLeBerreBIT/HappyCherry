@@ -7,15 +7,17 @@
             <div class="col-md-12 position-relative">
                 <div class="row position-relative align-items-start text-bg-dark border rounded-3 p-3">
                     <div class="d-flex align-items-center mb-3 w-100">
-                    {% if avg_score < 50 %}
-                        <!--Can sett style > position: absolute to fit the badge on top of the image.-->
-                        <span class="badge text-bg-danger position-absolute" style="top: 50px; left: 50px; font-size: 16px;">
-                            {{ avg_score}} %
-                        </span>
-                    {% else %}
-                        <span class="badge text-bg-success position-absolute" style="top: 50px; left: 50px; font-size: 16px;">
-                            {{ avg_score}} %
-                        </span>
+                    {% if tvshow.avg_score %}
+                        {% if tvshow.avg_score < 50 %}
+                            <!--Can sett style > position: absolute to fit the badge on top of the image.-->
+                            <span class="badge text-bg-danger position-absolute" style="top: 50px; left: 50px; font-size: 16px;">
+                                {{ tvshow.avg_score}} %
+                            </span>
+                        {% else %}
+                            <span class="badge text-bg-success position-absolute" style="top: 50px; left: 50px; font-size: 16px;">
+                                {{ tvshow.avg_score}} %
+                            </span>
+                        {% endif %}
                     {% endif %}
                     </div>
                     <div class="col-md-4 text-center d-flex flex-column">

@@ -346,11 +346,11 @@ def tvshow(request, tvshow_id):
     if reviews:
         # Iterate over all reviews
         total_sum = sum(review.score for review in reviews)
-        avg_score = round(total_sum/len(reviews), None)    
-    else: 
-        avg_score = 0
+        tvshow.avg_score = round(total_sum/len(reviews), None)    
     
-    context = {'tvshow': tvshow, 'reviews': reviews, 'avg_score': avg_score, 'note': note}
+    context = {'tvshow': tvshow, 
+               'reviews': reviews, 
+               'note': note}
     
     return render(request, 'happy_cherries/tvshow.html', context)
 
