@@ -139,7 +139,12 @@ def requested_movie(request, movie_id):
     url_credits_movie = "https://api.themoviedb.org/3/movie/{}/credits?language=en-US"
     url_poster = "https://image.tmdb.org/t/p/w500/{}"
     
+    is_owner = False 
+    if request.user.is_authenticated:
+        is_owner = True
+    
     if request.method != "POST":
+        
         # Using the Movie ID which has been saved from teh request response and parsed to the URL. 
         # Can use it to get the detailed information of a Tv Show
         movie = fetch_detailed_movie(headers=headers, 
@@ -155,8 +160,8 @@ def requested_movie(request, movie_id):
             movie["cast"] = movie["cast"][0:6]
             movie["cast"].append('...')
         
-        # Get all the saved Movie objects
-        saved_movies = Movie.objects.all()
+        # Get all the saved Movie objects from the authenticated user
+        saved_movies = Movie.objects.filter(owner=request.user)
         # Saved all the titles in a list 
         titles = []
         for saved in saved_movies:
@@ -167,12 +172,14 @@ def requested_movie(request, movie_id):
         
         context = {
             'movie': movie,
-            'saved': saved
+            'saved': saved,
+            'is_owner': is_owner
             }
         return render(request, 'happy_cherries/requested_movie.html', context)
 
     else: 
         
+        # Need to check of the current use is the owner or not.        
         movie = fetch_detailed_movie(headers=headers, 
                                      url_movie=url_det_movie, 
                                      url_cast=url_credits_movie, 
@@ -182,6 +189,7 @@ def requested_movie(request, movie_id):
         # Create an instance of the model to save all the information directly into the database. 
         # No need to create Form since have the values predefined
         m = Movie(title=movie['title'],
+                owner=request.user,
                 id_movie=movie['id'],
                 release_date=movie['release_date'],
                 poster_path=movie['poster'],

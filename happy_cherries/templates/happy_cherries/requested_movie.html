@@ -15,7 +15,7 @@
                 <div class="col-md-1"></div>
                 <div class="col-md-7 text-start">
                     {% if saved == "Saved" %}
-                    {% elif saved == "Unsaved" %}
+                    {% elif saved == "Unsaved" and is_owner %}
                     <form method="post" class="position-absolute top-0 end-0 m-3">
                         {% csrf_token %}
                         <button type="submit" class="btn btn-success">Save</button>
