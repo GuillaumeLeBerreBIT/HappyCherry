@@ -9,7 +9,7 @@ from .tmdb import fetch_movies, fetch_trending_rated_upcoming_popular_movies, fe
 
 import json, requests # This is to send a request to the URLs defined (Not a Django request)
 
-# Create your views here.
+# The welcome page. 
 def index(request):
     """Show the Home page for Happy Cherry."""
     return render(request, 'happy_cherries/index.html')
@@ -33,9 +33,9 @@ def movies(request):
         if reviews:
             # Iterate over the reviews per movie and calculate the total score
             total_sum = sum(review.score for review in reviews)
-            # Direclty assign the value to the saved model in the dictionary.
+            # Directly assign the value to the saved model in the dictionary.
             movie.avg_score = round(total_sum / len(reviews), None)
-            #print(dir(movie))
+        
         # Convert the text to a list.
         movie.genres = movie.genre.split(',')
         movie.genres.sort()
@@ -47,13 +47,14 @@ def movies(request):
 @login_required
 def movie(request, movie_id):
     """
-    Display the most important parts of a movie. 
+    Display a overview of the movie genre, actors, duration, ... 
     Shows the score and a review left by one or multiple persons.
     """
-        
+    # Get the requested movie.   
     movie = Movie.objects.get(id=movie_id)
+    
     # Make sure the saved movie belongs to the user
-    if movie.owner!= request.user:
+    if movie.owner != request.user:
         raise Http404   # Returning the standard error.
     
     # Split the saved lists and parse them in the context dictionary
@@ -86,7 +87,7 @@ def movie_search(request):
     """
     The user can search for a movie based on dynamic search term. 
     All relevant movies then are shown. 
-    When clicked on the relevant movie will be added to the list.  
+    When clicked on a movie of interest then detailed information is shown.  
     """
     # API_KEY
     headers = {
@@ -160,15 +161,21 @@ def requested_movie(request, movie_id):
             movie["cast"] = movie["cast"][0:6]
             movie["cast"].append('...')
         
-        # Get all the saved Movie objects from the authenticated user
-        saved_movies = Movie.objects.filter(owner=request.user)
-        # Saved all the titles in a list 
-        titles = []
-        for saved in saved_movies:
-            titles.append(saved.title)
-        # Then pass the variable to tell wether the movie is saved or not. 
-        if movie['title'] in titles: saved = "Saved"
-        else: saved  = "Unsaved"
+        # When logged in. 
+        if is_owner:
+            # Get all the saved Movie objects from the authenticated user
+            saved_movies = Movie.objects.filter(owner=request.user)
+            
+            # Saved all the titles in a list 
+            titles = []
+            for saved in saved_movies:
+                titles.append(saved.title)
+            # Then pass the variable to tell wether the movie is saved or not. 
+            if movie['title'] in titles: saved = "Saved"
+            else: saved  = "Unsaved"
+            
+        # When nog logged in it is not saved and can't be saved.    
+        else: saved = "Unsaved"
         
         context = {
             'movie': movie,
@@ -303,9 +310,10 @@ def tvshows(request):
     Want to shows all the TV shows that you have added to your list.
     User can select a Tv Show that has been added to your list.
     """
-        
-    tv_shows = TvShow.objects.order_by('date_added')
-
+    # Filter the movie by User set. 
+    tv_shows = TvShow.objects.filter(owner=request.user).order_by('date_added')
+    # Note is linked to the user so do not need to filter the note by user. 
+    
     for tv_show in tv_shows:
         reviews = tv_show.review_set.all()
         # Firstly check if there are any reviews left behind. 
@@ -313,8 +321,11 @@ def tvshows(request):
             total_sum = sum(review.score for review in reviews)
             tv_show.avg_score = round(total_sum / len(reviews), None)
         
+        print(dir(tv_show))
+        print(tv_show.id, tv_show.id_tvshow)
+        # Take the last note that has been left 
         note = tv_show.note_set.first()
-        
+        # If there is a note set then. 
         if note:
             tv_show.note = note
         
@@ -328,15 +339,19 @@ def tvshows(request):
 @login_required
 def tvshow(request, tvshow_id):
     """
-    Want to be able to get the detailed information of a specific TvShow.
-    The user can leave a review as well as a score behond.
-    Can also leave a note saying an what episode currently he is.    
+    Want to be able to get the detailed information of a TvShow.
+    The user can leave a review as well as a score behind.
+    Can also leave a note saying an what episode he currently is on.    
     """
-    
+    # Use the TvShow Primary key to get acces. 
     tvshow = TvShow.objects.get(id=tvshow_id)
     
+    # Make sure the saved movie belongs to the user
+    if tvshow.owner != request.user:
+        raise Http404   # Returning the standard error.
+    
     # Get the note linked to a specific Movie
-    note = tvshow.note_set.order_by('-date_added').first() # To get the newest note added first
+    note = tvshow.note_set.first() # Get the latest note added
     
     # Get the reviews linked to specific Tv Show. 
     # This is the model object, iterate to get all the reviews which then can access the score attr
@@ -459,6 +474,10 @@ def requested_tvshow(request, tvshow_id):
     url_credits_tvshow = "https://api.themoviedb.org/3/tv/{}/credits?language=en-US"
     url_poster = "https://image.tmdb.org/t/p/w500/{}"
     
+    is_owner = False 
+    if request.user.is_authenticated:
+        is_owner = True
+    
     # GET request -- > Show all the detailed information of Tv Show
     if request.method != 'POST':
         # Want to get all the detailed information of a movie. 
@@ -473,8 +492,27 @@ def requested_tvshow(request, tvshow_id):
         if len(tvshow['cast']) > 6:
             tvshow["cast"] = tvshow["cast"][0:6]
             tvshow["cast"].append('...')
+            
+        # When logged in. 
+        if is_owner:
+            # Get all the saved Movie objects from the authenticated user
+            saved_tvshows = TvShow.objects.filter(owner=request.user)
+            
+            # Saved all the titles in a list 
+            names = []
+            for saved_show in saved_tvshows:
+                names.append(saved_show.name)
+            
+            # Then pass the variable to tell wether the movie is saved or not. 
+            if tvshow['name'] in names: saved = True
+            else: saved  = False
+            
+        # When nog logged in it is not saved and can't be saved.    
+        else: saved = False
         
-        context = {'tvshow': tvshow}
+        context = {'tvshow': tvshow,
+                   'saved': saved,
+                   'is_owner': is_owner}
         return render(request, 'happy_cherries/requested_tvshow.html', context)
     # POST request -- > Save the Tv Show into a model which then redirected to tvshow homepage.    
     else:
@@ -484,12 +522,13 @@ def requested_tvshow(request, tvshow_id):
         # Create an instance of the model to save all the information directly into the database. 
         # No need to create Form since have the values predefined
         s = TvShow(name=tvshow['name'],
+                   owner=request.user,
                    id_tvshow=tvshow['id'],
                    poster_path=tvshow['poster_path'],
                    overview=tvshow['overview'],
                    first_air_date=tvshow['first_air_date'],
                    last_air_date=tvshow['last_air_date'],
-                   next_episode_to_air=tvshow['next_episode_to_air'],
+                   next_episode_to_air=tvshow['next_episode_to_air']['air_date'],
                    number_of_episodes=tvshow['number_of_episodes'],
                    number_of_seasons=tvshow['number_of_seasons'],
                    cast=tvshow['cast'],

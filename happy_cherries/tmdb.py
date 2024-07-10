@@ -266,7 +266,7 @@ def fetch_detailed_tvshow(headers, tvshow_id, url_tvshow, url_cast, url_poster):
         'first_air_date': response['first_air_date'],
         'last_air_date': response['last_air_date'],
         'poster_path': url_poster.format(response['poster_path']),
-        'next_episode_to_air': response['next_episode_to_air'],
+        'next_episode_to_air': response['next_episode_to_air']['air_date'],
         'number_of_seasons': response['number_of_seasons'],
         'number_of_episodes': response['number_of_episodes'],
         'overview': response['overview'],

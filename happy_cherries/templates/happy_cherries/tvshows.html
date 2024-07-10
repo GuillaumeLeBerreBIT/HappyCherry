@@ -12,6 +12,7 @@
         {% for show in tv_shows %}
             <div class="col mb-2">
                 <!--Remove the blue underline from the link as well as give it the same text color as original-->
+                <!--Using the PK automatically assigned by Django ORM to get the saved TvShow from the database -->
                 <a href="{% url 'happy_cherries:tvshow' show.id %}" class="text-decoration-none text-reset">
                     <div class="card h-100" style="max-width: 220px;">
                         {% if show.avg_score %}
