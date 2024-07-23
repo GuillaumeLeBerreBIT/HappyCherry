@@ -55,6 +55,7 @@ class Review(models.Model):
     
     movie = models.ForeignKey(Movie, on_delete=models.CASCADE, blank=True, null=True)  # Can have the option to have it blank so can choose between Tvshow or Movie
     tvshow = models.ForeignKey(TvShow, on_delete=models.CASCADE, blank=True, null=True)
+    owner = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
     score = models.PositiveIntegerField(default=50, validators=[MinValueValidator(1), MaxValueValidator(100)])
     review = models.TextField()
     date_added = models.DateTimeField(auto_now_add=True)

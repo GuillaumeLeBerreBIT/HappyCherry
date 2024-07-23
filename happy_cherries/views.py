@@ -63,7 +63,6 @@ def movie(request, movie_id):
     # Get the reviews linked to specific movie. 
     # This is the model object, iterate to get all the reviews which then can access the score attr
     reviews = movie.review_set.order_by('-date_added')
-    
     # Only show the first 6 six actors if it exceeds limits
     # Because want to acces an object use a dot hore to get acces to the attribute. 
     if len(movie.cast_spl) > 6:
@@ -631,7 +630,7 @@ def popular_tvshows(request):
 @login_required
 def add_review_movie(request, movie_id):
     """The user can leave a review about the movie as well as a score to view the movie as."""
-    movie = Movie.objects.get(id=movie_id)
+    movie = get_object_or_404(Movie, id=movie_id)
     
     if request.method != 'POST':
         # Creating a blank form
@@ -644,6 +643,7 @@ def add_review_movie(request, movie_id):
             new_review = form.save(commit=False)
             # Save the review under the PK linked to specific movie
             new_review.movie = movie
+            new_review.owner = request.user
             new_review.save()
             
             return redirect('happy_cherries:movie', movie_id=movie_id)
@@ -688,6 +688,7 @@ def add_review_tvshow(request, tvshow_id):
             new_review = form.save(commit=False)
             # Save the review under the PK linked to specific movie
             new_review.tvshow = tvshow
+            new_review.owner = request.user
             new_review.save()
             
             return redirect('happy_cherries:tvshow', tvshow_id=tvshow_id)
