@@ -14,11 +14,47 @@
             href="{% url 'users:register' %}">Register &raquo;</a>
         </div>
     </div>
-</div>
-
 {% endblock page_header %}
 
 {% block content %}
 
+<div class="d-flex align-items-center mt-2">
+    <h2 class="display-5 ms-2 fw-bold text-body-emphasis">Now Playing</h2>
+    <a class="btn btn-secondary ms-4" href="{% url "happy_cherries:now_playing_movies" %}">See more &raquo;</a>
+</div>
+
+{% if now_playing %}
+    <div class="container">
+        <!--When on xsmall screen only one col, small 2 col, medium 3 columns, ... -->
+        <div class="row row-cols-auto">
+            {% for movie in now_playing %}
+                <div class="col mb-2 mt-4">
+                    <!--Remove the blue underline from the link as well as give it the same text color as original-->
+                    <a href="{% url 'happy_cherries:requested_movie' movie.id %}" class="text-decoration-none text-reset">
+                        <div class="card h-100" style="max-width: 220px;">
+                            <img src="{{ movie.poster }}" class="card-img-top" alt="poster">
+                            <div class="card-body d-flex flex-column">
+                                <h5 class="card-title">
+                                    {{ movie.title }}
+                                </h5>
+                                <p class="card-text">
+                                    {{ movie.release_date }}
+                                </p>
+                            </div>
+                            <!--Set the margin top auto-->
+                            <div class="mt-auto">
+                                <div class="card-footer">
+                                    {% for genre in movie.genres %}
+                                        <span class="badge rounded-pill text-bg-dark">{{ genre }}</span>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            {% endfor %}
+        </div>
+    </div> 
+{% endif %} 
 
 {% endblock content %}

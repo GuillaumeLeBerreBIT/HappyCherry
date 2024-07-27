@@ -128,8 +128,8 @@ def fetch_movies(headers, movie_query, url_movie_search, url_poster):
     # Return the movie list.
     return movie_list
 
-def fetch_trending_rated_upcoming_popular_movies(headers, url, url_poster):
-    """Get all the trending movies to show on the page when searching for a movie."""
+def fetch_movies_list(headers, url, url_poster):
+    """Get all the trending/upcoming/popular movies to show on the page when searching for a movie."""
     response = requests.get(url, headers=headers).json()
     
     movie_list = []

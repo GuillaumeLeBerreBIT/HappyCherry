@@ -5,14 +5,28 @@ from django.http import Http404
 
 from .models import Movie, Review, TvShow, Note
 from .forms import MovieForm, ReviewForm, TvShowForm, NoteForm
-from .tmdb import fetch_movies, fetch_trending_rated_upcoming_popular_movies, fetch_detailed_movie, fetch_tvshow, fetch_detailed_tvshow, fetch_tvshows_list
+from .tmdb import fetch_movies, fetch_movies_list, fetch_detailed_movie, fetch_tvshow, fetch_detailed_tvshow, fetch_tvshows_list
 
 import json, requests # This is to send a request to the URLs defined (Not a Django request)
 
 # The welcome page. 
 def index(request):
     """Show the Home page for Happy Cherry."""
-    return render(request, 'happy_cherries/index.html')
+    # API_KEY
+    headers = {
+        "accept": "application/json",
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIwOTEwZTMzYzBiNzM5NWJhYWI2Nzg4MDJlOTkzMTJlYiIsInN1YiI6IjY2MjkxM2I5ZTI5NWI0MDE4NzllMTBiYSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.IwgWzjezREKj75fLbuLlK-Kp03z_yRyRcQaUJai68l0"
+    }
+    
+    url_now_playing = "https://api.themoviedb.org/3/movie/now_playing?language=en-US&page=1"
+    
+    url_poster = "https://image.tmdb.org/t/p/w500/{}"
+    
+    # Return all the movies currently in the cinema
+    now_playing = fetch_movies_list(headers, url_now_playing, url_poster)[:5]
+    
+    context = {'now_playing': now_playing}
+    return render(request, 'happy_cherries/index.html', context)
 
 # MOVIES
 # Show all the movies that you have saved. 
@@ -115,7 +129,7 @@ def movie_search(request):
     # IF it is a GET request just loading page. 
     else: 
         # Get all the trending movies so the home page does not look empty. 
-        movie_list = fetch_trending_rated_upcoming_popular_movies(headers, url_trending, url_poster)
+        movie_list = fetch_movies_list(headers, url_trending, url_poster)
         
         context = {
             'movie_list': movie_list
@@ -226,7 +240,7 @@ def top_rated_movies(request):
     url_poster = "https://image.tmdb.org/t/p/w500/{}"
     
     # Get all the trending movies so the home page does not look empty. 
-    movie_list = fetch_trending_rated_upcoming_popular_movies(headers, url_top_rated, url_poster)
+    movie_list = fetch_movies_list(headers, url_top_rated, url_poster)
     
     context = {
         'movie_list': movie_list,
@@ -249,7 +263,7 @@ def upcoming_movies(request):
     url_poster = "https://image.tmdb.org/t/p/w500/{}"
     
     # Get all the trending movies so the home page does not look empty. 
-    movie_list = fetch_trending_rated_upcoming_popular_movies(headers, url_upcoming, url_poster)
+    movie_list = fetch_movies_list(headers, url_upcoming, url_poster)
     
     context = {
         'movie_list': movie_list,
@@ -272,7 +286,7 @@ def now_playing_movies(request):
     url_poster = "https://image.tmdb.org/t/p/w500/{}"
     
     # Get all the trending movies so the home page does not look empty. 
-    movie_list = fetch_trending_rated_upcoming_popular_movies(headers, url_playing, url_poster)
+    movie_list = fetch_movies_list(headers, url_playing, url_poster)
     
     context = {
         'movie_list': movie_list,
@@ -293,7 +307,7 @@ def popular_movies(request):
     url_poster = "https://image.tmdb.org/t/p/w500/{}"
     
     # Get all the trending movies so the home page does not look empty. 
-    movie_list = fetch_trending_rated_upcoming_popular_movies(headers, url_popular, url_poster)
+    movie_list = fetch_movies_list(headers, url_popular, url_poster)
     
     context = {
         'movie_list': movie_list,
@@ -320,8 +334,8 @@ def tvshows(request):
             total_sum = sum(review.score for review in reviews)
             tv_show.avg_score = round(total_sum / len(reviews), None)
         
-        print(dir(tv_show))
-        print(tv_show.id, tv_show.id_tvshow)
+        #print(dir(tv_show))
+        #print(tv_show.id, tv_show.id_tvshow)
         # Take the last note that has been left 
         note = tv_show.note_set.first()
         # If there is a note set then. 
