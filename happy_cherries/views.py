@@ -20,12 +20,16 @@ def index(request):
     
     url_now_playing = "https://api.themoviedb.org/3/movie/now_playing?language=en-US&page=1"
     
+    url_airing = "https://api.themoviedb.org/3/tv/airing_today?language=en-US&page=1"
+
     url_poster = "https://image.tmdb.org/t/p/w500/{}"
     
     # Return all the movies currently in the cinema
     now_playing = fetch_movies_list(headers, url_now_playing, url_poster)[:5]
+    now_airing = fetch_tvshows_list(headers, url_airing, url_poster)[:5]
     
-    context = {'now_playing': now_playing}
+    context = {'now_playing': now_playing,
+               'now_airing': now_airing}
     return render(request, 'happy_cherries/index.html', context)
 
 # MOVIES

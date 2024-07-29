@@ -57,4 +57,43 @@
     </div> 
 {% endif %} 
 
+<div class="d-flex align-items-center mt-2">
+    <h2 class="display-5 ms-2 fw-bold text-body-emphasis">Now Airing</h2>
+    <a class="btn btn-secondary ms-4" href="{% url "happy_cherries:now_airing_tvshows" %}">See more &raquo;</a>
+</div>
+
+{% if now_airing %}
+    <div class="container">
+        <!--When on xsmall screen only one col, small 2 col, medium 3 columns, ... -->
+        <div class="row row-cols-auto">
+            {% for show in now_airing %}
+                <div class="col mb-2 mt-4">
+                    <!--Remove the blue underline from the link as well as give it the same text color as original-->
+                    <a href="{% url 'happy_cherries:requested_tvshow' show.id %}" class="text-decoration-none text-reset">
+                        <div class="card h-100" style="max-width: 220px;">
+                            <img src="{{ show.poster }}" class="card-img-top" alt="poster">
+                            <div class="card-body d-flex flex-column">
+                                <h5 class="card-title">
+                                    {{ show.name }}
+                                </h5>
+                                <p class="card-text">
+                                    {{ movie.first_air_date }}
+                                </p>
+                            </div>
+                            <!--Set the margin top auto-->
+                            <div class="mt-auto">
+                                <div class="card-footer">
+                                    {% for genre in show.genres %}
+                                        <span class="badge rounded-pill text-bg-dark">{{ genre }}</span>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            {% endfor %}
+        </div>
+    </div> 
+{% endif %} 
+
 {% endblock content %}
