@@ -13,8 +13,10 @@ urlpatterns = [
     # Detail page for a single movie
     # When parsing an id with the url, need to save it into the HTTP path.
     path('movies/<int:movie_id>/', views.movie, name='movie'),
-    # Add a review to a movie
+    # Add a review to a movie. 
     path('movies/<int:movie_id>/add_review/', views.add_review_movie, name='add_review_movie'),
+    # To delete a movie from the user list. 
+    path('movies/<int:movie_id>/delete_post/', views.delete_post_movie, name='delete_post_movie'),
     # Edit a review given to a Movie
     path('movies/<int:review_id>/edit_review/', views.edit_review_movie, name='edit_review_movie'),
     # Search for a specific movie

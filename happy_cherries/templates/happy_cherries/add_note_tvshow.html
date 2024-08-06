@@ -7,7 +7,7 @@
     <form method="post" action="{% url 'happy_cherries:add_note_tvshow' tvshow.id %}">
         {% csrf_token %}
         {{ form.as_p }}
-        <button name="submit">Add Note</button>
+        <button type="submit">Add Note</button>
     </form>
 
 {% endblock content %}

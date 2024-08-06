@@ -1,0 +1,18 @@
+{% extends "happy_cherries/base.html" %}
+
+{% block page_header %}
+
+    <h1>Delete Movie: {{ movie.title }}</h1>
+
+{% endblock page_header %}
+
+{% block content %}
+
+    <form action="{% url "happy_cherries:delete_post_movie" movie.id %}" method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        
+        <button type="submit">Delete Post</button>
+    </form>
+
+{% endblock content %}

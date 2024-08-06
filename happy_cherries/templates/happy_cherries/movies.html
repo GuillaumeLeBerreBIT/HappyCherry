@@ -17,15 +17,24 @@
                         {% if movie.avg_score %}
                             {% if movie.avg_score < 50 %}
                                 <!--Can sett style > position: absolute to fit the badge on top of the image.-->
-                                <span class="badge text-bg-danger" style="position: absolute; top: 10px; right: 10px; font-size: 12px;">
+                                <span class="badge text-bg-danger" style="position: absolute; top: 10px; left: 10px; font-size: 12px;">
                                     {{ movie.avg_score}} %
                                 </span>
                             {% else %}
-                                <span class="badge text-bg-success" style="position: absolute; top: 10px; right: 10px; font-size: 12px;">
+                                <span class="badge text-bg-success" style="position: absolute; top: 10px; left: 10px; font-size: 12px;">
                                     {{ movie.avg_score}} %
                                 </span>
                             {% endif %}
                         {% endif %}
+
+                                
+                        <a href="{% url "happy_cherries:delete_post_movie" movie.id %}" 
+                        class="badge text-bg-danger text-decoration-none" 
+                        style="position: absolute; top: 10px; right: 10px; font-size: 12px;">
+                            Delete
+                        </a>
+                                
+
                         <img src="{{ movie.poster_path }}" class="card-img-top" alt="poster_image">
                         <div class="card-body d-flex flex-column">
                             <h5 class="card-title">

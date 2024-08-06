@@ -9,6 +9,11 @@ from .tmdb import fetch_movies, fetch_movies_list, fetch_detailed_movie, fetch_t
 
 import json, requests # This is to send a request to the URLs defined (Not a Django request)
 
+def check_user(request, film):
+    """Check if the logged in user is linked to the saved movie"""
+    if request.user != film.owner:
+        raise Http404
+
 # The welcome page. 
 def index(request):
     """Show the Home page for Happy Cherry."""
@@ -99,6 +104,29 @@ def movie(request, movie_id):
                'reviews': reviews}
     
     return render(request, 'happy_cherries/movie.html', context)
+
+@login_required
+def delete_post_movie(request, movie_id):
+    """Deleting a saved Movie from the list."""
+    # Get the requested movie to delete.
+    movie = get_object_or_404(Movie, id = movie_id)
+    
+    # Check if the current user is linked to the movie. 
+    check_user(request, movie)
+    
+    # Pass the movie object to the HTML page. 
+    context = {'movie': movie}
+    
+    # Create a view to make sure the user wants to delete the post. 
+    if request.method != "POST":
+        return render(request, "happy_cherries/delete_post.html", context)
+    
+    # If the method is a POST
+    elif request.method == "POST":
+        # Delete the movie object.
+        movie.delete()
+        # Send the user back to the movie page
+        return redirect('happy_cherries:movies')
 
 def movie_search(request):
     """

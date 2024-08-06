@@ -65,7 +65,7 @@
                             <div class="card-header d-flex align-items-center">
                                 <h5 class="card-title font-weight-bold mb-0">{% if review.owner %}{{ review.owner }}{% else %}User{% endif %}</h5> 
                                 <!--ms-auto pushes it to the far right within the flex container, ensuring it aligns horizontally with the "User" title.-->
-                                <a class="btn btn-warning fw-bold ms-auto" href="{% url 'happy_cherries:edit_review_tvshow' review.id %}">Edit</a> 
+                                <a class="btn btn-warning fw-bold ms-auto" href="{% url 'happy_cherries:edit_review_movie' review.id %}">Edit</a> 
                             </div>
                             <div class="card-body">
                                 <div class="card-text mb-0">
