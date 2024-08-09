@@ -10,10 +10,11 @@
     <!--When on xsmall screen only one col, small 2 col, medium 3 columns, ... -->
     <div class="row row-cols-auto">
         {% for movie in movies %}
+        <!-- Create the cards to contain the content -->
             <div class="col mb-2">
-                <!--Remove the blue underline from the link as well as give it the same text color as original-->
-                <a href="{% url 'happy_cherries:movie' movie.id %}" class="text-decoration-none text-reset">
-                    <div class="card h-100" style="max-width: 220px;">
+                <div class="col mb-2 card h-100" style="max-width: 220px;">
+                    <!--Remove the blue underline from the link as well as give it the same text color as original-->
+                    <a href="{% url 'happy_cherries:movie' movie.id %}" class="text-decoration-none text-reset">
                         {% if movie.avg_score %}
                             {% if movie.avg_score < 50 %}
                                 <!--Can sett style > position: absolute to fit the badge on top of the image.-->
@@ -26,15 +27,6 @@
                                 </span>
                             {% endif %}
                         {% endif %}
-
-                                
-                        <a href="{% url "happy_cherries:delete_post_movie" movie.id %}" 
-                        class="badge text-bg-danger text-decoration-none" 
-                        style="position: absolute; top: 10px; right: 10px; font-size: 12px;">
-                            Delete
-                        </a>
-                                
-
                         <img src="{{ movie.poster_path }}" class="card-img-top" alt="poster_image">
                         <div class="card-body d-flex flex-column">
                             <h5 class="card-title">
@@ -52,11 +44,16 @@
                                 {% endfor %}
                             </div>
                         </div>
+                    </a>
+                    <a href="{% url "happy_cherries:delete_post_movie" movie.id %}" 
+                            class="badge text-bg-danger text-decoration-none" 
+                            style="position: absolute; top: 10px; right: 10px; font-size: 12px;">
+                                Delete
+                    </a>
                     </div>
-                </a>
             </div>
         {% empty %}
-            <p>No movies added yet</p>
+            <p>No movies have been added yet</p>
         {% endfor %}
     </div>
 </div>  

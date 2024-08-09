@@ -49,15 +49,25 @@ def movies(request):
     # Retrieve only the objects from database whose owner attribute matches the current user.
     movies = Movie.objects.filter(owner=request.user).order_by('date_added')
     
+    # This will take all the movies for each specific owner. 
     for movie in movies:
         # Gets all the reviews per movie
-        reviews = movie.review_set.all()
+        # The problem is it each movie is saved as a seperate ID. Even if the same movie is added. 
+        # But the all movies that are the same have the same "id_movie" --> Can iterate over to get all the Reviews of that specific movie. 
+        identical_movies = Movie.objects.filter(id_movie=movie.id_movie)
+        # Can now get all the reviews for those movies. 
+        all_reviews = []
+        for iden_movie in identical_movies:
+            # This line aggregates all reviews related to the identical movies into a single list. It does not add a list as a single item (append would not work).
+            all_reviews.extend(iden_movie.review_set.all())
+        
+        #reviews = movie.review_set.all()
         # If there are existing reviews for a movie.
-        if reviews:
+        if all_reviews:
             # Iterate over the reviews per movie and calculate the total score
-            total_sum = sum(review.score for review in reviews)
+            total_sum = sum(review.score for review in all_reviews)
             # Directly assign the value to the saved model in the dictionary.
-            movie.avg_score = round(total_sum / len(reviews), None)
+            movie.avg_score = round(total_sum / len(all_reviews), None)
         
         # Convert the text to a list.
         movie.genres = movie.genre.split(',')
@@ -83,25 +93,30 @@ def movie(request, movie_id):
     # Split the saved lists and parse them in the context dictionary
     movie.cast_spl, movie.genre_spl = movie.cast.split(','), movie.genre.split(',')
     
-    # Get the reviews linked to specific movie. 
-    # This is the model object, iterate to get all the reviews which then can access the score attr
-    reviews = movie.review_set.order_by('-date_added')
     # Only show the first 6 six actors if it exceeds limits
     # Because want to acces an object use a dot hore to get acces to the attribute. 
     if len(movie.cast_spl) > 6:
         movie.cast_spl = movie.cast_spl[0:6]
         movie.cast_spl.append('...')
+    
+    # Get the reviews linked to specific movie. 
+    # This is the model object, iterate to get all the reviews which then can access the score attr
+    identical_movies = Movie.objects.filter(id_movie=movie.id_movie)
+    # Can now get all the reviews for those movies. 
+    all_reviews = []
+    for iden_movie in identical_movies:
+        # This line aggregates all reviews related to the identical movies into a single list. It does not add a list as a single item (append would not work).
+        all_reviews.extend(iden_movie.review_set.all())
 
     # If there are existing reviews for a movie.
-    if reviews:
+    if all_reviews:
         # Iterate over the reviews per movie and calculate the total score
-        total_sum = sum(review.score for review in reviews)
+        total_sum = sum(review.score for review in all_reviews)
         # Direclty assign the value to the saved model in the dictionary.
-        movie.avg_score = round(total_sum / len(reviews), None)
-    
+        movie.avg_score = round(total_sum / len(all_reviews), None)
     
     context = {'movie': movie, 
-               'reviews': reviews}
+               'reviews': all_reviews}
     
     return render(request, 'happy_cherries/movie.html', context)
 
@@ -677,6 +692,8 @@ def popular_tvshows(request):
 def add_review_movie(request, movie_id):
     """The user can leave a review about the movie as well as a score to view the movie as."""
     movie = get_object_or_404(Movie, id=movie_id)
+    # Check if the owner of the saved movie is the one wanting to add a comment 
+    check_user(request, movie)
     
     if request.method != 'POST':
         # Creating a blank form
@@ -702,6 +719,9 @@ def edit_review_movie(request, review_id):
     """Want the user to be able to edit the score or review."""
     review = Review.objects.get(id=review_id)
     movie = review.movie
+    
+    # Check if the owner of the movie is the one wanting to edit the comment. 
+    check_user(request, movie)
     
     if request.method != 'POST':
         
