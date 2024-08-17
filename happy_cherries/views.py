@@ -3,8 +3,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.http import Http404
 
-from .models import Movie, Review, TvShow, Note
-from .forms import MovieForm, ReviewForm, TvShowForm, NoteForm
+from .models import Movie, PublicReview, TvShow, Note
+from .forms import ReviewForm, NoteForm
 from .tmdb import fetch_movies, fetch_movies_list, fetch_detailed_movie, fetch_tvshow, fetch_detailed_tvshow, fetch_tvshows_list
 
 import json, requests # This is to send a request to the URLs defined (Not a Django request)
@@ -59,9 +59,9 @@ def movies(request):
         all_reviews = []
         for iden_movie in identical_movies:
             # This line aggregates all reviews related to the identical movies into a single list. It does not add a list as a single item (append would not work).
-            all_reviews.extend(iden_movie.review_set.all())
+            all_reviews.extend(iden_movie.publicreview_set.all())
         
-        #reviews = movie.review_set.all()
+        #reviews = movie.publicreview_set.all()
         # If there are existing reviews for a movie.
         if all_reviews:
             # Iterate over the reviews per movie and calculate the total score
@@ -106,7 +106,7 @@ def movie(request, movie_id):
     all_reviews = []
     for iden_movie in identical_movies:
         # This line aggregates all reviews related to the identical movies into a single list. It does not add a list as a single item (append would not work).
-        all_reviews.extend(iden_movie.review_set.all())
+        all_reviews.extend(iden_movie.publicreview_set.all())
 
     # If there are existing reviews for a movie.
     if all_reviews:
@@ -375,7 +375,7 @@ def tvshows(request):
     # Note is linked to the user so do not need to filter the note by user. 
     
     for tv_show in tv_shows:
-        reviews = tv_show.review_set.all()
+        reviews = tv_show.publicreview_set.all()
         # Firstly check if there are any reviews left behind. 
         if reviews:
             total_sum = sum(review.score for review in reviews)
@@ -415,7 +415,7 @@ def tvshow(request, tvshow_id):
     
     # Get the reviews linked to specific Tv Show. 
     # This is the model object, iterate to get all the reviews which then can access the score attr
-    reviews = tvshow.review_set.order_by('date_added')
+    reviews = tvshow.publicreview_set.order_by('date_added')
     
     tvshow.cast_spl, tvshow.genres_spl = tvshow.cast.split(','), tvshow.genre.split(',')
     
@@ -717,7 +717,7 @@ def add_review_movie(request, movie_id):
 @login_required
 def edit_review_movie(request, review_id):
     """Want the user to be able to edit the score or review."""
-    review = Review.objects.get(id=review_id)
+    review = PublicReview.objects.get(id=review_id)
     movie = review.movie
     
     # Check if the owner of the movie is the one wanting to edit the comment. 
@@ -765,7 +765,7 @@ def add_review_tvshow(request, tvshow_id):
 @login_required
 def edit_review_tvshow(request, review_id):
     """Want the user to be able to edit the score or review."""
-    review = Review.objects.get(id=review_id)
+    review = PublicReview.objects.get(id=review_id)
     tvshow = review.tvshow
     
     if request.method != 'POST':

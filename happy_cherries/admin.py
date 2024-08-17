@@ -1,8 +1,8 @@
 from django.contrib import admin
 
 # Register your models here.
-from .models import Movie, Review, TvShow
+from .models import Movie, PublicReview, TvShow
 
 admin.site.register(Movie)
-admin.site.register(Review)
 admin.site.register(TvShow)
+admin.site.register(PublicReview)

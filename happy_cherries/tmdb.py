@@ -115,7 +115,7 @@ def fetch_tvshow(headers, url_tvshow, search, url_poster):
             'id': sq['id'],
             'poster': url_poster.format(sq['poster_path']),
             'genre_ids': sq['genre_ids'],
-            'name': sq['name'],
+            'title': sq['name'],
             'first_air_date': sq['first_air_date'],
         }
         
@@ -136,7 +136,7 @@ def fetch_tvshows_list(headers, url, url_poster):
         tvshow = {
             "id": tvshow['id'],
             "poster": url_poster.format(tvshow['poster_path']),
-            "name": tvshow['name'],
+            "title": tvshow['name'],
             "genre_ids": tvshow['genre_ids'],
             "first_air_date": tvshow['first_air_date']
         }
@@ -174,7 +174,7 @@ def fetch_detailed_tvshow(headers, tvshow_id, url_tvshow, url_cast, url_poster):
     # Save all the necassary information in a dictionary. 
     tvshow_info = {
         'id': response['id'],
-        'name': response['name'],
+        'title': response['name'],
         'first_air_date': response['first_air_date'],
         'last_air_date': response['last_air_date'],
         'poster_path': url_poster.format(response['poster_path']),
