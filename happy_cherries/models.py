@@ -101,13 +101,35 @@ class ExtendedReview(models.Model):
         ('Medium', 'Medium'),
         ('High', 'High'),
     )
+    REWATCH_CHOICES = (
+        ('Very Low', 'Very Low'),
+        ('Low', 'Low'),
+        ('Medium', 'Medium'),
+        ('High', 'High'),
+        ('Very High', 'Very High'),
+    )
+    
+    # One of the 2 will always be blank/empty
+    movie = models.ForeignKey(Movie, on_delete=models.CASCADE, blank=True, null=True)  # Can have the option to have it blank so can choose between Tvshow or Movie
+    tvshow = models.ForeignKey(TvShow, on_delete=models.CASCADE, blank=True, null=True)
 
-    status = models.CharField(choices=STATUS_CHOICES, max_length=3)
+    status = models.CharField(choices=STATUS_CHOICES, max_length=13)
     episodes_watched = models.IntegerField()
     your_score = models.IntegerField(choices=SCORE_CHOICES, default=5)
-    sart_date = 
-    finish_date =
-    priority = models.CharField(choices=PRIORITY_CHOICES)
+    
+    start_date = models.DateField(null=True, blank=True)
+    start_date_unknown = models.BooleanField(default=False)
+    
+    finish_date = models.DateField(null=True, blank=True)
+    finish_date_unknown = models.BooleanField(default=False)
+    
+    priority = models.CharField(choices=PRIORITY_CHOICES, max_length=6)
     total_times_rewatched = models.IntegerField(default=0)
-    rewatch_value = models.CharField()
+    rewatch_value = models.CharField(choices=REWATCH_CHOICES, max_length=9)
+    comment = models.TextField()
+    
+    def __str__(self):
+        """Return a string representation of the extended review."""
+        return f"Review for {self.id} with score {self.your_score}"
+        
     
