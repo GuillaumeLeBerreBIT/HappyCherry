@@ -74,4 +74,40 @@ class Note(BaseModel):
     def __str__(self):
         
         return f"{self.note[:50]} ..." if self.note > 50 else self.note
+
+class ExtendedReview(models.Model):
+    """The user can leave an exteded review for a TvShow/Movie"""
+    STATUS_CHOICES = (
+        ('Watching', 'Watching'),
+        ('Completed', 'Completed'),
+        ('On-hold', 'On-hold'),
+        ('Dropped', 'Dropped'),
+        ('Plan to watch', 'Plan to watch'),
+    )
+    SCORE_CHOICES = (
+        (1, 'Appalling'),
+        (2, 'Horrible'),
+        (3, 'Very bad'),
+        (4, 'Bad'),
+        (5, 'Average'),
+        (6, 'Fine'),
+        (7, 'Good'),
+        (8, 'Very Good'),
+        (9, 'Great'),
+        (10, 'Masterpiece'),
+    )
+    PRIORITY_CHOICES = (
+        ('Low', 'Low'),
+        ('Medium', 'Medium'),
+        ('High', 'High'),
+    )
+
+    status = models.CharField(choices=STATUS_CHOICES, max_length=3)
+    episodes_watched = models.IntegerField()
+    your_score = models.IntegerField(choices=SCORE_CHOICES, default=5)
+    sart_date = 
+    finish_date =
+    priority = models.CharField(choices=PRIORITY_CHOICES)
+    total_times_rewatched = models.IntegerField(default=0)
+    rewatch_value = models.CharField()
     
