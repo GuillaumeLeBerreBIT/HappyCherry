@@ -1,5 +1,5 @@
 from django import forms 
-from .models import Movie, PublicReview, TvShow, Note
+from .models import Movie, PublicReview, TvShow, Note, ExtendedReview
 
 class MovieForm(forms.ModelForm):
     class Meta():
@@ -20,6 +20,13 @@ class ReviewForm(forms.ModelForm):
     class Meta():
         model = PublicReview
         fields = ['score', 'review']
+        
+class ExtendedReviewForm(forms.ModelForm):
+    class Meta():
+        model = ExtendedReview
+        fields = ['status', 'episodes_watched', 'your_score', 'start_date', 
+                  'start_date_unknown', 'finish_date', 'priority', 'total_times_rewatched',
+                  'rewatch_value', 'comment']
         
 class NoteForm(forms.ModelForm):
     class Meta: 

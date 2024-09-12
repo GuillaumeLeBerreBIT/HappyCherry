@@ -85,16 +85,16 @@ class ExtendedReview(models.Model):
         ('Plan to watch', 'Plan to watch'),
     )
     SCORE_CHOICES = (
-        (1, 'Appalling'),
-        (2, 'Horrible'),
-        (3, 'Very bad'),
-        (4, 'Bad'),
-        (5, 'Average'),
-        (6, 'Fine'),
-        (7, 'Good'),
-        (8, 'Very Good'),
-        (9, 'Great'),
-        (10, 'Masterpiece'),
+        (1, 'Appalling (1)'),
+        (2, 'Horrible (2)'),
+        (3, 'Very bad (3)'),
+        (4, 'Bad (4)'),
+        (5, 'Average (5)'),
+        (6, 'Fine (6)'),
+        (7, 'Good (7)'),
+        (8, 'Very Good (8)'),
+        (9, 'Great (9)'),
+        (10, 'Masterpiece (10)'),
     )
     PRIORITY_CHOICES = (
         ('Low', 'Low'),
