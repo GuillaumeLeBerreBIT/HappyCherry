@@ -12,7 +12,7 @@
         {% for movie in movies %}
         <!-- Create the cards to contain the content -->
             <div class="col mb-2">
-                <div class="col mb-2 card h-100" style="max-width: 220px;">
+                <div class="col mb-2 card h-100 d-flex flex-column" style="max-width: 220px;">
                     <!--Remove the blue underline from the link as well as give it the same text color as original-->
                     <a href="{% url 'happy_cherries:movie' movie.id %}" class="text-decoration-none text-reset">
                         {% if movie.avg_score %}
@@ -37,20 +37,18 @@
                             </p>
                         </div>
                         <!--Set the margin top auto-->
-                        <div class="mt-auto">
-                            <div class="card-footer">
+                        <div class="mt-auto card-footer">
                                 {% for genre in movie.genres %}
                                     <span class="badge rounded-pill text-bg-dark">{{ genre }}</span>
                                 {% endfor %}
-                            </div>
                         </div>
                     </a>
                     <a href="{% url "happy_cherries:delete_post_movie" movie.id %}" 
                             class="badge text-bg-danger text-decoration-none" 
                             style="position: absolute; top: 10px; right: 10px; font-size: 12px;">
-                                Delete
+                        Delete
                     </a>
-                    </div>
+                </div>
             </div>
         {% empty %}
             <p>No movies have been added yet</p>
