@@ -9,9 +9,9 @@ from .tmdb import fetch_movies, fetch_movies_list, fetch_detailed_movie, fetch_t
 
 import json, requests # This is to send a request to the URLs defined (Not a Django request)
 
-def check_user(request, film):
-    """Check if the logged in user is linked to the saved movie"""
-    if request.user != film.owner:
+def check_user(request, media):
+    """Check if the logged in user is linked to the saved movie/show"""
+    if request.user != media.owner:
         raise Http404
 
 # The welcome page. 
@@ -130,7 +130,7 @@ def movie(request, movie_id):
     return render(request, 'happy_cherries/movie.html', context)
 
 @login_required
-def delete_post_movie(request, movie_id):
+def delete_movie(request, movie_id):
     """Deleting a saved Movie from the list."""
     # Get the requested movie to delete.
     movie = get_object_or_404(Movie, id = movie_id)
@@ -493,6 +493,25 @@ def edit_note_tvshow(request, note_id):
         
     context = {'form': form, 'note': note, 'tvshow': tvshow}
     return render(request, 'happy_cherries/edit_note_tvshow.html', context)
+
+@login_required
+def delete_tvshow(request, tvshow_id):
+    """Makes it so can delete the TvShow from your list."""
+    tvshow = get_object_or_404(TvShow, id = tvshow_id)  #Get the TvShow based on the ID parsed in the URL
+    
+    check_user(request, tvshow) #Check user
+    
+    context = {'tvshow': tvshow}
+    
+    if request.method != 'POST':    # If it isnt POST render delete show page
+        
+        return render(request, 'happy_cherries/delete_show.html', context)
+    
+    elif request.method == 'POST':  #If a POST then delete the show
+        
+        tvshow.delete()
+        
+        return redirect('happy_cherries:tvshows')
 
 def tvshow_search(request):
     """

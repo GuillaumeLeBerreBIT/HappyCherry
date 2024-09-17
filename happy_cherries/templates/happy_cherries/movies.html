@@ -27,7 +27,7 @@
                                 </span>
                             {% endif %}
                         {% endif %}
-                        <form method="post" action="{% url 'happy_cherries:delete_post_movie' movie.id %}" style="position: absolute; top: 10px; right: 10px;">
+                        <form method="post" action="{% url 'happy_cherries:delete_movie' movie.id %}" style="position: absolute; top: 10px; right: 10px;">
                             {% csrf_token %}
                             <button type="submit" class="btn btn-danger btm-sm rounded-pill fw-bold" style="font-size: 12px;">
                                 X

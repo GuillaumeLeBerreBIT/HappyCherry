@@ -16,7 +16,7 @@ urlpatterns = [
     # Add a review to a movie. 
     path('movies/<int:movie_id>/add_review/', views.add_review_movie, name='add_review_movie'),
     # To delete a movie from the user list. 
-    path('movies/<int:movie_id>/delete_post/', views.delete_post_movie, name='delete_post_movie'),
+    path('movies/<int:movie_id>/delete_movie/', views.delete_movie, name='delete_movie'),
     # Edit a review given to a Movie
     path('movies/<int:review_id>/edit_review/', views.edit_review_movie, name='edit_review_movie'),
     # Let the user create an extended review. 
@@ -38,6 +38,8 @@ urlpatterns = [
     path('tvshows/', views.tvshows, name='tvshows'),
     # Page for showing all the tvshows added to your list.
     path('tvshows/<int:tvshow_id>/', views.tvshow, name='tvshow'),
+    
+    path('movies/<int:tvshow_id>/delete_tvshow/', views.delete_tvshow, name='delete_tvshow'),
     # Page for showing all the tvshows added to your list.
     path('tvshows/<int:tvshow_id>/add_note_tvshow/', views.add_note_tvshow, name='add_note_tvshow'),
     # Page for showing all the tvshows added to your list.
