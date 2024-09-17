@@ -23,6 +23,7 @@ class CommonContent(BaseModel):
     overview = models.TextField()
     cast = models.TextField()
     genre = models.CharField(max_length=300)
+    tagline = models.CharField(max_length=300)
     
     def __str__(self):
         """Return a string representation of the model"""
@@ -40,7 +41,6 @@ class Movie(CommonContent):
     release_date = models.DateField()
     runtime = models.IntegerField(default=0)
     status = models.CharField(max_length=50)
-    tagline = models.CharField(max_length=300)
     
 class TvShow(CommonContent):
     """The repersenation of all the details of a TvSow"""
@@ -48,7 +48,7 @@ class TvShow(CommonContent):
     id_tvshow = models.IntegerField()
     first_air_date = models.DateField(null=True)
     last_air_date = models.DateField(null=True)
-    next_episode_to_air = models.DateField(null=True)
+    next_episode_to_air = models.DateField(null=True, blank=True)
     number_of_episodes = models.IntegerField()
     number_of_seasons = models.IntegerField()
     

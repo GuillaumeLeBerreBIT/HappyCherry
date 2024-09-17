@@ -2,7 +2,7 @@
 
 {% block page_header %}
     <h2 class="display-5 fw-bold text-body-emphasis mb-0 text-center">Movies</h2>
-    <a class="btn btn-dark rounded-pill px-3" href="{% url 'happy_cherries:movie_search' %}">Movie search</a>
+    <a class="btn btn-dark rounded-pill px-3" href="{% url 'happy_cherries:movie_search' %}">Movie Search</a>
 {% endblock page_header %}
 
 {% block content %}
@@ -10,11 +10,11 @@
     <!--When on xsmall screen only one col, small 2 col, medium 3 columns, ... -->
     <div class="row row-cols-auto">
         {% for movie in movies %}
-        <!-- Create the cards to contain the content -->
             <div class="col mb-2">
-                <div class="col mb-2 card h-100 d-flex flex-column" style="max-width: 220px;">
-                    <!--Remove the blue underline from the link as well as give it the same text color as original-->
-                    <a href="{% url 'happy_cherries:movie' movie.id %}" class="text-decoration-none text-reset">
+                <!--Remove the blue underline from the link as well as give it the same text color as original-->
+                <!--Using the PK automatically assigned by Django ORM to get the saved TvShow from the database -->
+                <a href="{% url 'happy_cherries:movie' movie.id %}" class="text-decoration-none text-reset">
+                    <div class="card h-100" style="max-width: 220px;">
                         {% if movie.avg_score %}
                             {% if movie.avg_score < 50 %}
                                 <!--Can sett style > position: absolute to fit the badge on top of the image.-->
@@ -37,21 +37,18 @@
                             </p>
                         </div>
                         <!--Set the margin top auto-->
-                        <div class="mt-auto card-footer">
+                        <div class="mt-auto">
+                            <div class="card-footer">
                                 {% for genre in movie.genres %}
                                     <span class="badge rounded-pill text-bg-dark">{{ genre }}</span>
                                 {% endfor %}
+                            </div>
                         </div>
-                    </a>
-                    <a href="{% url "happy_cherries:delete_post_movie" movie.id %}" 
-                            class="badge text-bg-danger text-decoration-none" 
-                            style="position: absolute; top: 10px; right: 10px; font-size: 12px;">
-                        Delete
-                    </a>
-                </div>
+                    </div>
+                </a>
             </div>
         {% empty %}
-            <p>No movies have been added yet</p>
+            <p>No TvShows added yet.</p>
         {% endfor %}
     </div>
 </div>  

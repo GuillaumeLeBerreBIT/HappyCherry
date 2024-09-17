@@ -170,7 +170,7 @@ def fetch_detailed_tvshow(headers, tvshow_id, url_tvshow, url_cast, url_poster):
         actors += f"{c['name']},"
     # Remove the last ',' from the string
     actors = actors[:-1]
-    print(actors)
+    print(response)
     # Save all the necassary information in a dictionary. 
     tvshow_info = {
         'id': response['id'],
@@ -178,13 +178,18 @@ def fetch_detailed_tvshow(headers, tvshow_id, url_tvshow, url_cast, url_poster):
         'first_air_date': response['first_air_date'],
         'last_air_date': response['last_air_date'],
         'poster_path': url_poster.format(response['poster_path']),
-        'next_episode_to_air': response['next_episode_to_air']['air_date'],
         'number_of_seasons': response['number_of_seasons'],
         'number_of_episodes': response['number_of_episodes'],
         'overview': response['overview'],
         'genres': genres,
         'cast': actors,
+        'tagline': response['tagline'],
         #'seasons':response['seasons']
     }
+    
+    if response['next_episode_to_air']:
+        tvshow_info['next_episode_to_air'] = response['next_episode_to_air']['air_date']
+    else:
+        tvshow_info['next_episode_to_air'] = None
     
     return tvshow_info

@@ -524,7 +524,7 @@ def tvshow_search(request):
         
         tvshow_list = fetch_tvshows_list(headers, url_trending_tvshows, url_poster)
         
-        context = {'tvshow_list': tvshow_list}
+        context = {'tvshow_list': tvshow_list,}
         
         return render(request, 'happy_cherries/search_tvshow.html', context)
         
@@ -568,12 +568,12 @@ def requested_tvshow(request, tvshow_id):
             saved_tvshows = TvShow.objects.filter(owner=request.user)
             
             # Saved all the titles in a list 
-            names = []
+            titles = []
             for saved_show in saved_tvshows:
-                names.append(saved_show.name)
+                titles.append(saved_show.title)
             
             # Then pass the variable to tell wether the movie is saved or not. 
-            if tvshow['name'] in names: saved = True
+            if tvshow['title'] in titles: saved = True
             else: saved  = False
             
         # When nog logged in it is not saved and can't be saved.    
@@ -590,18 +590,19 @@ def requested_tvshow(request, tvshow_id):
             
         # Create an instance of the model to save all the information directly into the database. 
         # No need to create Form since have the values predefined
-        s = TvShow(name=tvshow['name'],
+        s = TvShow(title=tvshow['title'],
                    owner=request.user,
                    id_tvshow=tvshow['id'],
                    poster_path=tvshow['poster_path'],
                    overview=tvshow['overview'],
                    first_air_date=tvshow['first_air_date'],
                    last_air_date=tvshow['last_air_date'],
-                   next_episode_to_air=tvshow['next_episode_to_air']['air_date'],
+                   next_episode_to_air=tvshow['next_episode_to_air'],
                    number_of_episodes=tvshow['number_of_episodes'],
                    number_of_seasons=tvshow['number_of_seasons'],
                    cast=tvshow['cast'],
-                   genre=tvshow['genres']
+                   genre=tvshow['genres'],
+                   tagline=tvshow['tagline']
                    )
         
         s.save()
