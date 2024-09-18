@@ -1,0 +1,18 @@
+{% extends 'happy_cherries/base.html' %}
+
+{% block page_header %}
+
+<h2>Extended Review</h2>
+
+{% endblock page_header %}
+
+{% block content %}
+
+
+<form action="{% url "happy_cherries:create_extended_review_tvshow" tvshow.id %}" method="post">
+    {% csrf_token %}
+    {{ form.as_p}}
+    <button type="submit">Save Personal Review</button>
+</form>
+
+{% endblock content %}

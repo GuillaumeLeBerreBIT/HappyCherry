@@ -39,7 +39,7 @@ urlpatterns = [
     # Page for showing all the tvshows added to your list.
     path('tvshows/<int:tvshow_id>/', views.tvshow, name='tvshow'),
     
-    path('movies/<int:tvshow_id>/delete_tvshow/', views.delete_tvshow, name='delete_tvshow'),
+    path('tvshows/<int:tvshow_id>/delete_tvshow/', views.delete_tvshow, name='delete_tvshow'),
     # Page for showing all the tvshows added to your list.
     path('tvshows/<int:tvshow_id>/add_note_tvshow/', views.add_note_tvshow, name='add_note_tvshow'),
     # Page for showing all the tvshows added to your list.
@@ -52,6 +52,8 @@ urlpatterns = [
     path('tvshows/<int:tvshow_id>/add_review/', views.add_review_tvshow, name='add_review_tvshow'),
     # Edit a review given to a TvShow
     path('tvshows/<int:review_id>/edit_review/', views.edit_review_tvshow, name='edit_review_tvshow'),
+    # Let the user create an extended review. 
+    path('tvshows/<int:tvshow_id>/add_extended_review/', views.create_extended_review_tvshow, name='create_extended_review_tvshow'),
     # View all the Top rated movies
     path('tvshows/top_rated/', views.top_rated_tvshows, name='top_rated_tvshows'),
     # Show all upcoming movies

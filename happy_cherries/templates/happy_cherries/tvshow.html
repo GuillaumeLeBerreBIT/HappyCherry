@@ -62,6 +62,30 @@
                             {% endfor %}
                         </p>
                     </div>
+                    <div class="col-md-12 position-relative" style="margin-top: 20px;">
+                        <a class="btn btn-primary fw-bold position-absolute end-0" href="{% url "happy_cherries:create_extended_review_tvshow" tvshow.id %}">
+                            Personal Review
+                        </a>
+                    </div>
+                    <div class="col-md-2">
+                    </div>
+                    <div class="col-md-4 text-start" style="margin-top: 70px;">
+                        <p>Status: {{ extended_review.status }}</p>
+                        <p>Episodes watched: {{ extended_review.episodes_watched }}</p>
+                        <p>Start date watching: {{ extended_review.start_date }}</p>
+                        <p>Start date unknown: {{ extended_review.start_date_unknown }}</p>
+                        <p>Your score: {{ extended_review.your_score }}</p>
+                        <p>Finish date: {{ extended_review.finish_date }}</p>
+                        <p>Finish date unknown: {{ extended_review.finish_date_unknown }}</p>
+                    </div>
+                    <div class="col-md-4 text-start" style="margin-top: 70px;">
+                        </p>Priority: {{ extended_review.priority }}</p>
+                        </p>Times Rewatched: {{ extended_review.total_times_rewatched }}</p>
+                        </p>Rewatch value: {{ extended_review.rewatch_value }}</p>
+                        </p>Extensive comment: {{ extended_review.comment }}</p>
+                    </div>
+                    <div class="col-md-2">
+                    </div>
                 </div>
             </div>
         </div>
