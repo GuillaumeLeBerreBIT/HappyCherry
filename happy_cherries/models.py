@@ -75,7 +75,7 @@ class Note(BaseModel):
         
         return f"{self.note[:50]} ..." if self.note > 50 else self.note
 
-class ExtendedReview(models.Model):
+class ExtendedReview(BaseModel):
     """The user can leave an exteded review for a TvShow/Movie"""
     STATUS_CHOICES = (
         ('Watching', 'Watching'),
@@ -108,28 +108,45 @@ class ExtendedReview(models.Model):
         ('High', 'High'),
         ('Very High', 'Very High'),
     )
-    
-    # One of the 2 will always be blank/empty
-    movie = models.ForeignKey(Movie, on_delete=models.CASCADE, blank=True, null=True)  # Can have the option to have it blank so can choose between Tvshow or Movie
-    tvshow = models.ForeignKey(TvShow, on_delete=models.CASCADE, blank=True, null=True)
 
     status = models.CharField(choices=STATUS_CHOICES, max_length=13)
-    episodes_watched = models.IntegerField()
     your_score = models.IntegerField(choices=SCORE_CHOICES, default=5)
-    
-    start_date = models.DateField(null=True, blank=True)
-    start_date_unknown = models.BooleanField(default=False)
+    priority = models.CharField(choices=PRIORITY_CHOICES, max_length=6)
+    rewatch_value = models.CharField(choices=REWATCH_CHOICES, max_length=9)
     
     finish_date = models.DateField(null=True, blank=True)
     finish_date_unknown = models.BooleanField(default=False)
     
-    priority = models.CharField(choices=PRIORITY_CHOICES, max_length=6)
     total_times_rewatched = models.IntegerField(default=0)
-    rewatch_value = models.CharField(choices=REWATCH_CHOICES, max_length=9)
     comment = models.TextField()
     
     def __str__(self):
         """Return a string representation of the extended review."""
         return f"Review for {self.id} with score {self.your_score}"
-        
     
+    class Meta:
+        # Make it so it will be the base model
+        abstract = True 
+        
+class ExtendedMovieReview(ExtendedReview):
+    
+    movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
+    
+    first_time_watched = models.DateField(null=True, blank=True)
+    last_time_watched = models.DateField(null=True, blank=True)
+    
+    
+    def __str__(self):
+        return f"The review for the Movie: {self.movie}"
+    
+
+class ExtendedTvShowReview(ExtendedReview):
+    
+    tvshow = models.ForeignKey(TvShow, on_delete=models.CASCADE)
+    episodes_watched = models.IntegerField()
+    
+    start_date = models.DateField(null=True, blank=True)
+    start_date_unknown = models.BooleanField(default=False)
+    
+    def __str__(self):
+        return f"The review for the TvShow: {self.tvshow}"

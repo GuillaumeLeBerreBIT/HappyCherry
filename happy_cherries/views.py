@@ -3,8 +3,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.http import Http404
 
-from .models import Movie, PublicReview, TvShow, Note, ExtendedReview
-from .forms import ReviewForm, NoteForm, ExtendedReviewForm
+from .models import Movie, PublicReview, TvShow, Note, ExtendedTvShowReview, ExtendedMovieReview
+from .forms import ReviewForm, NoteForm, ExtendedMovieReviewForm, ExtendedTvShowReviewForm
 from .tmdb import fetch_movies, fetch_movies_list, fetch_detailed_movie, fetch_tvshow, fetch_detailed_tvshow, fetch_tvshows_list
 
 import json, requests # This is to send a request to the URLs defined (Not a Django request)
@@ -85,8 +85,7 @@ def movie(request, movie_id):
     """
     # Get the requested movie.   
     movie = Movie.objects.get(id=movie_id)
-    ext_review = movie.extendedreview_set.first()
-    
+    ext_review = movie.extendedmoviereview_set.first()
     # Make sure the saved movie belongs to the user
     if movie.owner != request.user:
         raise Http404   # Returning the standard error.
@@ -103,26 +102,22 @@ def movie(request, movie_id):
     # Get the reviews linked to specific movie. 
     # This is the model object, iterate to get all the reviews which then can access the score attr
     identical_movies = Movie.objects.filter(id_movie=movie.id_movie)
+    
     # Can now get all the reviews for those movies. 
     all_reviews = []
     all_extended_reviews = []
     for iden_movie in identical_movies:
         # This line aggregates all reviews related to the identical movies into a single list. It does not add a list as a single item (append would not work).
         all_reviews.extend(iden_movie.publicreview_set.all())
-        all_extended_reviews.extend(iden_movie.extendedreview_set.all())
+        all_extended_reviews.extend(iden_movie.extendedmoviereview_set.all())
 
-    print(all_extended_reviews)
     # If there are existing reviews for a movie.
     if all_reviews:
         # Iterate over the reviews per movie and calculate the total score
         total_sum = sum(review.score for review in all_reviews)
         # Direclty assign the value to the saved model in the dictionary.
         movie.avg_score = round(total_sum / len(all_reviews), None)
-        
-    if all_extended_reviews:
-        total_sum = sum(extendedreview.score for extendedreview in all_reviews)
-        movie.avg_score_extended = round(total_sum / len(all_extended_reviews), None)
-    
+
     context = {'movie': movie, 
                'reviews': all_reviews,
                'extended_review': ext_review}
@@ -414,6 +409,7 @@ def tvshow(request, tvshow_id):
     """
     # Use the TvShow Primary key to get acces. 
     tvshow = TvShow.objects.get(id=tvshow_id)
+    ext_review = tvshow.extendedtvshowreview_set.first()
     
     # Make sure the saved movie belongs to the user
     if tvshow.owner != request.user:
@@ -441,6 +437,7 @@ def tvshow(request, tvshow_id):
         tvshow.avg_score = round(total_sum/len(reviews), None)    
     
     context = {'tvshow': tvshow, 
+               'extended_review': ext_review,
                'reviews': reviews, 
                'note': note}
     
@@ -822,11 +819,11 @@ def create_extended_review_movie(request, movie_id):
     
     if request.method != 'POST':
         # A blank form
-        form = ExtendedReviewForm()
+        form = ExtendedMovieReviewForm()
         
     else: 
         
-        form = ExtendedReviewForm(data=request.POST)
+        form = ExtendedMovieReviewForm(data=request.POST)
         
         if form.is_valid():
             # Do not save it directly
@@ -841,3 +838,32 @@ def create_extended_review_movie(request, movie_id):
     
     context = {'form': form,'movie': movie}
     return render(request, 'happy_cherries/movie_extendedreview.html', context)
+
+@login_required
+def create_extended_review_tvshow(request, tvshow_id):
+    
+    tvshow = get_object_or_404(TvShow, id=tvshow_id)
+    
+    check_user(request, tvshow)
+    
+    if request.method != 'POST':
+        
+        form = ExtendedTvShowReviewForm()
+        
+    elif request.method == 'POST':
+        
+        form = ExtendedTvShowReviewForm(data=request.POST)
+        
+        if form.is_valid():
+            
+            extended_review = form.save(commit=False)
+            # Set the Movie as User to the object
+            extended_review.tvshow = tvshow
+            extended_review.owner = request.user
+            
+            extended_review.save()
+            
+            return redirect('happy_cherries:tvshow', tvshow_id=tvshow.id)
+    
+    context = {'form': form, 'tvshow': tvshow}
+    return render(request, 'happy_cherries/tvshow_extendedreview.html', context)
