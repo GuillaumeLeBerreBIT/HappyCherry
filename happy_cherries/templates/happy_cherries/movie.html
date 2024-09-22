@@ -90,6 +90,7 @@
                                 <!--ms-auto pushes it to the far right within the flex container, ensuring it aligns horizontally with the "User" title.-->
                                 {% if request.user == review.movie.owner %}
                                 <a class="btn btn-warning fw-bold ms-auto" href="{% url 'happy_cherries:edit_review_movie' review.id %}">Edit</a>
+                                <a class="btn btn-danger fw-bold ms-auto" href="{% url 'happy_cherries:delete_review_movie' review.id %}">Delete</a>
                                 {% endif %}
                             </div>
                             <div class="card-body">

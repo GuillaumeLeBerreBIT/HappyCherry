@@ -763,6 +763,27 @@ def edit_review_movie(request, review_id):
     context = {'form': form, 'movie': movie, 'review': review}
     return render(request, 'happy_cherries/edit_review_movie.html', context)
 
+@login_required
+def delete_review_movie(request, review_id):
+    """Delete the review of a Movie."""
+    
+    review = get_object_or_404(PublicReview, id=review_id)
+    # Get the movie object linked to it. 
+    movie = review.movie
+    
+    context = {'review': review, 'movie': movie}
+    
+    if request.method != 'POST':
+        
+        return render(request, 'happy_cherries/delete_review.html', context)
+    
+    elif request.method == 'POST':
+        
+        review.delete()
+        
+        return redirect('happy_cherries:movie', movie_id=movie.id)
+    
+
 # REVIEW - TVSHOW
 @login_required
 def add_review_tvshow(request, tvshow_id):

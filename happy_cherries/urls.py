@@ -19,6 +19,8 @@ urlpatterns = [
     path('movies/<int:movie_id>/delete_movie/', views.delete_movie, name='delete_movie'),
     # Edit a review given to a Movie
     path('movies/<int:review_id>/edit_review/', views.edit_review_movie, name='edit_review_movie'),
+    # Delete a review of a movie. 
+    path('movies/<int:review_id>/delete_review/', views.delete_review_movie, name='delete_review_movie'),
     # Let the user create an extended review. 
     path('movies/<int:movie_id>/add_extended_review/', views.create_extended_review_movie, name='create_extended_review_movie'),
     # Search for a specific movie
