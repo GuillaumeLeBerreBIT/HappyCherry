@@ -1,4 +1,5 @@
 from django import forms 
+from django.forms.widgets import SelectDateWidget
 from .models import Movie, PublicReview, TvShow, Note, ExtendedMovieReview, ExtendedTvShowReview
 
 class MovieForm(forms.ModelForm):
@@ -27,6 +28,11 @@ class ExtendedMovieReviewForm(forms.ModelForm):
         fields = ['status', 'first_time_watched', 'last_time_watched', 'your_score', 
                   'finish_date', 'finish_date_unknown', 'priority', 'total_times_rewatched',
                   'rewatch_value', 'comment']
+        widgets = {
+            'first_time_watched': SelectDateWidget(years=range(1980, 2030)),  # Example year range
+            'last_time_watched': SelectDateWidget(years=range(1980, 2030)),
+            'finish_date': SelectDateWidget(years=range(1980, 2030)),
+        }
 
 class ExtendedTvShowReviewForm(forms.ModelForm):
     class Meta():

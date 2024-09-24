@@ -20,7 +20,7 @@ urlpatterns = [
     # Edit a review given to a Movie
     path('movies/<int:review_id>/edit_review/', views.edit_review_movie, name='edit_review_movie'),
     # Delete a review of a movie. 
-    path('movies/<int:review_id>/delete_review/', views.delete_review_movie, name='delete_review_movie'),
+    path('movies/<int:review_id>/delete_review_movie/', views.delete_review_movie, name='delete_review_movie'),
     # Let the user create an extended review. 
     path('movies/<int:movie_id>/add_extended_review/', views.create_extended_review_movie, name='create_extended_review_movie'),
     # Search for a specific movie
@@ -42,6 +42,8 @@ urlpatterns = [
     path('tvshows/<int:tvshow_id>/', views.tvshow, name='tvshow'),
     
     path('tvshows/<int:tvshow_id>/delete_tvshow/', views.delete_tvshow, name='delete_tvshow'),
+    # Delete a review of a TvShow. 
+    path('tvshows/<int:review_id>/delete_review_tvshow/', views.delete_review_tvshow, name='delete_review_tvshow'),
     # Page for showing all the tvshows added to your list.
     path('tvshows/<int:tvshow_id>/add_note_tvshow/', views.add_note_tvshow, name='add_note_tvshow'),
     # Page for showing all the tvshows added to your list.

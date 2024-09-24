@@ -73,7 +73,7 @@ class Note(BaseModel):
     
     def __str__(self):
         
-        return f"{self.note[:50]} ..." if self.note > 50 else self.note
+        return f"{self.note[:30]} ..." if len(self.note) > 30 else self.note
 
 class ExtendedReview(BaseModel):
     """The user can leave an exteded review for a TvShow/Movie"""

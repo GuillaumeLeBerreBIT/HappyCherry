@@ -442,11 +442,12 @@ def tvshow(request, tvshow_id):
                'note': note}
     
     return render(request, 'happy_cherries/tvshow.html', context)
+    
 
 @login_required
 def add_note_tvshow(request, tvshow_id):
     """The user can leave a Note behind on what episode/season he is currently at."""
-    tvshow = TvShow.objects.get(id=tvshow_id)
+    tvshow = get_object_or_404(TvShow, id=tvshow_id)   
     
     if request.method != 'POST':
         form = NoteForm()
@@ -462,8 +463,11 @@ def add_note_tvshow(request, tvshow_id):
                 existing_note.delete()
             # Do not save it direclty ito the database
             new_note = form.save(commit=False)
-            # Set the primary key of 
+            
+            # Set the primary keys of the Model. 
             new_note.tvshow = tvshow
+            new_note.owner = tvshow.owner   # request.user 
+            
             new_note.save()
             return redirect('happy_cherries:tvshow', tvshow_id = tvshow_id)
         
@@ -771,11 +775,11 @@ def delete_review_movie(request, review_id):
     # Get the movie object linked to it. 
     movie = review.movie
     
-    context = {'review': review, 'movie': movie}
+    context = {'review': review, 'media': movie}
     
     if request.method != 'POST':
         
-        return render(request, 'happy_cherries/delete_review.html', context)
+        return render(request, 'happy_cherries/delete_review_movie.html', context)
     
     elif request.method == 'POST':
         
@@ -808,6 +812,24 @@ def add_review_tvshow(request, tvshow_id):
     
     context = {'form': form, 'tvshow': tvshow}
     return render(request, 'happy_cherries/add_review_tvshow.html', context)
+
+@login_required
+def delete_review_tvshow(request, review_id):
+    """Delete the review for that specific movie."""
+    review = get_object_or_404(PublicReview, id=review_id)
+    tvshow = review.tvshow
+    
+    context = {'review': review, 'tvshow': tvshow}
+    
+    if request.method != 'POST':
+        
+        return render(request, 'happy_cherries/delete_review_tvshow.html', context)
+        
+    elif request.method == 'POST':
+        
+        review.delete()
+        
+        return redirect('happy_cherries:tvshow', tvshow_id=tvshow.id)
 
 @login_required
 def edit_review_tvshow(request, review_id):
