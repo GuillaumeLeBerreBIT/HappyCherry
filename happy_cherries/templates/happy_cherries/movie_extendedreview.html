@@ -1,5 +1,7 @@
 {% extends 'happy_cherries/base.html' %}
 
+{% load django_bootstrap5 %}    <!--Need tag to load Bootstrap Forms-->
+
 {% block page_header %}
 
 <h2>Extended Review</h2>
@@ -9,10 +11,18 @@
 {% block content %}
 
 
-<form action="{% url "happy_cherries:create_extended_review_movie" movie.id %}" method="post">
+<form action="{% url "happy_cherries:create_extended_review_movie" movie.id %}" method="post" class="form">
     {% csrf_token %}
-    {{ form.as_p}}
+    {% bootstrap_form form %}
+    {{ form.media }}
     <button type="submit">Save Extended Review</button>
 </form>
 
+<script>
+    $(function () {
+      $("#id_first_time_watched, #id_last_time_watched, #id_finish_date").datepicker();
+    });
+</script>
+
 {% endblock content %}
+
