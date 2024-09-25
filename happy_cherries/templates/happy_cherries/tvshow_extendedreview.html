@@ -1,5 +1,7 @@
 {% extends 'happy_cherries/base.html' %}
 
+{% load django_bootstrap5 %}
+
 {% block page_header %}
 
 <h2>Extended Review</h2>
@@ -11,8 +13,15 @@
 
 <form action="{% url "happy_cherries:create_extended_review_tvshow" tvshow.id %}" method="post">
     {% csrf_token %}
-    {{ form.as_p}}
+    {% bootstrap_form form %}
+    {{ form.media}}
     <button type="submit">Save Personal Review</button>
 </form>
+
+<script>
+    $(function () {
+      $("#id_start_date, #id_finish_date").datepicker();
+    });
+</script>
 
 {% endblock content %}

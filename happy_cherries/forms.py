@@ -28,12 +28,6 @@ class ExtendedMovieReviewForm(forms.ModelForm):
         fields = ['status', 'first_time_watched', 'last_time_watched', 'your_score', 
                   'finish_date', 'finish_date_unknown', 'priority', 'total_times_rewatched',
                   'rewatch_value', 'comment']
-
-        # widgets = {
-        #     'first_time_watched': forms.DateInput(attrs={'class': 'datepicker', 'autocomplete': 'off'}),
-        #     'last_time_watched': forms.DateInput(attrs={'class': 'datepicker', 'autocomplete': 'off'}),
-        #     'finish_date': forms.DateInput(attrs={'class': 'datepicker', 'autocomplete': 'off'}),
-        # }
         
         # widgets = {
         #     'first_time_watched': SelectDateWidget(years=range(1980, 2030)),  # Example year range
