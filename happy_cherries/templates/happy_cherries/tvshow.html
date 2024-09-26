@@ -24,8 +24,8 @@
                         <img src="{{ tvshow.poster_path }}" class="img-fluid rounded float-start" alt="tvshow_poster">
                     </div>
                     <div class="col-md-1"></div>
-                    <div class="col-md-7 text-start">    
-                        <h1 class="text-center border-bottom border-white my-2">{{ tvshow.title }}</h1>
+                    <div class="col-md-7 text-start mu-2">    
+                        <h1 class="text-center border-bottom border-white my-2 p-2">{{ tvshow.title }}</h1>
                         <div class="d-flex flex-column position-relative mt-3">
                             {% if note %}
                                 <div class="d-flex align-items-center mb-3 w-100">
@@ -39,96 +39,170 @@
                             {% endif %}
                         </div>
                         <!--Display Movie information-->
-                        <div class="container text-start">
-                            <div class="row">
-                                <div class="col-6 col-sm-5"><p><span class="badge text-bg-danger">First Air Date:</span></p></div>
-                                <div class="col-6 col-sm-5"><p><span class="fw-bold">{{ tvshow.first_air_date }}</span></p></div>
-
-                                <!-- Force next columns to break to new line -->
-                                <div class="w-100"></div>
-
-                                <div class="col-6 col-sm-5"><p><span class="badge text-bg-danger">Last Air date:</span></p></div>
-                                <div class="col-6 col-sm-5"><p><span class="fw-bold">{{ tvshow.last_air_date }}</span></p></div>
-
-                                <!-- Force next columns to break to new line -->
-                                <div class="w-100"></div>
-
-                                <div class="col-6 col-sm-5"><p><span class="badge text-bg-danger">Next Episode to Air:</span></p></div>
-                                <div class="col-6 col-sm-5"><p><span class="fw-bold">
-                                    {% if tvshow.next_episode_to_air == None %}
-                                        Finished
-                                    {% else %}
-                                        {{ tvshow.next_episode_to_air }}
-                                    {% endif %}</span></p>
-                                </div>
-
-                                <!-- Force next columns to break to new line -->
-                                <div class="w-100"></div>
-
-                                <div class="col-6 col-sm-5"><p><span class="badge text-bg-danger">Number of episodes:</span></p></div>
-                                <div class="col-6 col-sm-5"><p><span class="fw-bold">{{ tvshow.number_of_episodes }}</span></p></div>
-
-                                <!-- Force next columns to break to new line -->
-                                <div class="w-100"></div>
-                                
-                                <div class="col-6 col-sm-5"><p><span class="badge text-bg-danger">Number of seasons:</span></p></div>
-                                <div class="col-6 col-sm-5"><p><span class="fw-bold">{{ tvshow.number_of_seasons }}</span></p></div>
-                            </div>
+                        <div class="mb-4">
+                            <table class="table">
+                                <tr>
+                                    <td class="bg-dark text-white text-start" style="padding: 10px;">
+                                        <strong>First Air Date</strong>
+                                    </td>
+                                    <td class="bg-dark text-primary text-center" style="padding: 10px;">
+                                        {{ tvshow.first_air_date }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="bg-dark text-white text-start" style="padding: 10px;">
+                                        <strong>Last Air Date</strong>
+                                    </td>
+                                    <td class="bg-dark text-primary text-center" style="padding: 10px;">
+                                        {{ tvshow.last_air_date }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="bg-dark text-white text-start" style="padding: 10px;">
+                                        <strong>Next Episode to Air</strong>
+                                    </td>
+                                    <td class="bg-dark text-primary text-center" style="padding: 10px;">
+                                        {% if tvshow.next_episode_to_air == None %}
+                                            Finished
+                                        {% else %}
+                                            {{ tvshow.next_episode_to_air }}
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="bg-dark text-white text-start" style="padding: 10px;">
+                                        <strong>Number of episodes</strong>
+                                    </td>
+                                    <td class="bg-dark text-primary text-center" style="padding: 10px;">
+                                        {{ tvshow.number_of_episodes }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="bg-dark text-white text-start" style="padding: 10px;">
+                                        <strong>Number of seasons</strong>  
+                                    </td>
+                                    <td class="bg-dark text-primary text-center" style="padding: 10px;">
+                                        {{ tvshow.number_of_seasons }}
+                                    </td>
+                                </tr>
+                            </table>
                         </div>
+                        <p class="fw-bold">Overview</p>
                         <p> {{ tvshow.overview }} </p>
                         <p class="fw-bold">Actors</p>
                         <div class="mt-4">
                             <p>
                                 {% for actor in tvshow.cast_spl %}
-                                    <span class="badge bg-warning text-dark">{{ actor }}</span>
+                                    <span class="badge bg-warning text-dark p-2">{{ actor }}</span>
                                 {% endfor %}
                             </p>
                             <p class="fw-bold">Genres</p>
                             <p>
                                 {% for genre in tvshow.genres_spl %}
-                                    <span class="badge bg-primary text-dark">{{ genre }}</span>
+                                    <span class="badge bg-primary text-dark p-2">{{ genre }}</span>
                                 {% endfor %}
                             </p>
                         </div>
                     </div>
                     <div class="col-md-12 position-relative" style="margin-top: 20px;">
-                        <a class="btn btn-primary fw-bold position-absolute end-0" href="{% url "happy_cherries:create_extended_review_tvshow" tvshow.id %}">
-                            Personal Review
+                        <h2 class="text-center border-top border-white mt-4 p-2">Personal Review</h2>
+                        <a class="btn btn-primary fw-bold position-absolute end-0" style="margin-top: -40px;" href="{% url "happy_cherries:create_extended_review_tvshow" tvshow.id %}">
+                            Personal Review &raquo;
                         </a>
                     </div>
-                    <div class="col-md-2">
+                    <div class="col-md-5 mx-auto">
+                        <table class="table" style="margin-top: 60px;">
+                            <tr>
+                                <td class="bg-dark text-white text-start" style="padding: 10px;">
+                                    <strong>Status</strong>
+                                </td>
+                                <td class="bg-dark text-primary text-center" style="padding: 10px;">
+                                    {{ extended_review.status }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="bg-dark text-white text-start" style="padding: 10px;">
+                                    <strong>Episodes watched</strong>
+                                </td>
+                                <td class="bg-dark text-primary text-center" style="padding: 10px;">
+                                    {{ extended_review.episodes_watched }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="bg-dark text-white text-start" style="padding: 10px;"> 
+                                    <strong>Start date watching</strong>
+                                </td>
+                                <td class="bg-dark text-primary text-center" style="padding: 10px;">
+                                    {{ extended_review.start_date }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="bg-dark text-white text-start" style="padding: 10px;">
+                                    <strong>Start date unknown</strong>
+                                </td>
+                                <td class="bg-dark text-primary text-center" style="padding: 10px;">
+                                    {{ extended_review.start_date_unknown }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="bg-dark text-white text-start" style="padding: 10px;" >
+                                    <strong>Your score</strong>
+                                </td>
+                                <td class="bg-dark text-primary text-center" style="padding: 10px;">
+                                    {{ extended_review.your_score }}
+                                </td>
+                            </tr>
+                        </table>
                     </div>
-                    <div class="col-md-2 text-start" style="margin-top: 70px;">
-                        <p>Status:</p>
-                        <p>Episodes watched:</p>
-                        <p>Start date watching:</p>
-                        <p>Start date unknown:</p>
-                        <p>Your score:</p>
-                        <p>Finish date:</p>
-                        <p>Finish date unknown:</p>
+                    <div class="col-md-5 mx-auto">
+                        <table class="table" style="margin-top: 60px;">
+                            <tr>
+                                <td class="bg-dark text-white text-start" style="padding: 10px;" >
+                                    <strong>Finish date</strong>
+                                </td>
+                                <td class="bg-dark text-primary text-center" style="padding: 10px;">
+                                    {{ extended_review.finish_date }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="bg-dark text-white text-start" style="padding: 10px;" >
+                                    <strong>Finish date unknown</strong>
+                                </td>
+                                <td class="bg-dark text-primary text-center" style="padding: 10px;">
+                                    {{ extended_review.finish_date_unknown }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="bg-dark text-white text-start" style="padding: 10px;" >
+                                    <strong>Priority</strong>
+                                </td>
+                                <td class="bg-dark text-primary text-center" style="padding: 10px;">
+                                    {{ extended_review.priority }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="bg-dark text-white text-start" style="padding: 10px;" >
+                                    <strong>Total times rewatched</strong>
+                                </td>
+                                <td class="bg-dark text-primary text-center" style="padding: 10px;">
+                                    {{ extended_review.total_times_rewatched }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="bg-dark text-white text-start" style="padding: 10px;" >
+                                    <strong>Rewatch value</strong>
+                                </td>
+                                <td class="bg-dark text-primary text-center" style="padding: 10px;">
+                                    {{ extended_review.rewatch_value }}
+                                </td>
+                            </tr>
+                        </table>
                     </div>
-                    <div class="col-md-2 text-start" style="margin-top: 70px;">
-                        <p>{{ extended_review.status }}</p>
-                        <p>{{ extended_review.episodes_watched }}</p>
-                        <p>{{ extended_review.start_date }}</p>
-                        <p>{{ extended_review.start_date_unknown }}</p>
-                        <p>{{ extended_review.your_score }}</p>
-                        <p>{{ extended_review.finish_date }}</p>
-                        <p>{{ extended_review.finish_date_unknown }}</p>
+                    <div class="col-md-5 text-center mt-4 mx-auto">
+                        <strong>Personal comment</strong>
                     </div>
-                    <div class="col-md-2 text-start" style="margin-top: 70px;">
-                        </p>Priority:</p>
-                        </p>Times Rewatched:</p>
-                        </p>Rewatch value:</p>
-                        </p>Extensive comment:</p>
-                    </div>
-                    <div class="col-md-2 text-start" style="margin-top: 70px;">
-                    </p>{{ extended_review.priority }}</p>
-                    </p>{{ extended_review.total_times_rewatched }}</p>
-                    </p>{{ extended_review.rewatch_value }}</p>
-                    </p>{{ extended_review.comment }}</p>
-                </div>
-                    <div class="col-md-2">
+                    <div class="col-md-5 text-center text-primary mt-4 mx-auto">
+                        {{ extended_review.comment }}
                     </div>
                 </div>
             </div>
@@ -137,7 +211,7 @@
 
     <!--Ensure the box has a position property set that allows position within it.-->
     <div class="position-relative bg-dark text-bg-dark border rounded-2 mt-4 p-2">
-        <h2 class="text-center">Reviews</h2>
+        <h2 class="text-center mb-4">Reviews</h2>
 
         <div class="position-absolute top-0 end-0 m-3">
             <a class="btn btn-primary fw-bold mx-2" href="{% url 'happy_cherries:add_review_tvshow' tvshow.id %}">Add Review</a>
@@ -147,30 +221,37 @@
                 <div class="col-md-6">
                     <section class="mx-auto my-4">
                         <div class="card position-relative">
-                            <div class="card-header d-flex align-items-center">
-                                <h5 class="card-title font-weight-bold my-2">{{ review.owner }}</h5> 
-                            </div>
+                            <h5 class="card-header">{{ review.owner }}</h5> 
                             <div class="card-body">
-                                <div class="card-text mb-0">
-                                    <p>
-                                      {{ review.review|linebreaks }}
-                                    </p>
-                                    <hr>
-                                    <p class="fw-bold d-flex align-items-center">
-                                    {{ review.score }} %
-                                    <!--ms-auto pushes it to the far right within the flex container, ensuring it aligns horizontally with the "User" title.-->
-                                    {% if request.user == review.tvshow.owner %}
-                                    <a class="btn btn-warning fw-bold ms-auto me-2" href="{% url 'happy_cherries:edit_review_tvshow' review.id %}">Edit</a>
-                                    <a class="btn btn-danger fw-bold" href="{% url 'happy_cherries:delete_review_tvshow' review.id %}">Delete</a>
-                                    {% endif %}
-                                    </p>
+                                <p class="card-text">
+                                    {{ review.review|linebreaks }}
+                                </p>
+                                <hr>
+                                <div class="fw-bold d-flex align-items-center">
+                                <strong>{{ review.score }} %</strong>
+                                <!--ms-auto pushes it to the far right within the flex container, ensuring it aligns horizontally with the "User" title.-->
+                                {% if request.user == review.tvshow.owner %}
+                                <a class="btn btn-warning fw-bold ms-auto me-2" href="{% url 'happy_cherries:edit_review_tvshow' review.id %}">Edit</a>
+                                <a class="btn btn-danger fw-bold" href="{% url 'happy_cherries:delete_review_tvshow' review.id %}">Delete</a>
+                                {% endif %}
                                 </div>
                             </div>
                         </div>
                     </section>
                 </div>
             {% empty %}
-                <p>No reviews have been added</p>
+            <div class="col-md-3"></div>
+            <div class="col-md-6">
+                <div class="card">
+                    <h5 class="card-header">....</h5>
+                    <div class="card-body">
+                        <h5 class="card-title">No review has been posted</h5>
+                        <p class="card-text">Cmon be the fisrt one to post a review &raquo;</p>
+                        <a class="btn btn-primary fw-bold mx-2" href="{% url 'happy_cherries:add_review_tvshow' tvshow.id %}">Add Review</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3"></div>
             {% endfor %}
         </div>
     </div>  

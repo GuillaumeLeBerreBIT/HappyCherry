@@ -30,7 +30,7 @@
                         <form method="post" action="{% url 'happy_cherries:delete_movie' movie.id %}" style="position: absolute; top: 10px; right: 10px;">
                             {% csrf_token %}
                             <button type="submit" class="btn btn-danger btm-sm rounded-pill fw-bold" style="font-size: 12px;">
-                                X
+                                X 
                             </button>
                         </form>
                         <img src="{{ movie.poster_path }}" class="card-img-top" alt="poster_image">
