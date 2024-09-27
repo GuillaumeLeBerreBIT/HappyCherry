@@ -1,5 +1,6 @@
 import requests, json
 from .variables import GENRES_MOVIES, GENRES_TVSHOWS
+from datetime import datetime
 
 def convert_ids_genre(ids, genres):
     """Need to convert the ids to representative genre"""
@@ -175,7 +176,7 @@ def fetch_detailed_tvshow(headers, tvshow_id, url_tvshow, url_cast, url_poster):
     tvshow_info = {
         'id': response['id'],
         'title': response['name'],
-        'first_air_date': response['first_air_date'],
+        'first_air_date':response['first_air_date'],
         'last_air_date': response['last_air_date'],
         'poster_path': url_poster.format(response['poster_path']),
         'number_of_seasons': response['number_of_seasons'],

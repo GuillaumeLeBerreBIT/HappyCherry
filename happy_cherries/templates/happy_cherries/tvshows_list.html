@@ -2,7 +2,7 @@
 
 {% block page_header %}
 
-    <h2 class="display-5 fw-bold text-body-emphasis mb-0 text-center">{{ title }}</h2>
+    <h2 class="display-5 fw-bold mb-3 text-center text-warning border-bottom border-warning p-2">{{ title }}</h2>
 
 {% endblock page_header %}
 
@@ -23,7 +23,7 @@
                                         {{ show.title }}
                                     </h5>
                                     <p class="card-text">
-                                        {{ show.first_air_date }}
+                                        <span class="fw-lighter fst-italic">{{ show.first_air_date }}</span>
                                     </p>
                                 </div>
                                 <!--Set the margin top auto-->

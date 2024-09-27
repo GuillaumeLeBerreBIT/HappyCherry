@@ -34,7 +34,7 @@
                                         <strong>Release date</strong>
                                     </td>
                                     <td class="bg-dark text-primary text-center" style="padding: 10px;">
-                                        {{ movie.release_date }}
+                                        {{ movie.release_date|date:"d M, Y" }}
                                     </td>
                                 </tr>
                                 <tr>
@@ -62,9 +62,11 @@
                                     <span class="badge bg-primary text-dark p-2">{{ genre }}</span>
                                 {% endfor %}
                             </p>
-                            <p>
-                                <span class="fw-lighter fst-italic text-center mt-5">{{ movie.tagline }}</span>
-                            </p>
+                            <div class="text-center mt-5">
+                                <p>
+                                    <span class="fw-lighter fst-italic">{{ movie.tagline }}</span>
+                                </p>
+                            </div>
                         </div>
                     </div>
                     <div class="col-md-12 position-relative" style="margin-top: 20px;">
@@ -88,7 +90,7 @@
                                     <strong>First time watched</strong>
                                 </td>
                                 <td class="bg-dark text-primary text-center" style="padding: 10px;">
-                                    {{ extended_review.first_time_watched }}
+                                    {{ extended_review.first_time_watched|date:"d M, Y" }}
                                 </td>
                             </tr>
                             <tr>
@@ -96,7 +98,7 @@
                                     <strong>Last time watched</strong>
                                 </td>
                                 <td class="bg-dark text-primary text-center" style="padding: 10px;">
-                                    {{ extended_review.last_time_watched }}
+                                    {{ extended_review.last_time_watched|date:"d M, Y" }}
                                 </td>
                             </tr>
                             <tr>
@@ -112,7 +114,7 @@
                                     <strong>Date finished</strong>
                                 </td>
                                 <td class="bg-dark text-primary text-center" style="padding: 10px;">
-                                    {{ extended_review.finish_date }}
+                                    {{ extended_review.finish_date|date:"d M, Y" }}
                                 </td>
                             </tr>
                         </table>
@@ -153,11 +155,15 @@
                             </tr>
                         </table>
                     </div>
-                    <div class="col-md-5 text-center mt-4 mx-auto">
-                        <strong>Personal comment</strong>
-                    </div>
-                    <div class="col-md-5 text-center text-primary mt-4 mx-auto">
-                        {{ extended_review.comment }}
+                    <div class="col-md-8 text-center mt-4 mx-auto">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">
+                                <strong>Personal comment</strong>
+                            </li>
+                            <li class="list-group-item">
+                                    {{ extended_review.comment }}
+                            </li>
+                        </ul>
                     </div>
                 </div>
             </div>

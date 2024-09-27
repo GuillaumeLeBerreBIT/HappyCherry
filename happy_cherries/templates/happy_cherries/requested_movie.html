@@ -1,48 +1,86 @@
 {% extends "happy_cherries/base.html" %}
 
-{% block page_header %}
-{% endblock page_header %}
+{% block page_header %}{% endblock page_header %}
 
 {% block content %}
 
-<div class="container text-center mt-4">
-    <div class="row justify-content-center">
-        <div class="col-md-12 position-relative">
-            <div class="row align-items-center text-bg-dark border rounded-3 p-3 position-relative">
-                <div class="col-md-4 text-center">
-                    <img src="{{ movie.poster }}" class="img-fluid rounded float-start" alt="movie_poster">
-                </div>
-                <div class="col-md-1"></div>
-                <div class="col-md-7 text-start">
-                    {% if saved == "Saved" %}
-                    {% elif saved == "Unsaved" and is_owner %}
-                    <form method="post" class="position-absolute top-0 end-0 m-3">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-success">Save</button>
-                    </form>
+    <div class="container text-center mt-4">
+        <div class="row justify-content-center">
+            <div class="col-md-12 position-relative">
+                <div class="row position-relative align-items-start text-bg-dark border rounded-3 p-3">
+                    <div class="d-flex align-items-center mb-3 w-100">
+                    {% if movie.avg_score %}
+                        {% if movie.avg_score < 50 %}
+                            <!--Can sett style > position: absolute to fit the badge on top of the image.-->
+                            <span class="badge text-bg-danger position-absolute" style="top: 50px; left: 50px; font-size: 16px;">
+                                {{ movie.avg_score}} %
+                            </span>
+                        {% else %}
+                            <span class="badge text-bg-success position-absolute" style="top: 50px; left: 50px; font-size: 16px;">
+                                {{ movie.avg_score}} %
+                            </span>
+                        {% endif %}
                     {% endif %}
-
-                    <h1 class="text-center border-bottom border-white mb-4">{{ movie.title }}</h1>
-                    <p>Release date: <span class="fw-bold">{{ movie.release_date }}</span></p>
-                    <p>Runtime: <span class="fw-bold">{{ movie.runtime }}</span></p>
-                    <p>{{ movie.overview }}</p>
-                    <p class="fw-bold">Actors</p>
-                    <p>
-                        {% for cast in movie.cast %}
-                            <span class="badge rounded-pill text-bg-danger">{{ cast }}</span>
-                        {% endfor %}
-                    </p>
-                    <p class="fw-bold">Genres</p>
-                    <p>
-                        {% for genre in movie.genres %}
-                            <span class="badge rounded-pill text-bg-primary">{{ genre }}</span>
-                        {% endfor %}
-                    </p>
-                    <p class="fw-lighter mt-4">{{ movie.tagline }}</p>
+                    </div>
+                    <div class="col-md-4 text-center d-flex flex-column">
+                        <img src="{{ movie.poster }}" class="img-fluid rounded float-start" alt="movie_poster">
+                    </div>
+                    <div class="col-md-1"></div>
+                    <div class="col-md-7 text-start mu-2">    
+                        {% if saved == "Saved" %}
+                        {% elif saved == "Unsaved" and is_owner %}
+                        <form method="post" class="position-absolute top-0 end-0 m-3">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-success">Save</button>
+                        </form>
+                        {% endif %}
+                        <h1 class="text-center border-bottom border-white my-2 p-2">{{ movie.title }}</h1>
+                        <!--Display Movie information-->
+                        <div class="mb-4">
+                            <table class="table">
+                                <tr>
+                                    <td class="bg-dark text-white text-start" style="padding: 10px;">
+                                        <strong>Release date</strong>
+                                    </td>
+                                    <td class="bg-dark text-primary text-center" style="padding: 10px;">
+                                        {{ movie.release_date }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="bg-dark text-white text-start" style="padding: 10px;">
+                                        <strong>Runtime</strong>
+                                    </td>
+                                    <td class="bg-dark text-primary text-center" style="padding: 10px;">
+                                        {{ movie.runtime }}
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <p class="fw-bold">Overview</p>
+                        <p> {{ movie.overview }} </p>
+                        <div class="mt-2">
+                            <p class="fw-bold">Actors</p>
+                            <p>
+                                {% for actor in movie.cast_spl %}
+                                    <span class="badge bg-warning text-dark p-2 mt-2">{{ actor }}</span>
+                                {% endfor %}
+                            </p>
+                            <p class="fw-bold">Genres</p>
+                            <p>
+                                {% for genre in movie.genres_spl %}
+                                    <span class="badge bg-primary text-dark p-2 mt-2">{{ genre }}</span>
+                                {% endfor %}
+                            </p>
+                            <div class="text-center mt-5">
+                                <p>
+                                    <span class="fw-lighter fst-italic">{{ movie.tagline }}</span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
 {% endblock content %}

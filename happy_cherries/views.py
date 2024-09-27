@@ -8,6 +8,12 @@ from .forms import ReviewForm, NoteForm, ExtendedMovieReviewForm, ExtendedTvShow
 from .tmdb import fetch_movies, fetch_movies_list, fetch_detailed_movie, fetch_tvshow, fetch_detailed_tvshow, fetch_tvshows_list
 
 import json, requests # This is to send a request to the URLs defined (Not a Django request)
+from datetime import datetime
+
+def convert_date(time_str):
+    """Convert the time string to time object"""
+    time_obj = datetime.strptime(time_str, '%Y-%m-%d')
+    return datetime.strftime(time_obj, '%d %b, %Y')
 
 def check_user(request, media):
     """Check if the logged in user is linked to the saved movie/show"""
@@ -172,6 +178,9 @@ def movie_search(request):
         # Get all the movies through Dynamic search. 
         movie_list = fetch_movies(headers, movie_search, url_movie_search, url_poster)
         
+        for movie in movie_list:
+            movie['release_date'] = convert_date(movie["release_date"])
+        
         context = {
             'movie_list': movie_list
         }
@@ -181,6 +190,9 @@ def movie_search(request):
     else: 
         # Get all the trending movies so the home page does not look empty. 
         movie_list = fetch_movies_list(headers, url_trending, url_poster)
+        
+        for movie in movie_list:
+            movie['release_date'] = convert_date(movie["release_date"])
         
         context = {
             'movie_list': movie_list
@@ -219,11 +231,14 @@ def requested_movie(request, movie_id):
                                      movie_id=movie_id)
         # Because the Cast and Genres are saved in a long string splitted by ',' to save easily in the model direclty.
         # We split the string to then iterate over a list in the HTML file.  
-        movie['cast'], movie['genres'] = movie['cast'].split(','), movie['genres'].split(',')
+        movie['cast'], movie['genres_spl'] = movie['cast'].split(','), movie['genres'].split(',')
         # Only show the first 6 six actors if it exceeds limits
         if len(movie['cast']) > 6:
-            movie["cast"] = movie["cast"][0:6]
-            movie["cast"].append('...')
+            movie["cast_spl"] = movie["cast"][0:6]
+            movie["cast_spl"].append('...')
+        
+        # Convert date
+        movie['release_date'] = convert_date(movie['release_date'])
         
         # When logged in. 
         if is_owner:
@@ -293,6 +308,9 @@ def top_rated_movies(request):
     # Get all the trending movies so the home page does not look empty. 
     movie_list = fetch_movies_list(headers, url_top_rated, url_poster)
     
+    for movie in movie_list:
+        movie['release_date'] = convert_date(movie["release_date"])
+    
     context = {
         'movie_list': movie_list,
         'title': "Top Rated Movies"
@@ -315,6 +333,9 @@ def upcoming_movies(request):
     
     # Get all the trending movies so the home page does not look empty. 
     movie_list = fetch_movies_list(headers, url_upcoming, url_poster)
+    
+    for movie in movie_list:
+        movie['release_date'] = convert_date(movie["release_date"])
     
     context = {
         'movie_list': movie_list,
@@ -339,6 +360,9 @@ def now_playing_movies(request):
     # Get all the trending movies so the home page does not look empty. 
     movie_list = fetch_movies_list(headers, url_playing, url_poster)
     
+    for movie in movie_list:
+        movie['release_date'] = convert_date(movie["release_date"])
+        
     context = {
         'movie_list': movie_list,
         'title':'Now Playing Movies'
@@ -360,6 +384,9 @@ def popular_movies(request):
     # Get all the trending movies so the home page does not look empty. 
     movie_list = fetch_movies_list(headers, url_popular, url_poster)
     
+    for movie in movie_list:
+        movie['release_date'] = convert_date(movie["release_date"])
+        
     context = {
         'movie_list': movie_list,
         'title':'Popular Movies'
@@ -435,7 +462,7 @@ def tvshow(request, tvshow_id):
         # Iterate over all reviews
         total_sum = sum(review.score for review in reviews)
         tvshow.avg_score = round(total_sum/len(reviews), None)    
-    
+    print(ext_review.start_date)
     context = {'tvshow': tvshow, 
                'extended_review': ext_review,
                'reviews': reviews, 
@@ -536,6 +563,9 @@ def tvshow_search(request):
         
         tvshow_list = fetch_tvshow(headers, url_tvshow, tvshow_search, url_poster)
         
+        for show in tvshow_list:
+            show['first_air_date'] = convert_date(show["first_air_date"])
+        
         context = {'tvshow_list': tvshow_list}
         
         return render(request, 'happy_cherries/search_tvshow.html', context)
@@ -543,6 +573,9 @@ def tvshow_search(request):
     else: # GET request
         
         tvshow_list = fetch_tvshows_list(headers, url_trending_tvshows, url_poster)
+        
+        for show in tvshow_list:
+            show['first_air_date'] = convert_date(show["first_air_date"])
         
         context = {'tvshow_list': tvshow_list,}
         
@@ -645,6 +678,9 @@ def top_rated_tvshows(request):
     
     tvshow_list = fetch_tvshows_list(headers, url_top_rated, url_poster)
     
+    for show in tvshow_list:
+        show['first_air_date'] = convert_date(show["first_air_date"])
+    
     context = {
         'tvshow_list': tvshow_list,
         'title': "Top Rated TV Shows"
@@ -667,6 +703,9 @@ def upcoming_tvshows(request):
     
     tvshow_list = fetch_tvshows_list(headers, url_on_the_air, url_poster)
     
+    for show in tvshow_list:
+        show['first_air_date'] = convert_date(show["first_air_date"])
+        
     context = {
         'tvshow_list': tvshow_list,
         'title': "On The Air TV Shows"
@@ -689,6 +728,9 @@ def now_airing_tvshows(request):
     
     tvshow_list = fetch_tvshows_list(headers, url_airing, url_poster)
     
+    for show in tvshow_list:
+        show['first_air_date'] = convert_date(show["first_air_date"])
+        
     context = {
         'tvshow_list': tvshow_list,
         'title': "TV Shows Airing Today"
@@ -709,6 +751,9 @@ def popular_tvshows(request):
     
     url_poster = "https://image.tmdb.org/t/p/w500/{}"
     
+    for show in tvshow_list:
+        show['first_air_date'] = convert_date(show["first_air_date"])
+        
     tvshow_list = fetch_tvshows_list(headers, url_popular, url_poster)
     
     context = {

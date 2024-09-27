@@ -1,7 +1,7 @@
 {% extends "happy_cherries/base.html" %}
 
 {% block page_header %}
-    <h2 class="display-5 fw-bold text-body-emphasis mb-0 text-center">Tv Shows</h2>
+    <h2 class="display-5 fw-bold mb-3 text-center text-warning border-bottom border-warning p-2">Tv Shows</h2>
     <a class="btn btn-dark rounded-pill px-3" href="{% url 'happy_cherries:tvshow_search' %}">TvShow Search</a>
 {% endblock page_header %}
 
@@ -38,10 +38,10 @@
                             <h5 class="card-title">
                                 {{ show.title }}
                             </h5>
-                            <p class="card-text">
-                                {{ show.tagline }}
-                                {% if show.note %} <span class="badge text-bg-primary text-wrap mt-2 p-2">{{ show.note }}</span>{% endif %}
-                            </p>
+                            <div class="card-text mt-2">
+                                <span class="fw-lighter fst-italic">{{ show.tagline }}</span>
+                                {% if show.note %} <span class="badge text-bg-primary text-wrap mt-4 p-2">{{ show.note }}</span>{% endif %}
+                            </div>
                         </div>
                         <!--Set the margin top auto-->
                         <div class="mt-auto">

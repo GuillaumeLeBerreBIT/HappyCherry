@@ -46,7 +46,7 @@
                                         <strong>First Air Date</strong>
                                     </td>
                                     <td class="bg-dark text-primary text-center" style="padding: 10px;">
-                                        {{ tvshow.first_air_date }}
+                                        {{ tvshow.first_air_date|date:"d M, Y" }}
                                     </td>
                                 </tr>
                                 <tr>
@@ -54,7 +54,7 @@
                                         <strong>Last Air Date</strong>
                                     </td>
                                     <td class="bg-dark text-primary text-center" style="padding: 10px;">
-                                        {{ tvshow.last_air_date }}
+                                        {{ tvshow.last_air_date|date:"d M, Y" }}
                                     </td>
                                 </tr>
                                 <tr>
@@ -65,7 +65,7 @@
                                         {% if tvshow.next_episode_to_air == None %}
                                             Finished
                                         {% else %}
-                                            {{ tvshow.next_episode_to_air }}
+                                            {{ tvshow.next_episode_to_air|date:"d M, Y" }}
                                         {% endif %}
                                     </td>
                                 </tr>
@@ -133,7 +133,7 @@
                                     <strong>Start date watching</strong>
                                 </td>
                                 <td class="bg-dark text-primary text-center" style="padding: 10px;">
-                                    {{ extended_review.start_date }}
+                                    {{ extended_review.start_date|date:"d M, Y" }}
                                 </td>
                             </tr>
                             <tr>
@@ -161,7 +161,7 @@
                                     <strong>Finish date</strong>
                                 </td>
                                 <td class="bg-dark text-primary text-center" style="padding: 10px;">
-                                    {{ extended_review.finish_date }}
+                                    {{ extended_review.finish_date|date:"d M, Y" }}
                                 </td>
                             </tr>
                             <tr>
@@ -198,11 +198,15 @@
                             </tr>
                         </table>
                     </div>
-                    <div class="col-md-5 text-center mt-4 mx-auto">
-                        <strong>Personal comment</strong>
-                    </div>
-                    <div class="col-md-5 text-center text-primary mt-4 mx-auto">
-                        {{ extended_review.comment }}
+                    <div class="col-md-8 text-center mt-4 mx-auto">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">
+                                <strong>Personal comment</strong>
+                            </li>
+                            <li class="list-group-item">
+                                    {{ extended_review.comment }}
+                            </li>
+                        </ul>
                     </div>
                 </div>
             </div>
