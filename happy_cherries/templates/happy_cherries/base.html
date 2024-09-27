@@ -25,6 +25,7 @@
         Added some styling to make it so can hover over the button.  
     -->
     <style>
+        
         .navbar-dark .navbar-nav .nav-link {
             color: #fff; /* Example text color */
         }
@@ -127,14 +128,63 @@
         </div>
     </nav>
 
-    <main role="main" class="container">
-        <div class="mb-2 pb-2">
-            {% block page_header %}{% endblock page_header %}
+    <div class="container-fluid">
+        <div class="row">
+            <nav class="col-md-2">
+                <div class="sidebar-sticky">
+                    <h6 class="">
+                        Movies
+                    </h6>
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link-active" href="#">
+                                Library
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link-active" href="#">
+                                Watchlist
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link-active" href="#">
+                                Favorites
+                            </a>
+                        </li>
+                    </ul>
+                    <h6 class="">
+                        TvShows
+                    </h6>
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link-active" href="#">
+                                Library
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link-active" href="#">
+                                Watchlist
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link-active" href="#">
+                                Favorites
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
         </div>
-        <div>
-            {% block content %}{% endblock content %}
-        </div>
-    </main>
+        
+        <main role="main" class="container col-md-9">
+            <div class="mb-2 pb-2">
+                {% block page_header %}{% endblock page_header %}
+            </div>
+            <div>
+                {% block content %}{% endblock content %}
+            </div>
+        </main>
+    </div>
 
 </body>
 </html>

@@ -461,8 +461,8 @@ def tvshow(request, tvshow_id):
     if reviews:
         # Iterate over all reviews
         total_sum = sum(review.score for review in reviews)
-        tvshow.avg_score = round(total_sum/len(reviews), None)    
-    print(ext_review.start_date)
+        tvshow.avg_score = round(total_sum/len(reviews), None)  
+        
     context = {'tvshow': tvshow, 
                'extended_review': ext_review,
                'reviews': reviews, 
