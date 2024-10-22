@@ -2,3 +2,6 @@
 hc_env/
 venv_home/ 
 venv/
+
+# Database
+db.sqlite3
