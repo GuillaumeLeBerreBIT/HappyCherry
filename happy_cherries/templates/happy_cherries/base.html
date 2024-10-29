@@ -22,7 +22,8 @@
     <!-- Fengyuan Chen's Datepicker -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/datepicker/0.6.5/datepicker.min.css" integrity="sha256-b88RdwbRJEzRx95nCuuva+hO5ExvXXnpX+78h8DjyOE=" crossorigin="anonymous" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/datepicker/0.6.5/datepicker.min.js" integrity="sha256-/7FLTdzP6CfC1VBAj/rsp3Rinuuu9leMRGd354hvk0k=" crossorigin="anonymous"></script>
-
+    
+    <!-- Dark Theme -->
     <link rel="stylesheet" type="text/css" href="https://bootswatch.com/5/darkly/bootstrap.min.css">
 
     
@@ -61,22 +62,48 @@
             height: 100vh; /* Full viewport height */
         }
 
+        .sidebar {
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            width: 250px;
+            background-color: #343a40;
+            padding-top: 20px;
+            transform: translateX(-250px);
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar.show {
+            transform: translateX(0);
+        }
+
+        .content-area {
+            margin-left: 0;
+            transition: margin-left 0.3s ease;
+        }
+
+        .content-area.sidebar-open {
+            margin-left: 250px;
+        }
+        
+
         /*Add through SASS change of container-xxl screens*/
 
     </style>
 
 </head>
 <body>
-    <div class="container-fluid">   <!--Container to wrap the whole page-->
+    <div class="container-fluid">
         <div class="row flex-nowrap">
-            <!-- Main content of the sidebar -->
-            <div class="col-auto col-md-3 col-xl-2 px-sm-2 bg-dark">
-                <div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-white min-vh-100 sticky">
-                    <a href="{% url 'happy_cherries:index' %}" class="d-flex align-items-center pb-3 mb-md-0 me-md-auto text-white text-decoration-none">
-                        <span class="fs-5 d-none d-sm-inline text-warning">Happy Cherries</span>
+            <!-- Sidebar -->
+            <div id="sidebar" class="sidebar bg-dark text-white">
+                <div class="d-flex flex-column flex-shrink-0 p-3 text-bg-dark min-vh-100">
+                    <a href="{% url 'happy_cherries:index' %}" class="text-decoration-none text-warning fs-5">
+                        Happy Cherries
                     </a>
-                    <hr class="w-100 text-white my-2">
-                    <ul class="nav nav-pills flex-column mb-3 align-items-center align-items-sm-start">
+                    <hr class="text-white my-2">
+                    <ul class="nav nav-pills flex-column mb-2">
                         <li class="w-100 mt-3">
                         </li>
                         <li>
@@ -97,7 +124,7 @@
                         </li>
                     </ul>
                     <hr class="w-100 text-white my-2">
-                    <ul class="nav nav-pills flex-column mb-sm-auto my-3 align-items-center align-items-sm-start">
+                    <ul class="nav nav-pills flex-column mb-auto">
                         <li>
                             <a href="#" class="nav-link px-0 align-middle text-warning" style="font-size: 1.25rem;">
                                 <i class="fs-4 bi-tv"></i> <span class="ms-1 d-none d-sm-inline">TV Shows</span>
@@ -115,7 +142,8 @@
                             </ul>
                         </li>
                     </ul>
-                    <div class="dropdown pb-4">
+                    <hr>
+                    <div class="dropup mb-4">
                         <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
                             <img src="https://github.com/mdo.png" alt="hugenerd" width="30" height="30" class="rounded-circle">
                             <span class="d-none d-sm-inline mx-1">loser</span>
@@ -133,13 +161,12 @@
                 </div>
             </div>            
             <!-- Content of the navigation bar -->
-            <div class="col-auto col-md-9 col-xl-10 m-0 p-0">
-                <nav class="navbar navbar-expand-md navbar-dark bg-dark mb-4">
-                    <a class="navbar-brand ms-4" href="{% url 'happy_cherries:index' %}">Home</a>
-            
-                    <button class="navbar-toggler me-2" type="button" data-bs-toggle="collapse" 
-                        data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" 
-                        aria-expanded="false" aria-label="Toggle navigation">
+            <div id="content" class="col content-area px-0">
+                <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4 w-100">
+                    <button class="btn btn-outline-warning ms-3" id="sidebarToggle" style="width: 56px; height: 40px; padding: 4px 12px;" >
+                        <span class="navbar-toggler-icon" style="width: 30px; height: 30px;"></span>
+                    </button>
+                    <button class="navbar-toggler me-2" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                         <span class="navbar-toggler-icon"></span>
                     </button>
                     <div class="collapse navbar-collapse ms-4" id="navbarSupportedContent">
@@ -151,7 +178,7 @@
                                 <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-expanded="false">
                                     Movie List
                                 </a>
-                                <ul class="dropdown-menu" data-bs-popper="static">
+                                <ul class="dropdown-menu">
                                     <li>
                                         <a class="dropdown-item" href="{% url 'happy_cherries:movie_search' %}">Search</a>
                                     </li>
@@ -176,7 +203,7 @@
                                 <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-expanded="false">
                                     TV Shows List
                                 </a>
-                                <ul class="dropdown-menu" data-bs-popper="static">
+                                <ul class="dropdown-menu">
                                     <li><a class="dropdown-item" href="{% url 'happy_cherries:tvshow_search' %}">Search</a></li>
                                     <li><a class="dropdown-item" href="{% url 'happy_cherries:top_rated_tvshows' %}">Top Rated TV Shows</a></li>
                                     <li><a class="dropdown-item" href="{% url 'happy_cherries:upcoming_tvshows' %}">Upcoming TV Shows</a></li>
@@ -220,6 +247,14 @@
             </div>
         </div>
     </div>
+
+    <script>
+        document.getElementById("sidebarToggle").onclick = function() {
+            document.getElementById("sidebar").classList.toggle("show");
+            document.getElementById("content").classList.toggle("sidebar-open");
+        };
+    </script>
+
 
 </body>
 </html>
