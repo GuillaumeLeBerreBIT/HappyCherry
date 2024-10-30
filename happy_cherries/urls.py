@@ -33,9 +33,12 @@ urlpatterns = [
     path('movies/now_playing/', views.now_playing_movies, name='now_playing_movies'),
     # Show all movies now playing.
     path('movies/popular/', views.popular_movies, name='popular_movies'),
-    # Add a movie to the page. 
+    # Show all movies in your watchlist
+    path('movies/watchlist/', views.movies_watchlist, name='movies_watchlist'),    
     # Make sure the movie_id is parsed to the URL as well otherwise get an error no reverse match
     path('movies/movie_search/requested_movie/<int:movie_id>/', views.requested_movie, name='requested_movie'),
+    
+    
     # Page for showing all the tvshows added to your list.
     path('tvshows/', views.tvshows, name='tvshows'),
     # Page for showing all the tvshows added to your list.

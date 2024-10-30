@@ -25,6 +25,10 @@ class CommonContent(BaseModel):
     genre = models.CharField(max_length=300)
     tagline = models.CharField(max_length=300)
     
+    # Use Boolean to either set them under favorites or in your watchlist. 
+    watchlist= models.BooleanField()
+    favorites = models.BooleanField()
+    
     def __str__(self):
         """Return a string representation of the model"""
         return self.title
