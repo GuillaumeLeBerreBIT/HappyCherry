@@ -1,7 +1,7 @@
 {% extends "happy_cherries/base.html" %}
 
 {% block page_header %}
-    <h2 class="display-5 fw-bold mb-3 text-center text-warning border-bottom border-warning p-2">Movies</h2>
+    <h2 class="display-5 fw-bold mb-3 text-center text-warning border-bottom border-warning p-2">{{ title }}</h2>
     <a class="btn btn-dark rounded-pill px-3" href="{% url 'happy_cherries:movie_search' %}">Movie Search</a>
 {% endblock page_header %}
 

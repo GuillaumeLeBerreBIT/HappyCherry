@@ -111,14 +111,14 @@
                                 <i class="fs-4 bi-film"></i> <span class="ms-1 d-none d-sm-inline">Movies</span>
                             </a>
                             <ul class="nav flex-column ms-1">
-                                <li class="w-100">
+                                <li>
+                                    <a href="{% url 'happy_cherries:movies' %}" class="nav-link px-0"> <span class="d-none d-sm-inline">Library</span> </a>
+                                </li>
+                                <li>
                                     <a href="{% url 'happy_cherries:movies_watchlist' %}" class="nav-link px-0"> <span class="d-none d-sm-inline">Watchlist</span> </a>
                                 </li>
                                 <li>
-                                    <a href="#" class="nav-link px-0"> <span class="d-none d-sm-inline">Favorites</span> </a>
-                                </li>
-                                <li>
-                                    <a href="#" class="nav-link px-0"> <span class="d-none d-sm-inline">Library</span> </a>
+                                    <a href="{% url 'happy_cherries:movies_favorites' %}" class="nav-link px-0"> <span class="d-none d-sm-inline">Favorites</span> </a>
                                 </li>
                             </ul>
                         </li>
@@ -130,14 +130,14 @@
                                 <i class="fs-4 bi-tv"></i> <span class="ms-1 d-none d-sm-inline">TV Shows</span>
                             </a>
                             <ul class="nav flex-column ms-1">
-                                <li class="w-100">
+                                <li>
+                                    <a href="#" class="nav-link px-0"> <span class="d-none d-sm-inline">Library</span> </a>
+                                </li>
+                                <li>
                                     <a href="#" class="nav-link px-0"> <span class="d-none d-sm-inline">Watchlist</span> </a>
                                 </li>
                                 <li>
                                     <a href="#" class="nav-link px-0"> <span class="d-none d-sm-inline">Favorites</span> </a>
-                                </li>
-                                <li>
-                                    <a href="#" class="nav-link px-0"> <span class="d-none d-sm-inline">Library</span> </a>
                                 </li>
                             </ul>
                         </li>

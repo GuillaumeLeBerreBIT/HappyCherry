@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 # This will restricts the user to access certain data. 
 from django.contrib.auth.decorators import login_required
 from django.http import Http404
+from django.forms.models import model_to_dict
 
 from .models import Movie, PublicReview, TvShow, Note, ExtendedTvShowReview, ExtendedMovieReview
 from .forms import ReviewForm, NoteForm, ExtendedMovieReviewForm, ExtendedTvShowReviewForm
@@ -79,8 +80,62 @@ def movies(request):
         movie.genres = movie.genre.split(',')
         movie.genres.sort()
     
-    context = {'movies': movies}
+    context = {'movies': movies, 'title': 'Library Movies'}
     
+    return render(request, 'happy_cherries/movies.html', context)
+
+@login_required
+def movies_watchlist(request):
+    """Show all the movies added to your watchlist."""
+    
+    movies = Movie.objects.filter(owner=request.user, watchlist=True).order_by('date_added')
+    
+    for movie in movies:
+        
+        identical_movies = Movie.objects.filter(id_movie=movie.id_movie)    # Get all the movies with the same ID. 
+        
+        all_reviews = []
+        for iden_movie in identical_movies:
+            
+            all_reviews.extend(iden_movie.publicreview_set.all())
+        
+        if all_reviews:
+            
+            total_sum = sum(review.score for review in all_reviews)
+            
+            movie.avg_score = round(total_sum / len(all_reviews), None)
+        
+        movie.genres = movie.genre.split(',')
+        movie.genres.sort()
+    
+    context = {'movies': movies, 'title': 'Watchlist Movies'}
+    return render(request, 'happy_cherries/movies.html', context)
+ 
+@login_required
+def movies_favorites(request):
+    """Show all the movies add to your favorites list."""
+    
+    movies = Movie.objects.filter(owner= request.user, favorites=True).order_by('date_added')
+    
+    for movie in movies:
+        
+        identical_movies = Movie.objects.filter(id_movie=movie.id_movie)
+        
+        all_reviews = []
+        for iden_movie in identical_movies:
+            
+            all_reviews.extend(iden_movie.publicreview_set.all())
+            
+            if all_reviews:
+                
+                total_sum = sum(review.score for review in all_reviews)
+            
+                movie.avg_score = round(total_sum / len(all_reviews), None)
+        
+        movie.genres = movie.genre.split(',')
+        movie.genres.sort()
+    
+    context = {'movies': movies, 'title': 'Favorite Movies'}
     return render(request, 'happy_cherries/movies.html', context)
 
 @login_required
@@ -393,42 +448,6 @@ def popular_movies(request):
     }
     return render(request, 'happy_cherries/movies_list.html', context)
    
-
-@login_required
-def movies_watchlist(request):
-    """Show all the movies added to your watchlist."""
-    
-    movies = Movie.objects.filter(watchlist=True).order_by('date_added')
-    
-    for movie in movies:
-        
-        identical_movies = Movie.objects.filter(id_movie=movie.id_movie)    # Get all the movies with the same ID. 
-        
-        all_reviews = []
-        for iden_movie in identical_movies:
-            
-            all_reviews.extend(iden_movie.publicreview_set.all())
-        
-        if all_reviews:
-            
-            total_sum = sum(review.score for review in all_reviews)
-            
-            movie.avg_score = round(total_sum / len(all_reviews), None)
-        
-        movie.genres = movie.genre.split(',')
-        movie.genres.sort()
-    
-    context = {'movies': movies}
-    return render(request, 'happy_cherries/movies.html', context)
- 
-@login_required
-def movies_favorites(request):
-    """Show all the movies add to your favorites list."""
-    
-    movies = Movie.objects.filter(favorites=True)
-    
-    context = {'movies': movies}
-    return render(request, 'happy_cherries/.html', context)
     
 # TV SHOWS
 @login_required

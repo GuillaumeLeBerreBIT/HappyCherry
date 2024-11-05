@@ -35,6 +35,8 @@ urlpatterns = [
     path('movies/popular/', views.popular_movies, name='popular_movies'),
     # Show all movies in your watchlist
     path('movies/watchlist/', views.movies_watchlist, name='movies_watchlist'),    
+    # Show all movies in your watchlist
+    path('movies/favorites/', views.movies_favorites, name='movies_favorites'),
     # Make sure the movie_id is parsed to the URL as well otherwise get an error no reverse match
     path('movies/movie_search/requested_movie/<int:movie_id>/', views.requested_movie, name='requested_movie'),
     
