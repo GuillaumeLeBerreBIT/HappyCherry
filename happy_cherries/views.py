@@ -298,27 +298,37 @@ def requested_movie(request, movie_id):
         # When logged in. 
         if is_owner:
             # Get all the saved Movie objects from the authenticated user
-            saved_movies = Movie.objects.filter(owner=request.user)
+            saved_movie = Movie.objects.filter(owner=request.user, title=movie['title']).first()
             
-            # Saved all the titles in a list 
-            titles = []
-            for saved in saved_movies:
-                titles.append(saved.title)
             # Then pass the variable to tell wether the movie is saved or not. 
-            if movie['title'] in titles: saved = "Saved"
-            else: saved  = "Unsaved"
+            if saved_movie: 
+                saved = "Saved"
+                in_watchlist = saved_movie.watchlist
+                is_favorite = saved_movie.favorites
+                
+            else: 
+                saved  = "Unsaved"
+                in_watchlist = is_favorite = False
             
         # When nog logged in it is not saved and can't be saved.    
-        else: saved = "Unsaved"
+        else: 
+            saved  = "Unsaved"
+            in_watchlist = is_favorite = False
         
         context = {
             'movie': movie,
             'saved': saved,
-            'is_owner': is_owner
+            'is_owner': is_owner,
+            'in_watchlist': in_watchlist,
+            'is_favorite': is_favorite
             }
+        
         return render(request, 'happy_cherries/requested_movie.html', context)
 
-    else: 
+    elif request.method == 'POST': 
+        
+        # Get the current action given by entered Form
+        action = request.POST.get('action')
         
         # Need to check of the current use is the owner or not.        
         movie = fetch_detailed_movie(headers=headers, 
@@ -341,10 +351,34 @@ def requested_movie(request, movie_id):
                 cast=movie['cast'],
                 genre=movie['genres'],
                 )
-        m.save()
         
-        # Redirect to the movies page after saving
-        return redirect('happy_cherries:movies')
+        if action == "save_movie":
+            
+            m.watchlist = m.favorites = False
+            m.save()
+        
+            # Redirect to the movies page after saving
+            return redirect('happy_cherries:movies')
+    
+        elif action == 'save_watchlist': 
+        
+            m.watchlist = True
+            m.favorites = False
+                
+            m.save()
+        
+            # Redirect to the movies page after saving
+            return redirect('happy_cherries:movies_watchlist')
+    
+        elif action == 'save_favorite': 
+            
+            m.watchlist = False
+            m.favorites = True
+                
+            m.save()
+            
+            # Redirect to the movies page after saving
+            return redirect('happy_cherries:movies_favorites')
     
 def top_rated_movies(request):
     """
@@ -684,12 +718,14 @@ def requested_tvshow(request, tvshow_id):
             if tvshow['title'] in titles: saved = True
             else: saved  = False
             
-        # When nog logged in it is not saved and can't be saved.    
+        # When not logged in it is not saved and can't be saved.    
         else: saved = False
         
         context = {'tvshow': tvshow,
                    'saved': saved,
-                   'is_owner': is_owner}
+                   'is_owner': is_owner
+                   }
+        
         return render(request, 'happy_cherries/requested_tvshow.html', context)
     # POST request -- > Save the Tv Show into a model which then redirected to tvshow homepage.    
     else:

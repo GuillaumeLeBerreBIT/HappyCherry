@@ -26,13 +26,26 @@
                         <img src="{{ movie.poster }}" class="img-fluid rounded float-start" alt="movie_poster">
                     </div>
                     <div class="col-md-1"></div>
-                    <div class="col-md-7 text-start mu-2">    
-                        {% if saved == "Saved" %}
-                        {% elif saved == "Unsaved" and is_owner %}
-                        <form method="post" class="position-absolute top-0 end-0 m-3">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-success">Save</button>
-                        </form>
+                    <div class="col-md-7 text-start mu-2">
+                        {% if is_owner %}
+                            <form method="post" class="position-absolute top-0 end-1 m-3">
+                                {% csrf_token %}
+                                <input type="hidden" name="action" value="save_watchlist">
+                                <button type="submit" class="btn btn-danger">Add Watchlist</button>
+                            </form>
+                            <form method="post" class="position-absolute top-0 end-4 m-3">
+                                {% csrf_token %}
+                                <input type="hidden" name="action" value="save_favorite">
+                                <button type="submit" class="btn btn-warning">Favorite</button>
+                            </form>  
+                            {% if saved == "Saved" %}
+                            {% elif saved == "Unsaved" and is_owner %}
+                            <form method="post" class="position-absolute top-0 end-0 m-3">
+                                {% csrf_token %}
+                                <input type="hidden" name="action" value="save_movie">
+                                <button type="submit" class="btn btn-success">Save</button>
+                            </form>
+                            {% endif %}
                         {% endif %}
                         <h1 class="text-center border-bottom border-white my-2 p-2">{{ movie.title }}</h1>
                         <!--Display Movie information-->
