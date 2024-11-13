@@ -79,8 +79,27 @@ def movies(request):
         # Convert the text to a list.
         movie.genres = movie.genre.split(',')
         movie.genres.sort()
+        
+    # Initialize is_delete based on session data
+    is_delete = request.session.get('is_delete', False)
+        
+    if request.method == 'POST':
+        if request.POST.get('action') == 'delete_movies':
+            # Toggle is_delete in the session
+            request.session['is_delete'] = True
+            return redirect('happy_cherries:movies')
+        
+        if request.POST.get('action') == 'save_movies':
+            # Toggle is_delete in the session
+            request.session['is_delete'] = False
+            return redirect('happy_cherries:movies')
+        
     
-    context = {'movies': movies, 'title': 'Library Movies'}
+    context = {
+        'movies': movies, 
+        'title': 'Library Movies',
+        'is_delete': is_delete
+        }
     
     return render(request, 'happy_cherries/movies.html', context)
 
