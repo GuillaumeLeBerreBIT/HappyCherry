@@ -145,11 +145,16 @@ def movie(request, movie_id):
     Shows the score and a review left by one or multiple persons.
     """
     # Get the requested movie.   
-    movie = Movie.objects.get(id=movie_id)
+    movie = get_object_or_404(Movie, id=movie_id)
+    
     ext_review = movie.extendedmoviereview_set.first()
+    
     # Make sure the saved movie belongs to the user
-    if movie.owner != request.user:
-        raise Http404   # Returning the standard error.
+    check_user(request, movie)
+    
+    is_owner = False
+    if request.user.is_authenticated:
+        is_owner = True
     
     # Split the saved lists and parse them in the context dictionary
     movie.cast_spl, movie.genre_spl = movie.cast.split(','), movie.genre.split(',')
@@ -178,10 +183,48 @@ def movie(request, movie_id):
         total_sum = sum(review.score for review in all_reviews)
         # Direclty assign the value to the saved model in the dictionary.
         movie.avg_score = round(total_sum / len(all_reviews), None)
+    
+    if request.method == 'POST':
+        
+        action = request.POST.get('action')
+        
+        if action == "remove_movie":
+                
+            movie.watchlist = movie.favorites = False
+            movie.delete()
+        
+            # Refresh teh page directly. 
+            return redirect('happy_cherries:movies')
+        
+        elif action == 'save_watchlist': 
+        
+            movie.watchlist = True
+            movie.favorites = False
+                
+            movie.save()
+        
+            # Refresh teh page directly. 
+            return redirect('happy_cherries:movie', movie_id=movie.id)
+    
+        elif action == 'save_favorite': 
+            
+            movie.watchlist = False
+            movie.favorites = True
+                
+            movie.save()
+        
+            # Refresh teh page directly. 
+            return redirect('happy_cherries:movie', movie_id=movie.id)
+    
 
-    context = {'movie': movie, 
-               'reviews': all_reviews,
-               'extended_review': ext_review}
+    context = {
+        'movie': movie, 
+        'is_owner': is_owner,
+        'reviews': all_reviews,
+        'extended_review': ext_review,
+        'in_watchlist': movie.watchlist,
+        'in_favorite': movie.favorites
+        }
     
     return render(request, 'happy_cherries/movie.html', context)
 
