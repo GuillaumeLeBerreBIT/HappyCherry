@@ -20,13 +20,13 @@
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
 
     <!-- Fengyuan Chen's Datepicker -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/datepicker/0.6.5/datepicker.min.css" integrity="sha256-b88RdwbRJEzRx95nCuuva+hO5ExvXXnpX+78h8DjyOE=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/datepicker/0.6.5/datepicker.min.css" integrity="sha256-b88RdwbRJEzRx95nCuuva+hO5ExvXXnpX+78h8DjyOE=" crossorigin="anonymous"/>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/datepicker/0.6.5/datepicker.min.js" integrity="sha256-/7FLTdzP6CfC1VBAj/rsp3Rinuuu9leMRGd354hvk0k=" crossorigin="anonymous"></script>
     
     <!-- Dark Theme -->
-    <link rel="stylesheet" type="text/css" href="https://bootswatch.com/5/darkly/bootstrap.min.css">
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/js/all.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://bootswatch.com/5/darkly/bootstrap.min.css"/>
+    <!--Bootstrap Icons-->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
 
     
     <!-- Adding some custom styling for the dropdown menu
@@ -79,143 +79,139 @@
         .sidebar.show {
             transform: translateX(0);
         }
+        
+        /* Sidebar adjustments */
+        .sidebar-next {
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            width: 250px; /* Fixed width */
+            background-color: #343a40;
+            padding-top: 20px;
+        }
 
-        .content-area {
-            margin-left: 0;
+        /* Content area adjustment to align with sidebar */
+        #content {
+            margin-left: 250px; /* Same width as the sidebar */
+            width: calc(100% - 250px);
             transition: margin-left 0.3s ease;
         }
 
-        .content-area.sidebar-open {
-            margin-left: 250px;
-        }
+        /* Remove padding/margin for tight alignment */
         
 
-        /*Add through SASS change of container-xxl screens*/
+        .sidebar-next .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 10px 20px;
+            color: white;
+        }
+
+        .sidebar-next .description {
+            font-size: 14px;
+        }
+
+        .sidebar-next .nav-link:hover {
+            background-color: yellow;
+        }
+
+        .sidebar-next .sub-menu {
+            padding-left: 3%;
+        }
+
+        @media (max-width: 992px) {
+            .sidebar-next {
+                width: 60px; 
+            }
+
+            .sidebar-next .description {
+                display: none; 
+            }
+
+            .sidebar-next .nav-link {
+                justify-content: center;
+            }
+
+            .content-area {
+                margin-left: 60px;
+            }
+
+            #content {
+                margin-left: 60px; /* Match the sidebar width */
+                width: calc(100% - 60px); /* Fill the remaining space */
+            }
+        }
+
 
     </style>
 
 </head>
 <body>
     <div class="container-fluid">
-        <div class="row flex-nowrap">
+        <div class="row">
             <!-- Sidebar -->
-            <div class="bg-dark col-auto col-md-3 col-lg-3 min-vh-100 d-flex flex-column justify-content-between" style="max-width: 260px;">
-                <div class="bg-dark p-2">
-                    <a class="d-flex text-decoration-none mt-1 align-items-center">
-                        <span class="fs-4 d-none d-sm-inline text-warning">Happy Cherry</span>
+            <div class="col-auto sidebar-next px-0 bg-dark">
+                <nav class="nav flex-column">
+                    <!-- Sidebar links -->
+                    <a class="nav-link" href="#">
+                        <span class="icon">
+                            <i class="bi bi-grid"></i>
+                        </span>
+                        <span class="description">Dashboard</span>
                     </a>
-                    <ul class="nav nav-pills flex-column my-2">
-                        <li class="nav-item py-2 py-sm-0">
-                            <a href="#" class="nav-link text-warning">
-                                <i class="fs-5 fa fa-gauge"></i>
-                                <span class="fs-5 ms-3 d-none d-sm-inline">Dashboard</span>
-                            </a>
-                        </li>
-                        <li class="nav-item py-2 py-sm-0">
-                            <a href="#" class="nav-link text-warning">
-                                <i class="fs-5 fa fa-house"></i>
-                                <span class="fs-5 ms-3 d-none d-sm-inline">Home</span>
-                            </a>
-                        </li>
-                        <li class="nav-item py-2 py-sm-0">
-                            <a href="#" class="nav-link text-warning">
-                                <i class="fs-5 fa fa-table-list"></i>
-                                <span class="fs-5 ms-3 d-none d-sm-inline">Articles</span>
-                            </a>
-                        </li>
-                        <li class="nav-item py-2 py-sm-0">
-                            <a href="#" class="nav-link text-warning">
-                                <i class="fs-5 fa fa-table-list"></i>
-                                <span class="fs-5 ms-3 d-none d-sm-inline">Products</span>
-                            </a>
-                        </li>
-                        <li class="nav-item py-2 py-sm-0">
-                            <a href="#" class="nav-link text-warning">
-                                <i class="fs-5 fa fa-clipboard"></i>
-                                <span class="fs-5 ms-3 d-none d-sm-inline">Orders</span>
-                            </a>
-                        </li>
-                        <li class="nav-item py-2 py-sm-0">
-                            <a href="#" class="nav-link text-warning">
-                                <i class="fs-5 fa fa-users"></i>
-                                <span class="fs-5 ms-3 d-none d-sm-inline">Customers</span>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-            
-            <!-- 2) Sidebar Older one with toggle
-            <div id="sidebar" class="sidebar bg-dark text-white">
-                <div class="d-flex flex-column flex-shrink-0 p-3 text-bg-dark min-vh-100">
-                    <a href="{% url 'happy_cherries:index' %}" class="text-decoration-none text-warning fs-5">
-                        Happy Cherries
+                    <a class="nav-link" href="#">
+                        <span class="icon">
+                            <i class="bi bi-clipboard-check"></i> 
+                        </span>
+                        <span class="description">Posts</span>
                     </a>
-                    <hr class="text-white my-2">
-                    <ul class="nav nav-pills flex-column mb-2">
-                        <li class="w-100 mt-3">
-                        </li>
-                        <li>
-                            <a href="#" class="nav-link px-0 align-middle text-warning" style="font-size: 1.25rem;">
-                                <i class="fs-4 bi-film"></i> <span class="ms-1 d-none d-sm-inline">Movies</span>
-                            </a>
-                            <ul class="nav flex-column ms-1">
-                                <li>
-                                    <a href="{% url 'happy_cherries:movies' %}" class="nav-link px-0"> <span class="d-none d-sm-inline">Library</span> </a>
-                                </li>
-                                <li>
-                                    <a href="{% url 'happy_cherries:movies_watchlist' %}" class="nav-link px-0"> <span class="d-none d-sm-inline">Watchlist</span> </a>
-                                </li>
-                                <li>
-                                    <a href="{% url 'happy_cherries:movies_favorites' %}" class="nav-link px-0"> <span class="d-none d-sm-inline">Favorites</span> </a>
-                                </li>
-                            </ul>
-                        </li>
-                    </ul>
-                    <hr class="w-100 text-white my-2">
-                    <ul class="nav nav-pills flex-column mb-auto">
-                        <li>
-                            <a href="#" class="nav-link px-0 align-middle text-warning" style="font-size: 1.25rem;">
-                                <i class="fs-4 bi-tv"></i> <span class="ms-1 d-none d-sm-inline">TV Shows</span>
-                            </a>
-                            <ul class="nav flex-column ms-1">
-                                <li>
-                                    <a href="#" class="nav-link px-0"> <span class="d-none d-sm-inline">Library</span> </a>
-                                </li>
-                                <li>
-                                    <a href="#" class="nav-link px-0"> <span class="d-none d-sm-inline">Watchlist</span> </a>
-                                </li>
-                                <li>
-                                    <a href="#" class="nav-link px-0"> <span class="d-none d-sm-inline">Favorites</span> </a>
-                                </li>
-                            </ul>
-                        </li>
-                    </ul>
-                    <hr>
-                    <div class="dropup mb-4">
-                        <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
-                            <img src="https://github.com/mdo.png" alt="hugenerd" width="30" height="30" class="rounded-circle">
-                            <span class="d-none d-sm-inline mx-1">loser</span>
+                    <a class="nav-link" href="#">
+                        <span class="icon">
+                            <i class="bi bi-bell"></i>
+                        </span>
+                        <span class="description">Notifications</span>
+                    </a>
+                    <!--Dropdown-->
+                    <a class="nav-link" href="#" data-bs-toggle="collapse" data-bs-target="#submenu" aria-expanded="false aria-controls="submenu">
+                        <span class="icon">
+                            <i class="bi bi-box-seam"></i>
+                        </span>
+                        <span class="description">Projects <i class="bi bi-caret-down-fill"></i></span>
+                    </a>
+                    <div class="sub-menu collapse" id="submenu">
+                        <a class="nav-link" href="#" >
+                            <span class="icon">
+                                <i class="bi bi-file-earmark-check"></i>
+                            </span>
+                            <span class="description">Project 1</span>
                         </a>
-                        <ul class="dropdown-menu dropdown-menu-dark text-small shadow">
-                            <li><a class="dropdown-item" href="#">New project...</a></li>
-                            <li><a class="dropdown-item" href="#">Settings</a></li>
-                            <li><a class="dropdown-item" href="#">Profile</a></li>
-                            <li>
-                                <hr class="dropdown-divider">
-                            </li>
-                            <li><a class="dropdown-item" href="#">Sign out</a></li>
-                        </ul>
+                        <a class="nav-link" href="#" >
+                            <span class="icon">
+                                <i class="bi bi-file-earmark-check"></i>
+                            </span>
+                            <span class="description">Project 2</span>
+                        </a>
+                        <a class="nav-link" href="#" >
+                            <span class="icon">
+                                <i class="bi bi-file-earmark-check"></i>
+                            </span>
+                            <span class="description">Project 3</span>
+                        </a>
                     </div>
-                </div>
-            </div>-->            
-            <!-- Content of the navigation bar -->
+                    <a class="nav-link" href="#" >
+                        <span class="icon">
+                            <i class="bi bi-gear"></i>
+                        </span>
+                        <span class="description">Settings</span>
+                    </a>    
+                </nav>
+            </div>
+            <!-- Content Area -->
             <div id="content" class="col content-area px-0">
                 <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4 w-100">
-                    <button class="btn btn-outline-warning ms-3" id="sidebarToggle" style="width: 56px; height: 40px; padding: 4px 12px;" >
-                        <span class="navbar-toggler-icon" style="width: 30px; height: 30px;"></span>
-                    </button>
-                    <button class="navbar-toggler me-2" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <button class="navbar-toggler ms-auto me-2" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                         <span class="navbar-toggler-icon"></span>
                     </button>
                     <div class="collapse navbar-collapse ms-4" id="navbarSupportedContent">
@@ -253,11 +249,21 @@
                                     TV Shows List
                                 </a>
                                 <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" href="{% url 'happy_cherries:tvshow_search' %}">Search</a></li>
-                                    <li><a class="dropdown-item" href="{% url 'happy_cherries:top_rated_tvshows' %}">Top Rated TV Shows</a></li>
-                                    <li><a class="dropdown-item" href="{% url 'happy_cherries:upcoming_tvshows' %}">Upcoming TV Shows</a></li>
-                                    <li><a class="dropdown-item" href="{% url 'happy_cherries:now_airing_tvshows' %}">Now Airing TV Shows</a></li>
-                                    <li><a class="dropdown-item" href="{% url 'happy_cherries:popular_tvshows' %}">Popular TV Shows</a></li>
+                                    <li>
+                                        <a class="dropdown-item" href="{% url 'happy_cherries:tvshow_search' %}">Search</a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="{% url 'happy_cherries:top_rated_tvshows' %}">Top Rated TV Shows</a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="{% url 'happy_cherries:upcoming_tvshows' %}">Upcoming TV Shows</a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="{% url 'happy_cherries:now_airing_tvshows' %}">Now Airing TV Shows</a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="{% url 'happy_cherries:popular_tvshows' %}">Popular TV Shows</a>
+                                    </li>
                                 </ul>
                             </li>
                         </ul>
@@ -282,10 +288,10 @@
                             {% endif %}
                         </ul>
                     </div>
-                </nav>
+                </nav>    
                 
-                <!-- Main Content Area -->
-                <main role="main" class="container-xxl">    <!--So the content doesn't keep spreading across the page.-->
+                <!-- Main Content -->
+                <main role="main" class="container-xxl">
                     <div class="mb-2 pb-2">
                         {% block page_header %}{% endblock page_header %}
                     </div>
@@ -296,23 +302,6 @@
             </div>
         </div>
     </div>
-
-    <script>
-        document.getElementById("sidebarToggle").onclick = function() {
-            document.getElementById("sidebar").classList.toggle("show");
-            document.getElementById("content").classList.toggle("sidebar-open");
-        };
-    </script>
-
-    <script>
-        $("#menu-toggle").click(function(e) {
-            e.preventDefault();
-            $("#wrapper").toggleClass("toggled");
-        });
-    </script>
-
-
-
 </body>
 </html>
 
@@ -324,4 +313,4 @@
     as the left margin (start margin in LTR) is set to auto, taking up all the 
     available space to the left.
     Spacing: https://getbootstrap.com/docs/5.3/utilities/spacing/#margin-and-padding
--->
+    -->
