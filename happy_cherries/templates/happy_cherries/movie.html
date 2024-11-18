@@ -2,6 +2,7 @@
 
 {% block content %}
 
+<div class="container m-2"
     <div class="text-center mt-4">
         <div class="row justify-content-center">
             <div class="col-md-12 position-relative">
@@ -28,26 +29,54 @@
                         {% if is_owner %}
                             <!-- Flex container for buttons -->
                             <div class="d-flex justify-content-end gap-1">
-                                {% if not in_watchlist %}
+                                {% if not in_watchlist and in_favorite %}
                                 <form method="post">
                                     {% csrf_token %}
                                     <input type="hidden" name="action" value="save_watchlist">
                                     <button type="submit" class="btn btn-primary">Add Watchlist</button>
                                 </form>
-                                {% endif %}
-                                {% if not in_favorite %}
+                                <form method="post">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="action" value="remove_favorite">
+                                    <button type="submit" class="btn btn-warning">Remove Favorite</button>
+                                </form>
+                                {% elif not in_favorite and in_watchlist%}
+                                <form method="post">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="action" value="remove_watchlist">
+                                    <button type="submit" class="btn btn-primary">Remove Watchlist</button>
+                                </form>
                                 <form method="post">
                                     {% csrf_token %}
                                     <input type="hidden" name="action" value="save_favorite">
-                                    <button type="submit" class="btn btn-warning">Favorite</button>
+                                    <button type="submit" class="btn btn-warning">Add Favorite</button>
+                                </form>  
+                                {% elif not in_watchlist and not in_favorite %}
+                                <form method="post">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="action" value="save_watchlist">
+                                    <button type="submit" class="btn btn-primary">Add Watchlist</button>
+                                </form>
+                                <form method="post">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="action" value="save_favorite">
+                                    <button type="submit" class="btn btn-warning">Add Favorite</button>
+                                </form>  
+                                {% elif in_watchlist and in_favorite %}
+                                <form method="post">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="action" value="remove_watchlist">
+                                    <button type="submit" class="btn btn-primary">Remove Watchlist</button>
+                                </form>
+                                <form method="post">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="action" value="remove_favorite">
+                                    <button type="submit" class="btn btn-warning">Remove Favorite</button>
                                 </form>  
                                 {% endif %}
-                    
-                                {% if is_owner %}
                                 <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
                                     Delete Movie
                                 </button>
-                                {% endif %}
                             </div>
                         {% endif %}    
                         <h1 class="text-center border-bottom border-white my-2 p-2">{{ movie.title }}</h1>
@@ -193,7 +222,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    
 
     <!--Ensure the box has a position property set that allows position within it.-->
     <div class="row position-relative align-items-start text-bg-dark border rounded-3 p-3 mt-3">
@@ -241,7 +270,7 @@
             {% endfor %}
         </div>
     </div>  
-
+</div>
 
 <!-- Bootstrap Modal for Delete Confirmation -->
 <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">

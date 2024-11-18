@@ -26,6 +26,8 @@
     <!-- Dark Theme -->
     <link rel="stylesheet" type="text/css" href="https://bootswatch.com/5/darkly/bootstrap.min.css">
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/js/all.min.js"></script>
+
     
     <!-- Adding some custom styling for the dropdown menu
         Added some styling to make it so can hover over the button.  
@@ -97,6 +99,53 @@
     <div class="container-fluid">
         <div class="row flex-nowrap">
             <!-- Sidebar -->
+            <div class="bg-dark col-auto col-md-3 col-lg-3 min-vh-100 d-flex flex-column justify-content-between" style="max-width: 260px;">
+                <div class="bg-dark p-2">
+                    <a class="d-flex text-decoration-none mt-1 align-items-center">
+                        <span class="fs-4 d-none d-sm-inline text-warning">Happy Cherry</span>
+                    </a>
+                    <ul class="nav nav-pills flex-column my-2">
+                        <li class="nav-item py-2 py-sm-0">
+                            <a href="#" class="nav-link text-warning">
+                                <i class="fs-5 fa fa-gauge"></i>
+                                <span class="fs-5 ms-3 d-none d-sm-inline">Dashboard</span>
+                            </a>
+                        </li>
+                        <li class="nav-item py-2 py-sm-0">
+                            <a href="#" class="nav-link text-warning">
+                                <i class="fs-5 fa fa-house"></i>
+                                <span class="fs-5 ms-3 d-none d-sm-inline">Home</span>
+                            </a>
+                        </li>
+                        <li class="nav-item py-2 py-sm-0">
+                            <a href="#" class="nav-link text-warning">
+                                <i class="fs-5 fa fa-table-list"></i>
+                                <span class="fs-5 ms-3 d-none d-sm-inline">Articles</span>
+                            </a>
+                        </li>
+                        <li class="nav-item py-2 py-sm-0">
+                            <a href="#" class="nav-link text-warning">
+                                <i class="fs-5 fa fa-table-list"></i>
+                                <span class="fs-5 ms-3 d-none d-sm-inline">Products</span>
+                            </a>
+                        </li>
+                        <li class="nav-item py-2 py-sm-0">
+                            <a href="#" class="nav-link text-warning">
+                                <i class="fs-5 fa fa-clipboard"></i>
+                                <span class="fs-5 ms-3 d-none d-sm-inline">Orders</span>
+                            </a>
+                        </li>
+                        <li class="nav-item py-2 py-sm-0">
+                            <a href="#" class="nav-link text-warning">
+                                <i class="fs-5 fa fa-users"></i>
+                                <span class="fs-5 ms-3 d-none d-sm-inline">Customers</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- 2) Sidebar Older one with toggle
             <div id="sidebar" class="sidebar bg-dark text-white">
                 <div class="d-flex flex-column flex-shrink-0 p-3 text-bg-dark min-vh-100">
                     <a href="{% url 'happy_cherries:index' %}" class="text-decoration-none text-warning fs-5">
@@ -159,7 +208,7 @@
                         </ul>
                     </div>
                 </div>
-            </div>            
+            </div>-->            
             <!-- Content of the navigation bar -->
             <div id="content" class="col content-area px-0">
                 <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4 w-100">
@@ -254,6 +303,14 @@
             document.getElementById("content").classList.toggle("sidebar-open");
         };
     </script>
+
+    <script>
+        $("#menu-toggle").click(function(e) {
+            e.preventDefault();
+            $("#wrapper").toggleClass("toggled");
+        });
+    </script>
+
 
 
 </body>

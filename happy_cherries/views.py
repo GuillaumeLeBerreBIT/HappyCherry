@@ -206,34 +206,35 @@ def movie(request, movie_id):
     if request.method == 'POST':
         
         action = request.POST.get('action')
+        print(action)
         
         if action == "remove_movie":
-                
-            movie.watchlist = movie.favorites = False
             movie.delete()
-        
             # Refresh teh page directly. 
             return redirect('happy_cherries:movies')
         
         elif action == 'save_watchlist': 
-        
             movie.watchlist = True
-            movie.favorites = False
-                
             movie.save()
-        
             # Refresh teh page directly. 
             return redirect('happy_cherries:movie', movie_id=movie.id)
     
         elif action == 'save_favorite': 
-            
-            movie.watchlist = False
             movie.favorites = True
-                
             movie.save()
-        
             # Refresh teh page directly. 
             return redirect('happy_cherries:movie', movie_id=movie.id)
+        
+        elif action == 'remove_favorite':
+            movie.favorites = False
+            movie.save()
+            return redirect('happy_cherries:movie', movie_id=movie.id)
+        
+        elif action == 'remove_watchlist':
+            movie.watchlist = False
+            movie.save()
+            return redirect('happy_cherries:movie', movie_id=movie.id)
+
     
 
     context = {
