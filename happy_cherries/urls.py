@@ -71,4 +71,8 @@ urlpatterns = [
     path('tvshows/now_airing_tvshows/', views.now_airing_tvshows, name='now_airing_tvshows'),
     # Show all movies now playing.
     path('tvshows/popular/', views.popular_tvshows, name='popular_tvshows'),
+    # Show all movies in your watchlist
+    path('tvshows/watchlist/', views.tvshows_watchlist, name='tvshows_watchlist'),    
+    # Show all movies in your watchlist
+    path('tvshows/favorites/', views.tvshows_favorites, name='tvshows_favorites'),
 ]

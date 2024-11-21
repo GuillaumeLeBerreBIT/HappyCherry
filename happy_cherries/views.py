@@ -13,8 +13,11 @@ from datetime import datetime
 
 def convert_date(time_str):
     """Convert the time string to time object"""
-    time_obj = datetime.strptime(time_str, '%Y-%m-%d')
-    return datetime.strftime(time_obj, '%d %b, %Y')
+    if time_str:
+        time_obj = datetime.strptime(time_str, '%Y-%m-%d')
+        return datetime.strftime(time_obj, '%d %b, %Y')
+    else: 
+        return ''
 
 def check_user(request, media):
     """Check if the logged in user is linked to the saved movie/show"""
@@ -121,7 +124,6 @@ def movies_watchlist(request):
         if all_reviews:
             
             total_sum = sum(review.score for review in all_reviews)
-            
             movie.avg_score = round(total_sum / len(all_reviews), None)
         
         movie.genres = movie.genre.split(',')
@@ -148,7 +150,6 @@ def movies_favorites(request):
             if all_reviews:
                 
                 total_sum = sum(review.score for review in all_reviews)
-            
                 movie.avg_score = round(total_sum / len(all_reviews), None)
         
         movie.genres = movie.genre.split(',')
@@ -206,7 +207,6 @@ def movie(request, movie_id):
     if request.method == 'POST':
         
         action = request.POST.get('action')
-        print(action)
         
         if action == "remove_movie":
             movie.delete()
@@ -558,11 +558,18 @@ def tvshows(request):
     # Note is linked to the user so do not need to filter the note by user. 
     
     for tv_show in tv_shows:
-        reviews = tv_show.publicreview_set.all()
-        # Firstly check if there are any reviews left behind. 
-        if reviews:
-            total_sum = sum(review.score for review in reviews)
-            tv_show.avg_score = round(total_sum / len(reviews), None)
+        
+        identical_tv_shows = TvShow.objects.filter(id_tvshow=tv_show.id_tvshow)    # Get all the movies with the same ID. 
+        
+        all_reviews = []
+        for iden_tv_show in identical_tv_shows:
+            
+            all_reviews.extend(iden_tv_show.publicreview_set.all())
+        
+        if all_reviews:
+            
+            total_sum = sum(review.score for review in all_reviews)
+            tv_show.avg_score = round(total_sum / len(all_reviews), None)
         
         #print(dir(tv_show))
         #print(tv_show.id, tv_show.id_tvshow)
@@ -576,7 +583,90 @@ def tvshows(request):
         tv_show.genres = tv_show.genre.split(',')
         tv_show.genres.sort()
     
-    context = {'tv_shows': tv_shows}
+    # Initialize is_delete based on session data
+    is_delete = request.session.get('is_delete', False)
+        
+    if request.method == 'POST':
+        if request.POST.get('action') == 'delete_tvshows':
+            # Toggle is_delete in the session
+            request.session['is_delete'] = True
+            return redirect('happy_cherries:tvshows')
+        
+        if request.POST.get('action') == 'save_tvshows':
+            # Toggle is_delete in the session
+            request.session['is_delete'] = False
+            return redirect('happy_cherries:tvshows')
+    
+    context = {'tv_shows': tv_shows, 
+               'title': 'Library Tv Shows',
+               'is_delete': is_delete
+               }
+    
+    return render(request, 'happy_cherries/tvshows.html', context)
+
+@login_required
+def tvshows_watchlist(request):
+    """Show all the movies added to your watchlist."""
+    
+    tv_shows = TvShow.objects.filter(owner=request.user, watchlist=True).order_by('date_added')
+    
+    for tv_show in tv_shows:
+        
+        identical_tv_shows = TvShow.objects.filter(id_tvshow=tv_show.id_tvshow)    # Get all the movies with the same ID. 
+        
+        all_reviews = []
+        for iden_tv_show in identical_tv_shows:
+            
+            all_reviews.extend(iden_tv_show.publicreview_set.all())
+        
+        if all_reviews:
+            
+            total_sum = sum(review.score for review in all_reviews)
+            tv_show.avg_score = round(total_sum / len(all_reviews), None)
+        
+        note = tv_show.note_set.first()
+        # If there is a note set then. 
+        if note:
+            tv_show.note = note
+        
+        tv_show.genres = tv_show.genre.split(',')
+        tv_show.genres.sort()
+    
+    context = {'tv_shows': tv_shows, 'title': 'Watchlist Tv Shows'}
+    return render(request, 'happy_cherries/tvshows.html', context)
+ 
+@login_required
+def tvshows_favorites(request):
+    """Show all the movies add to your favorites list."""
+    
+    tv_shows = TvShow.objects.filter(owner=request.user, favorites=True).order_by('date_added')
+    
+    for tv_show in tv_shows:
+        
+        identical_tv_shows = TvShow.objects.filter(id_tvshow=tv_show.id_tvshow)    # Get all the movies with the same ID. 
+        
+        all_reviews = []
+        for iden_tv_show in identical_tv_shows:
+            
+            all_reviews.extend(iden_tv_show.publicreview_set.all())
+        
+        if all_reviews:
+            
+            total_sum = sum(review.score for review in all_reviews)
+            tv_show.avg_score = round(total_sum / len(all_reviews), None)
+        
+        note = tv_show.note_set.first()
+        # If there is a note set then. 
+        if note:
+            tv_show.note = note
+        
+        tv_show.genres = tv_show.genre.split(',')
+        tv_show.genres.sort()
+    
+    context = {
+        'tv_shows': tv_shows, 
+        'title': 'Favorite Tv Shows'
+        }
     return render(request, 'happy_cherries/tvshows.html', context)
 
 @login_required
@@ -588,18 +678,17 @@ def tvshow(request, tvshow_id):
     """
     # Use the TvShow Primary key to get acces. 
     tvshow = TvShow.objects.get(id=tvshow_id)
+    
     ext_review = tvshow.extendedtvshowreview_set.first()
     
-    # Make sure the saved movie belongs to the user
-    if tvshow.owner != request.user:
-        raise Http404   # Returning the standard error.
+    check_user(request, tvshow)
     
+    is_owner = False
+    if request.user.is_authenticated:
+        is_owner = True
+        
     # Get the note linked to a specific Movie
     note = tvshow.note_set.first() # Get the latest note added
-    
-    # Get the reviews linked to specific Tv Show. 
-    # This is the model object, iterate to get all the reviews which then can access the score attr
-    reviews = tvshow.publicreview_set.order_by('date_added')
     
     tvshow.cast_spl, tvshow.genres_spl = tvshow.cast.split(','), tvshow.genre.split(',')
     
@@ -609,16 +698,61 @@ def tvshow(request, tvshow_id):
         tvshow.cast_spl = tvshow.cast_spl[0:6]
         tvshow.cast_spl.append('...')
     
-    # Check if there are any reviews. 
-    if reviews:
-        # Iterate over all reviews
-        total_sum = sum(review.score for review in reviews)
-        tvshow.avg_score = round(total_sum/len(reviews), None)  
+    # Get the reviews linked to specific movie. 
+    # This is the model object, iterate to get all the reviews which then can access the score attr
+    identical_tvshows = TvShow.objects.filter(id_tvshow=tvshow.id_tvshow)
+    
+    all_reviews = []
+    all_extended_reviews = []
+    for iden_tvshow in identical_tvshows:
+        # This line aggregates all reviews related to the identical movies into a single list. It does not add a list as a single item (append would not work).
+        all_reviews.extend(iden_tvshow.publicreview_set.all())
+        all_extended_reviews.extend(iden_tvshow.extendedtvshowreview_set.all())
+
+    if all_reviews:
+        total_sum = sum(review.score for review in all_reviews)
+        tvshow.avg_score = round(total_sum/len(all_reviews), None)  
         
-    context = {'tvshow': tvshow, 
-               'extended_review': ext_review,
-               'reviews': reviews, 
-               'note': note}
+    if request.method == 'POST':
+        
+        action = request.POST.get('action')
+        
+        if action == "remove_tvshow":
+            tvshow.delete()
+            # Refresh teh page directly. 
+            return redirect('happy_cherries:tvshows')
+        
+        elif action == 'save_watchlist': 
+            tvshow.watchlist = True
+            tvshow.save()
+            # Refresh teh page directly. 
+            return redirect('happy_cherries:tvshow', tvshow_id=tvshow.id)
+    
+        elif action == 'save_favorite': 
+            tvshow.favorites = True
+            tvshow.save()
+            # Refresh teh page directly. 
+            return redirect('happy_cherries:tvshow', tvshow_id=tvshow.id)
+        
+        elif action == 'remove_favorite':
+            tvshow.favorites = False
+            tvshow.save()
+            return redirect('happy_cherries:tvshow', tvshow_id=tvshow.id)
+        
+        elif action == 'remove_watchlist':
+            tvshow.watchlist = False
+            tvshow.save()
+            return redirect('happy_cherries:tvshow', tvshow_id=tvshow.id)
+        
+    context = {
+        'tvshow': tvshow, 
+        'is_owner': is_owner,
+        'reviews': all_reviews,
+        'extended_review': ext_review,
+        'in_watchlist': tvshow.watchlist,
+        'in_favorite': tvshow.favorites, 
+        'note': note
+        }
     
     return render(request, 'happy_cherries/tvshow.html', context)
     
@@ -756,7 +890,11 @@ def requested_tvshow(request, tvshow_id):
     if request.method != 'POST':
         # Want to get all the detailed information of a movie. 
         
-        tvshow = fetch_detailed_tvshow(headers, tvshow_id, url_det_tvshow, url_credits_tvshow, url_poster)
+        tvshow = fetch_detailed_tvshow(headers, 
+                                       tvshow_id, 
+                                       url_det_tvshow,
+                                       url_credits_tvshow, 
+                                       url_poster)
         
         # Because the Cast and Genres are saved in a long string splitted by ',' to save easily in the model direclty.
         # We split the string to then iterate over a list in the HTML file.  
@@ -768,32 +906,47 @@ def requested_tvshow(request, tvshow_id):
             tvshow["cast"].append('...')
             
         # When logged in. 
+        # When logged in. 
         if is_owner:
             # Get all the saved Movie objects from the authenticated user
-            saved_tvshows = TvShow.objects.filter(owner=request.user)
-            
-            # Saved all the titles in a list 
-            titles = []
-            for saved_show in saved_tvshows:
-                titles.append(saved_show.title)
+            saved_tvshow = TvShow.objects.filter(owner=request.user, title=tvshow['title']).first()
             
             # Then pass the variable to tell wether the movie is saved or not. 
-            if tvshow['title'] in titles: saved = True
-            else: saved  = False
+            if saved_tvshow: 
+                saved = "Saved"
+                in_watchlist = saved_tvshow.watchlist
+                is_favorite = saved_tvshow.favorites
+                
+            else: 
+                saved  = "Unsaved"
+                in_watchlist = is_favorite = False
             
-        # When not logged in it is not saved and can't be saved.    
-        else: saved = False
+        # When nog logged in it is not saved and can't be saved.    
+        else: 
+            saved  = "Unsaved"
+            in_watchlist = is_favorite = False
         
         context = {'tvshow': tvshow,
                    'saved': saved,
-                   'is_owner': is_owner
+                   'is_owner': is_owner,
+                   'in_watchlist': in_watchlist,
+                   'is_favorite': is_favorite,
                    }
         
         return render(request, 'happy_cherries/requested_tvshow.html', context)
+    
     # POST request -- > Save the Tv Show into a model which then redirected to tvshow homepage.    
-    else:
+    elif request.method == 'POST': 
         
-        tvshow = fetch_detailed_tvshow(headers, tvshow_id, url_det_tvshow, url_credits_tvshow, url_poster)
+        # Get the current action given by entered Form
+        action = request.POST.get('action')
+        
+        tvshow = fetch_detailed_tvshow(headers, 
+                                       tvshow_id, 
+                                       url_det_tvshow, 
+                                       url_credits_tvshow, 
+                                       url_poster
+                                       )
             
         # Create an instance of the model to save all the information directly into the database. 
         # No need to create Form since have the values predefined
@@ -812,9 +965,33 @@ def requested_tvshow(request, tvshow_id):
                    tagline=tvshow['tagline']
                    )
         
-        s.save()
+        if action == "save_tvshow":
+            
+            s.watchlist = s.favorites = False
+            s.save()
         
-        return redirect('happy_cherries:tvshows')
+            # Redirect to the movies page after saving
+            return redirect('happy_cherries:tvshows')
+    
+        elif action == 'save_watchlist': 
+        
+            s.watchlist = True
+            s.favorites = False
+                
+            s.save()
+        
+            # Redirect to the movies page after saving
+            return redirect('happy_cherries:tvshows_watchlist')
+    
+        elif action == 'save_favorite': 
+            
+            s.watchlist = False
+            s.favorites = True
+                
+            s.save()
+            
+            # Redirect to the movies page after saving
+            return redirect('happy_cherries:tvshows_favorites')
 
 def top_rated_tvshows(request):
     """

@@ -116,6 +116,14 @@
         .sidebar-next .nav-link:hover {
             background-color: #f39c12;
         }
+        
+        .navbar-dark .navbar-nav .nav-link:hover {
+            color: #f39c12;
+        }
+
+        .navbar-dark .navbar-nav .dropdown-item:hover {
+            color: #f39c12;
+        }
 
         .sidebar-next .sub-menu {
             padding-left: 3%;
@@ -173,31 +181,58 @@
                         </span>
                         <span class="description">Notifications</span>
                     </a>
-                    <!--Dropdown-->
-                    <a class="nav-link" href="#" data-bs-toggle="collapse" data-bs-target="#submenu" aria-expanded="false aria-controls="submenu">
+                    <!--Dropdown 1-->
+                    <a class="nav-link" href="#" data-bs-toggle="collapse" data-bs-target="#submenu1" aria-expanded="false" aria-controls="submenu1">
                         <span class="icon">
                             <i class="bi bi-box-seam"></i>
                         </span>
-                        <span class="description">Projects <i class="bi bi-caret-down-fill"></i></span>
+                        <span class="description">Movies<i class="bi bi-caret-down-fill"></i></span>
                     </a>
-                    <div class="sub-menu collapse" id="submenu">
-                        <a class="nav-link" href="#" >
+                    <div class="sub-menu collapse" id="submenu1">
+                        <a class="nav-link" href="{% url 'happy_cherries:movies' %}">
                             <span class="icon">
                                 <i class="bi bi-file-earmark-check"></i>
                             </span>
-                            <span class="description">Project 1</span>
+                            <span class="description">Library</span>
                         </a>
-                        <a class="nav-link" href="#" >
+                        <a class="nav-link" href="{% url 'happy_cherries:movies_watchlist' %}" >
                             <span class="icon">
                                 <i class="bi bi-file-earmark-check"></i>
                             </span>
-                            <span class="description">Project 2</span>
+                            <span class="description">Watchlist</span>
                         </a>
-                        <a class="nav-link" href="#" >
+                        <a class="nav-link" href="{% url 'happy_cherries:movies_favorites' %}" >
                             <span class="icon">
                                 <i class="bi bi-file-earmark-check"></i>
                             </span>
-                            <span class="description">Project 3</span>
+                            <span class="description">Favorites</span>
+                        </a>
+                    </div>
+                    <!--Dropdown 2-->
+                    <a class="nav-link" href="#" data-bs-toggle="collapse" data-bs-target="#submenu2" aria-expanded="false" aria-controls="submenu2">
+                        <span class="icon">
+                            <i class="bi bi-box-seam"></i>
+                        </span>
+                        <span class="description">Tv Shows<i class="bi bi-caret-down-fill"></i></span>
+                    </a>
+                    <div class="sub-menu collapse" id="submenu2">
+                        <a class="nav-link" href="{% url 'happy_cherries:tvshows' %}">
+                            <span class="icon">
+                                <i class="bi bi-file-earmark-check"></i>
+                            </span>
+                            <span class="description">Library</span>
+                        </a>
+                        <a class="nav-link" href="{% url 'happy_cherries:tvshows_watchlist' %}" >
+                            <span class="icon">
+                                <i class="bi bi-file-earmark-check"></i>
+                            </span>
+                            <span class="description">Watchlist</span>
+                        </a>
+                        <a class="nav-link" href="{% url 'happy_cherries:tvshows_favorites' %}" >
+                            <span class="icon">
+                                <i class="bi bi-file-earmark-check"></i>
+                            </span>
+                            <span class="description">Favorites</span>
                         </a>
                     </div>
                     <a class="nav-link" href="#" >
