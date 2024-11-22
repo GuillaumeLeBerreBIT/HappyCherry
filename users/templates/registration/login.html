@@ -34,13 +34,13 @@
                                 <!-- Username input -->
                                 <div class="mb-3">
                                     <label for="id_username" class="form-label">Username</label>
-                                    {{ form.username }}
+                                    <input type="text" name="username" id="id_username" class="form-control" placeholder="Enter your username">
                                 </div>
 
                                 <!-- Password input -->
                                 <div class="mb-3">
                                     <label for="id_password" class="form-label">Password</label>
-                                    {{ form.password }}
+                                    <input type="password" name="password" id="id_password" class="form-control" placeholder="Enter your password">
                                 </div>
 
                                 <!-- Remember me and forgot password -->
@@ -51,7 +51,7 @@
                                     </div>
                                 </div>
 
-                                <!-- Submit button -->
+                                <!-- Submit button -->      
                                 <button type="submit" class="btn btn-primary w-100">Log in</button>
                                 
                                 <!-- Hidden next input -->
