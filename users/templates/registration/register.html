@@ -2,13 +2,121 @@
 
 {% block content %}
 
-    <form method="post" action="{% url 'users:register' %}">
-        {% csrf_token %}
-        {{ form.as_p }}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <!-- Card for form -->
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <!-- Pills navigation -->
+                    <ul class="nav nav-pills nav-justified mb-3 gap-2" id="login-tabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <a class="nav-link" id="tab-login" href="{% url "users:login" %}">
+                                Login
+                            </a>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <a class="nav-link active bg-warning" id="tab-register" data-bs-toggle="pill"
+                               href="#register" role="tab" aria-controls="register" aria-selected="true">
+                                Register
+                            </a>
+                        </li>
+                    </ul>
+                    <!-- Pills navigation -->
 
-        <button name="submit">Register</button>
-        <input type="hidden" name="next" 
-        value="{% url 'happy_cherries:index' %}"/>
-    </form>
+                    <!-- Form content -->
+                    <form method="post" action="{% url 'users:register' %}">
+                        {% csrf_token %}
+                        
+                        <!-- Username Field -->
+                        <div class="mb-3">
+                            <label for="id_username" class="form-label">Username</label>
+                            <input 
+                                type="text" 
+                                name="username" 
+                                class="form-control {% if form.username.errors %}is-invalid{% endif %}" 
+                                placeholder="Enter Username" 
+                                maxlength="150" 
+                                autocapitalize="none" 
+                                autocomplete="username" 
+                                autofocus 
+                                required 
+                                id="id_username">
+                            {% if form.username.errors %}
+                                <div class="invalid-feedback my-1">
+                                    {{ form.username.errors|join:", " }}
+                                </div>
+                            {% else %}
+                                <div class="my-1">
+                                    <small class="text-muted">
+                                        Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.
+                                    </small>
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Password Field -->
+                        <div class="mb-3">
+                            <label for="id_password1" class="form-label">Password</label>
+                            <input 
+                                type="password" 
+                                name="password1" 
+                                class="form-control {% if form.password1.errors %}is-invalid{% endif %}" 
+                                placeholder="Enter Password" 
+                                autocomplete="new-password" 
+                                required 
+                                id="id_password1">
+                            {% if form.password1.errors %}
+                                <div class="invalid-feedback my-1">
+                                    {{ form.password1.errors|join:", " }}
+                                </div>
+                            {% else %}
+                                <ul class="text-muted small my-1">
+                                    <li>Your password can’t be too similar to your other personal information.</li>
+                                    <li>Your password must contain at least 8 characters.</li>
+                                    <li>Your password can’t be a commonly used password.</li>
+                                    <li>Your password can’t be entirely numeric.</li>
+                                </ul>
+                            {% endif %}
+                        </div>
+
+                        <!-- Confirm Password Field -->
+                        <div class="mb-3">
+                            <label for="id_password2" class="form-label">Password Confirmation</label>
+                            <input 
+                                type="password" 
+                                name="password2" 
+                                class="form-control {% if form.password2.errors %}is-invalid{% endif %}" 
+                                placeholder="Enter Password Again" 
+                                autocomplete="new-password" 
+                                required 
+                                id="id_password2">
+                            {% if form.password2.errors %}
+                                <div class="invalid-feedback my-1">
+                                    {{ form.password2.errors|join:", " }}
+                                </div>
+                            {% else %}
+                                <div class="my-1">
+                                    <small class="text-muted">
+                                        Enter the same password as before, for verification.
+                                    </small>
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Submit Button -->
+                        <button type="submit" class="btn btn-warning w-100">Register</button>
+                        <input type="hidden" name="next" value="{% url 'happy_cherries:index' %}">
+                    </form>
+
+                    <!-- Redirect to Login -->
+                    <div class="text-center mt-3">
+                        <p>Already have an account? <a href="{% url 'users:login' %}" class="text-primary">Log In</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 {% endblock content %}
