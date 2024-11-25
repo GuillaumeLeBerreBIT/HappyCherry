@@ -157,6 +157,51 @@
             background-color: #f39c12;
         }
 
+        /* Base Rule: Show only the first card by default */
+        .card-responsive:nth-child(n+2) {
+            display: none;
+        }
+
+        /* Small Screens (592px and up): Show up to 2 cards */
+        @media (min-width: 592px) {
+            .card-responsive:nth-child(n+3) {
+                display: none;
+            }
+            .card-responsive:nth-child(-n+2) {
+                display: block;
+            }
+        }
+
+        /* Medium Screens (1036px and up): Show up to 3 cards */
+        @media (min-width: 1036px) {
+            .card-responsive:nth-child(n+4) {
+                display: none;
+            }
+            .card-responsive:nth-child(-n+3) {
+                display: block;
+            }
+        }
+
+        /* Large Screens (992px and up): Show up to 4 cards */
+        @media (min-width: 1284px) {
+            .card-responsive:nth-child(n+5) {
+                display: none;
+            }
+            .card-responsive:nth-child(-n+4) {
+                display: block;
+            }
+        }
+
+        /* Extra-Large Screens (1200px and up): Show all cards */
+        @media (min-width: 1560px) {
+            .card-responsive:nth-child(n+6) {
+                display: none;
+            }
+            .card-responsive:nth-child(-n+5) {
+                display: block;
+            }
+        }
+
 
     </style>
 
@@ -168,11 +213,11 @@
             <div class="col-auto sidebar-next px-0 bg-dark">
                 <nav class="nav flex-column">
                     <!-- Sidebar links -->
-                    <a class="nav-link" href="#">
+                    <a class="nav-link" href="{% url "happy_cherries:index" %}">
                         <span class="icon">
-                            <i class="bi bi-grid"></i>
+                            <i class="bi bi-house"></i>
                         </span>
-                        <span class="description">Dashboard</span>
+                        <span class="description fw-bold" style="font-size: 20px;">Happy Cherry</span>
                     </a>
                     <a class="nav-link" href="#">
                         <span class="icon">
@@ -189,26 +234,26 @@
                     <!--Dropdown 1-->
                     <a class="nav-link" href="#" data-bs-toggle="collapse" data-bs-target="#submenu1" aria-expanded="false" aria-controls="submenu1">
                         <span class="icon">
-                            <i class="bi bi-box-seam"></i>
+                            <i class="bi bi-film"></i>
                         </span>
-                        <span class="description">Movies<i class="bi bi-caret-down-fill"></i></span>
+                        <span class="description fw-bold">Movies <i class="bi bi-caret-down-fill"></i></span>
                     </a>
                     <div class="sub-menu collapse" id="submenu1">
                         <a class="nav-link" href="{% url 'happy_cherries:movies' %}">
                             <span class="icon">
-                                <i class="bi bi-file-earmark-check"></i>
+                                <i class="bi bi-book"></i>
                             </span>
                             <span class="description">Library</span>
                         </a>
                         <a class="nav-link" href="{% url 'happy_cherries:movies_watchlist' %}" >
                             <span class="icon">
-                                <i class="bi bi-file-earmark-check"></i>
+                                <i class="bi bi-card-list"></i>
                             </span>
                             <span class="description">Watchlist</span>
                         </a>
                         <a class="nav-link" href="{% url 'happy_cherries:movies_favorites' %}" >
                             <span class="icon">
-                                <i class="bi bi-file-earmark-check"></i>
+                                <i class="bi bi-star-fill"></i>
                             </span>
                             <span class="description">Favorites</span>
                         </a>
@@ -216,26 +261,26 @@
                     <!--Dropdown 2-->
                     <a class="nav-link" href="#" data-bs-toggle="collapse" data-bs-target="#submenu2" aria-expanded="false" aria-controls="submenu2">
                         <span class="icon">
-                            <i class="bi bi-box-seam"></i>
+                            <i class="bi bi-tv"></i>
                         </span>
-                        <span class="description">Tv Shows<i class="bi bi-caret-down-fill"></i></span>
+                        <span class="description fw-bold">Tv Shows <i class="bi bi-caret-down-fill"></i></span>
                     </a>
                     <div class="sub-menu collapse" id="submenu2">
                         <a class="nav-link" href="{% url 'happy_cherries:tvshows' %}">
                             <span class="icon">
-                                <i class="bi bi-file-earmark-check"></i>
+                                <i class="bi bi-book"></i>
                             </span>
                             <span class="description">Library</span>
                         </a>
                         <a class="nav-link" href="{% url 'happy_cherries:tvshows_watchlist' %}" >
                             <span class="icon">
-                                <i class="bi bi-file-earmark-check"></i>
+                                <i class="bi bi-card-list"></i>
                             </span>
                             <span class="description">Watchlist</span>
                         </a>
                         <a class="nav-link" href="{% url 'happy_cherries:tvshows_favorites' %}" >
                             <span class="icon">
-                                <i class="bi bi-file-earmark-check"></i>
+                                <i class="bi bi-star-fill"></i>
                             </span>
                             <span class="description">Favorites</span>
                         </a>
