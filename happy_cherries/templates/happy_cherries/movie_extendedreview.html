@@ -2,20 +2,225 @@
 
 {% load django_bootstrap5 %}    <!--Need tag to load Bootstrap Forms-->
 
-{% block page_header %}
-
-<h2>Extended Review</h2>
-
-{% endblock page_header %}
+{% block page_header %}{% endblock page_header %}
 
 {% block content %}
 
+{% if form.errors %}
+    <div class="alert alert-danger">
+        <ul>
+            {% for error in form.errors %}
+                <li>{{ error }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endif %}
 
-<form action="{% url "happy_cherries:create_extended_review_movie" movie.id %}" method="post" class="form">
+<form action="{% url 'happy_cherries:create_extended_review_movie' movie.id %}" method="post" class="form">
     {% csrf_token %}
-    {% bootstrap_form form %}
-    {{ form.media }}
-    <button type="submit">Save Extended Review</button>
+    <div class="container m-2">
+        <div class="text-center mt-4">
+            <div class="row justify-content-center">
+                <div class="col-md-12 position-relative">
+                    <div class="row position-relative align-items-start text-bg-dark border rounded-3 p-3">
+                        <!-- Badge Section -->
+                        <div class="d-flex align-items-center mb-3 w-100">
+                            {% if movie.avg_score %}
+                                {% if movie.avg_score < 50 %}
+                                    <span class="badge text-bg-danger position-absolute" style="top: 50px; left: 50px; font-size: 16px;">
+                                        {{ movie.avg_score }} %
+                                    </span>
+                                {% else %}
+                                    <span class="badge text-bg-success position-absolute" style="top: 50px; left: 50px; font-size: 16px;">
+                                        {{ movie.avg_score }} %
+                                    </span>
+                                {% endif %}
+                            {% endif %}
+                        </div>
+
+                        <!-- Movie Poster Section -->
+                        <div class="col-md-4 text-center d-flex flex-column">
+                            <img src="{{ movie.poster_path }}" class="img-fluid rounded float-start" alt="movie_poster">
+                        </div>
+
+                        <!-- Spacer -->
+                        <div class="col-md-1"></div>
+
+                        <!-- Movie Details Section -->
+                        <div class="col-md-7 text-start">
+                            <h1 class="text-center border-bottom border-white my-2 p-2">{{ movie.title }}</h1>
+                            <!-- Movie Information -->
+                            <div class="mb-4">
+                                <table class="table">
+                                    <tr>
+                                        <td class="bg-dark text-white text-start" style="padding: 10px;"><strong>Release date</strong></td>
+                                        <td class="bg-dark text-primary text-center" style="padding: 10px;">
+                                            {{ movie.release_date|date:"d M, Y" }}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="bg-dark text-white text-start" style="padding: 10px;"><strong>Runtime</strong></td>
+                                        <td class="bg-dark text-primary text-center" style="padding: 10px;">{{ movie.runtime }}</td>
+                                    </tr>
+                                </table>
+                            </div>
+
+                            <p class="fw-bold">Overview</p>
+                            <p>{{ movie.overview }}</p>
+
+                            <p class="fw-bold">Actors</p>
+                            <div class="mt-4">
+                                <p>
+                                    {% for actor in movie.cast_spl %}
+                                        <span class="badge bg-warning text-dark p-2 mt-2">{{ actor }}</span>
+                                    {% endfor %}
+                                </p>
+                                <p class="fw-bold">Genres</p>
+                                <p>
+                                    {% for genre in movie.genre_spl %}
+                                        <span class="badge bg-primary text-dark p-2 mt-2">{{ genre }}</span>
+                                    {% endfor %}
+                                </p>
+                                <div class="text-center mt-5">
+                                    <p>
+                                        <span class="fw-lighter fst-italic">{{ movie.tagline }}</span>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Personal Review Section -->
+                        <div class="col-md-12 position-relative" style="margin-top: 20px;">
+                            <h2 class="text-center border-top border-white mt-4 p-2">Personal Review</h2>
+                        </div>
+
+                        <!-- Form Tables -->
+                        <div class="col-md-5 mx-auto">
+                            <table class="table" style="margin-top: 60px;">
+                                <!-- Status Field -->
+                                <tr>
+                                    <td class="bg-dark text-white text-start" style="padding: 10px;">
+                                        <strong>Status</strong>
+                                    </td>
+                                    <td class="bg-dark text-primary text-center" style="padding: 10px;">
+                                        <select name="status" id="id_status" class="form-control">
+                                            {% for option in form.status.field.choices %}
+                                                <option value="{{ option.0 }}" {% if option.0 == form.status.value %}selected{% endif %}>
+                                                    {{ option.1 }}
+                                                </option>
+                                            {% endfor %}
+                                        </select>
+                                    </td>
+                                </tr>
+                                
+                                <!-- First time watched Field -->
+                                <tr>
+                                    <td class="bg-dark text-white text-start" style="padding: 10px;">
+                                        <strong>First time watched</strong>
+                                    </td>
+                                    <td class="bg-dark text-primary text-center" style="padding: 10px;">
+                                        <input name="first_time_watched" id="id_first_time_watched" class="form-control" value="{{ form.first_time_watched.value }}">
+                                    </td>
+                                </tr>
+
+                                <!-- Last time watched Field -->
+                                <tr>
+                                    <td class="bg-dark text-white text-start" style="padding: 10px;">
+                                        <strong>Last time watched</strong>
+                                    </td>
+                                    <td class="bg-dark text-primary text-center" style="padding: 10px;">
+                                        <input name="last_time_watched" id="id_last_time_watched" class="form-control" value="{{ form.last_time_watched.value }}">
+                                    </td>
+                                </tr>
+
+                                <!-- Your score Field -->
+                                <tr>
+                                    <td class="bg-dark text-white text-start" style="padding: 10px;">
+                                        <strong>Score</strong>
+                                    </td>
+                                    <td class="bg-dark text-primary text-center" style="padding: 10px;">
+                                        <select name="your_score" id="id_your_score" class="form-control">
+                                            {% for choice in form.your_score.field.choices %}
+                                                <option value="{{ choice.0 }}" {% if form.your_score.value == choice.0 %}selected{% endif %}>
+                                                    {{ choice.1 }}
+                                                </option>
+                                            {% endfor %}
+                                        </select>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+
+                        <div class="col-md-5 mx-auto">
+                            <table class="table" style="margin-top: 60px;">
+                                <tr>
+                                    <td class="bg-dark text-white text-start" style="padding: 10px;">
+                                        <strong>Date finished</strong>
+                                    </td>
+                                    <td class="bg-dark text-primary text-center" style="padding: 10px;">
+                                        <input name="finish_date" id="id_finish_date" class="form-control" value="{{ form.finish_date.value }}">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="bg-dark text-white text-start" style="padding: 10px;">
+                                        <strong>Priority</strong>
+                                    </td>
+                                    <td class="bg-dark text-primary text-center" style="padding: 10px;">
+                                        <select name="{{ form.priority.name }}" id="{{ form.priority.id_for_label }}" class="form-control">
+                                            {% for choice in form.priority.field.choices %}
+                                                <option value="{{ choice.0 }}" {% if form.priority.value == choice.0 %}selected{% endif %}>
+                                                    {{ choice.1 }}
+                                                </option>
+                                            {% endfor %}
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="bg-dark text-white text-start" style="padding: 10px;">
+                                        <strong>Total times rewatched</strong>
+                                    </td>
+                                    <td class="bg-dark text-primary text-center" style="padding: 10px;">
+                                        <input type="number" class="form-control" name="total_times_rewatched" value="{{ form.total_times_rewatched.value }}" required="" id="id_total_times_rewatched">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="bg-dark text-white text-start" style="padding: 10px;">
+                                        <strong>Rewatch value</strong>
+                                    </td>
+                                    <td class="bg-dark text-primary text-center" style="padding: 10px;">
+                                        <select name="{{ form.rewatch_value.name }}" id="{{ form.rewatch_value.id_for_label }}" class="form-control">
+                                            {% for choice in form.rewatch_value.field.choices %}
+                                                <option value="{{ choice.0 }}" {% if form.rewatch_value.value == choice.0 %}selected{% endif %}>
+                                                    {{ choice.1 }}
+                                                </option>
+                                            {% endfor %}
+                                        </select>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+
+                        <!-- Personal Comment Section -->
+                        <div class="col-md-8 text-center mt-4 mx-auto">
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item">
+                                    <strong>Personal comment</strong>
+                                </li>
+                                <li class="list-group-item">
+                                    <textarea class="form-control" name="comment" cols="40" rows="10" required="" id="id_comment">{{ form.comment.value }}</textarea>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="text-center mt-4">
+                            <button type="submit" class="btn btn-warning">Save Extended Review</button>
+                        </div>
+                    </div> <!-- row -->
+                </div> <!-- col-md-12 -->
+            </div> <!-- row -->
+        </div> <!-- text-center -->
+    </div> <!-- container -->
 </form>
 
 <script>
@@ -25,4 +230,3 @@
 </script>
 
 {% endblock content %}
-

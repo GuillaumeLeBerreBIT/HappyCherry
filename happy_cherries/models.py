@@ -113,16 +113,15 @@ class ExtendedReview(BaseModel):
         ('Very High', 'Very High'),
     )
 
-    status = models.CharField(choices=STATUS_CHOICES, max_length=13)
-    your_score = models.IntegerField(choices=SCORE_CHOICES, default=5)
-    priority = models.CharField(choices=PRIORITY_CHOICES, max_length=6)
-    rewatch_value = models.CharField(choices=REWATCH_CHOICES, max_length=9)
+    status = models.CharField(choices=STATUS_CHOICES, max_length=13, null=True, blank=True)
+    your_score = models.IntegerField(choices=SCORE_CHOICES, default=5, null=True, blank=True)
+    priority = models.CharField(choices=PRIORITY_CHOICES, max_length=6, null=True, blank=True)
+    rewatch_value = models.CharField(choices=REWATCH_CHOICES, max_length=9, null=True, blank=True)
     
     finish_date = models.DateField(null=True, blank=True)
-    finish_date_unknown = models.BooleanField(default=False)
     
     total_times_rewatched = models.IntegerField(default=0)
-    comment = models.TextField()
+    comment = models.TextField(null=True, blank=True)
     
     def __str__(self):
         """Return a string representation of the extended review."""
@@ -150,7 +149,6 @@ class ExtendedTvShowReview(ExtendedReview):
     episodes_watched = models.IntegerField()
     
     start_date = models.DateField(null=True, blank=True)
-    start_date_unknown = models.BooleanField(default=False)
     
     def __str__(self):
         return f"The review for the TvShow: {self.tvshow}"

@@ -26,7 +26,7 @@ class ExtendedMovieReviewForm(forms.ModelForm):
     class Meta():
         model = ExtendedMovieReview
         fields = ['status', 'first_time_watched', 'last_time_watched', 'your_score', 
-                  'finish_date', 'finish_date_unknown', 'priority', 'total_times_rewatched',
+                  'finish_date', 'priority', 'total_times_rewatched',
                   'rewatch_value', 'comment']
         
         # widgets = {
@@ -36,11 +36,11 @@ class ExtendedMovieReviewForm(forms.ModelForm):
         # }
 
 class ExtendedTvShowReviewForm(forms.ModelForm):
-    class Meta():
+    class Meta:
         model = ExtendedTvShowReview
         fields = ['status', 'episodes_watched', 'your_score', 'start_date',
-                  'start_date_unknown', 'finish_date', 'finish_date_unknown', 'priority',
-                  'rewatch_value', 'total_times_rewatched', 'comment']
+                   'finish_date', 'priority','rewatch_value', 'total_times_rewatched', 'comment']
+        
         
 class NoteForm(forms.ModelForm):
     class Meta: 

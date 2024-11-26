@@ -1,13 +1,16 @@
 {% extends "happy_cherries/base.html" %}
 
+{% load django_bootstrap5 %}
+
 {% block content %}
 
 <h2>Review</h2>
 
 <form action="{% url 'happy_cherries:add_review_movie' movie.id %}" method='post'>
     {% csrf_token %}
-    {{ form.as_p}}
-    <button type="submit">Add Review</button>
+    {% bootstrap_form form %}
+    {{ form.media }}
+    <button class="btn btn-warning" type="submit">Add Review</button>
 </form>
 
 {% endblock content %}

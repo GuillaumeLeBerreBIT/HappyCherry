@@ -163,24 +163,16 @@
                                     {{ extended_review.your_score }}
                                 </td>
                             </tr>
-                            <tr>
-                                <td class="bg-dark text-white text-start" style="padding: 10px;" >
-                                    <strong>Date finished</strong>
-                                </td>
-                                <td class="bg-dark text-primary text-center" style="padding: 10px;">
-                                    {{ extended_review.finish_date|date:"d M, Y" }}
-                                </td>
-                            </tr>
                         </table>
                     </div>
                     <div class="col-md-5 mx-auto">
                         <table class="table" style="margin-top: 60px;">
                             <tr>
                                 <td class="bg-dark text-white text-start" style="padding: 10px;" >
-                                    <strong>Date finished unknown</strong>
+                                    <strong>Date finished</strong>
                                 </td>
                                 <td class="bg-dark text-primary text-center" style="padding: 10px;">
-                                    {{ extended_review.finish_date_unknown }}
+                                    {{ extended_review.finish_date|date:"d M, Y" }}
                                 </td>
                             </tr>
                             <tr>

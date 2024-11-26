@@ -7,6 +7,7 @@ from django.forms.models import model_to_dict
 from .models import Movie, PublicReview, TvShow, Note, ExtendedTvShowReview, ExtendedMovieReview
 from .forms import ReviewForm, NoteForm, ExtendedMovieReviewForm, ExtendedTvShowReviewForm
 from .tmdb import fetch_movies, fetch_movies_list, fetch_detailed_movie, fetch_tvshow, fetch_detailed_tvshow, fetch_tvshows_list
+from django.utils import timezone
 
 import json, requests # This is to send a request to the URLs defined (Not a Django request)
 from datetime import datetime
@@ -235,8 +236,17 @@ def movie(request, movie_id):
             movie.save()
             return redirect('happy_cherries:movie', movie_id=movie.id)
 
+        elif action == 'remove_review_movie':
+            # Get the review ID from the form
+            review_id = request.POST.get('review_id')
+            print(request.POST)
+            if review_id:
+                review = get_object_or_404(PublicReview, id=review_id)
+                review.delete()
+                
+                return redirect('happy_cherries:movie', movie_id=movie.id)
+            
     
-
     context = {
         'movie': movie, 
         'is_owner': is_owner,
@@ -1232,13 +1242,34 @@ def create_extended_review_movie(request, movie_id):
     """
     Create an extended review for bounded specifically to the user itself.
     """
+
     movie = get_object_or_404(Movie, id=movie_id)
+    
     # Check if the owner of the saved movie is the one wanting to add a comment 
     check_user(request, movie)
     
+    # Split the saved lists and parse them in the context dictionary
+    movie.cast_spl, movie.genre_spl = movie.cast.split(','), movie.genre.split(',')
+    
+    # Only show the first 6 six actors if it exceeds limits
+    # Because want to acces an object use a dot hore to get acces to the attribute. 
+    if len(movie.cast_spl) > 6:
+        movie.cast_spl = movie.cast_spl[0:6]
+        movie.cast_spl.append('...')
+    
+    ext_review = movie.extendedmoviereview_set.filter(owner=request.user).first()
+    
     if request.method != 'POST':
         # A blank form
-        form = ExtendedMovieReviewForm()
+        if ext_review:
+            
+            ext_review.first_time_watched= ext_review.first_time_watched.strftime('%m/%d/%Y') if ext_review.first_time_watched else ''
+            ext_review.last_time_watched= ext_review.last_time_watched.strftime('%m/%d/%Y') if ext_review.last_time_watched else ''
+            ext_review.finish_date= ext_review.finish_date.strftime('%m/%d/%Y') if ext_review.finish_date else ''
+            
+            form = ExtendedMovieReviewForm(instance=ext_review)
+        else: 
+            form = ExtendedMovieReviewForm()
         
     else: 
         
@@ -1250,10 +1281,17 @@ def create_extended_review_movie(request, movie_id):
             # Link the owner and user to the movie
             extended_review.movie = movie
             extended_review.owner = request.user
+            extended_review.date_added = timezone.now()
+            
+            if ext_review:
+                extended_review.id = ext_review.id
+            
             # Save the extended review
             extended_review.save()
             
             return redirect('happy_cherries:movie', movie_id=movie.id)
+    
+    # Reformat the dates from "Nov. 4, 2024" to "11/04/2024"
     
     context = {'form': form,'movie': movie}
     return render(request, 'happy_cherries/movie_extendedreview.html', context)
@@ -1265,9 +1303,28 @@ def create_extended_review_tvshow(request, tvshow_id):
     
     check_user(request, tvshow)
     
+    tvshow.cast_spl, tvshow.genres_spl = tvshow.cast.split(','), tvshow.genre.split(',')
+    
+    # Only show the first 6 six actors if it exceeds limits
+    # Because want to acces an object use a dot hore to get acces to the attribute. 
+    if len(tvshow.cast_spl) > 6:
+        tvshow.cast_spl = tvshow.cast_spl[0:6]
+        tvshow.cast_spl.append('...')
+    
+    ext_review = tvshow.extendedtvshowreview_set.filter(owner=request.user).first()
+    
     if request.method != 'POST':
         
-        form = ExtendedTvShowReviewForm()
+        # A blank form
+        if ext_review:
+            
+            ext_review.start_date= ext_review.start_date.strftime('%m/%d/%Y') if ext_review.start_date else ''
+            ext_review.finish_date= ext_review.finish_date.strftime('%m/%d/%Y') if ext_review.finish_date else ''
+
+            form = ExtendedTvShowReviewForm(instance=ext_review)
+        else:
+                  
+            form = ExtendedTvShowReviewForm()
         
     elif request.method == 'POST':
         
@@ -1279,6 +1336,10 @@ def create_extended_review_tvshow(request, tvshow_id):
             # Set the Movie as User to the object
             extended_review.tvshow = tvshow
             extended_review.owner = request.user
+            extended_review.date_added= timezone.now()
+            
+            if ext_review:
+                extended_review.id = ext_review.id
             
             extended_review.save()
             
