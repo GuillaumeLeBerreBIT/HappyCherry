@@ -33,49 +33,65 @@
                                 <form method="post">
                                     {% csrf_token %}
                                     <input type="hidden" name="action" value="save_watchlist">
-                                    <button type="submit" class="btn btn-primary">Add Watchlist</button>
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="bi bi-bookmark-plus" style="font-size: 24px;"></i>
+                                    </button>
                                 </form>
                                 <form method="post">
                                     {% csrf_token %}
                                     <input type="hidden" name="action" value="remove_favorite">
-                                    <button type="submit" class="btn btn-warning">Remove Favorite</button>
+                                    <button type="submit" class="btn btn-warning">
+                                        <i class="bi bi-bookmark-star-fill" style="font-size: 24px;"></i>
+                                    </button>
                                 </form>
                                 {% elif not in_favorite and in_watchlist%}
                                 <form method="post">
                                     {% csrf_token %}
                                     <input type="hidden" name="action" value="remove_watchlist">
-                                    <button type="submit" class="btn btn-primary">Remove Watchlist</button>
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="bi bi-bookmark-check" style="font-size: 24px;"></i>
+                                    </button>
                                 </form>
                                 <form method="post">
                                     {% csrf_token %}
                                     <input type="hidden" name="action" value="save_favorite">
-                                    <button type="submit" class="btn btn-warning">Add Favorite</button>
+                                    <button type="submit" class="btn btn-warning">
+                                        <i class="bi bi-bookmark-star" style="font-size: 24px;"></i>
+                                    </button>
                                 </form>  
                                 {% elif not in_watchlist and not in_favorite %}
                                 <form method="post">
                                     {% csrf_token %}
                                     <input type="hidden" name="action" value="save_watchlist">
-                                    <button type="submit" class="btn btn-primary">Add Watchlist</button>
+                                    <button type="submit" class="btn btn-primary">
+                                            <i class="bi bi-bookmark-plus" style="font-size: 24px;"></i>
+                                    </button>
                                 </form>
                                 <form method="post">
                                     {% csrf_token %}
                                     <input type="hidden" name="action" value="save_favorite">
-                                    <button type="submit" class="btn btn-warning">Add Favorite</button>
+                                    <button type="submit" class="btn btn-warning">
+                                        <i class="bi bi-bookmark-star" style="font-size: 24px;"></i>
+                                    </button>
                                 </form>  
                                 {% elif in_watchlist and in_favorite %}
                                 <form method="post">
                                     {% csrf_token %}
                                     <input type="hidden" name="action" value="remove_watchlist">
-                                    <button type="submit" class="btn btn-primary">Remove Watchlist</button>
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="bi bi-bookmark-check" style="font-size: 24px;"></i>
+                                    </button>
                                 </form>
                                 <form method="post">
                                     {% csrf_token %}
                                     <input type="hidden" name="action" value="remove_favorite">
-                                    <button type="submit" class="btn btn-warning">Remove Favorite</button>
+                                    <button type="submit" class="btn btn-warning">
+                                        <i class="bi bi-bookmark-star-fill" style="font-size: 24px;"></i>
+                                    </button>
                                 </form>  
                                 {% endif %}
                                 <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
-                                    Delete Movie
+                                    <i class="bi bi-dash-square" style="font-size: 24px;"></i>
                                 </button>
                             </div>
                         {% endif %}    
@@ -239,12 +255,34 @@
                                 <!--ms-auto pushes it to the far right within the flex container, ensuring it aligns horizontally with the "User" title.-->
                                 {% if request.user == review.movie.owner %}
                                 <a class="btn btn-warning fw-bold ms-auto me-2" href="{% url 'happy_cherries:edit_review_movie' review.id %}">Edit</a>
-                                <a class="btn btn-danger fw-bold" href="{% url 'happy_cherries:delete_review_movie' review.id %}">Delete</a>
+                                <button class="btn btn-danger fw-bold" data-bs-toggle="modal" data-bs-target="#deleteModalLabelReview-{{ review.id }}">Delete</button>
                                 {% endif %}
                                 </div>
                             </div>
                         </div>
                     </section>
+                </div>
+                <!-- Bootstrap Modal for Delete Confirmation -->
+                <div class="modal fade" id="deleteModalLabelReview-{{ review.id }}" tabindex="-1" aria-labelledby="deleteModalLabelReview-{{ review.id }}" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="deleteModalLabelReview-{{ review.id }}">Confirm Deletion</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                Are you sure you want to delete this review by {{ review.owner }}?
+                            </div>
+                            <div class="modal-footer">
+                                <!--Do not need an extra HTML page can directly load this Form here and send the POST request directly to the view.-->
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                <form method="post" action="{% url 'happy_cherries:delete_review_movie' review.id %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-danger">Confirm Delete</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             {% empty %}
             <div class="col-md-3"></div>
@@ -264,6 +302,7 @@
     </div>  
 </div>
 
+{% for review in reviews %}
 <!-- Bootstrap Modal for Delete Confirmation -->
 <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
@@ -280,11 +319,13 @@
                 <form method="post">
                     {% csrf_token %}
                     <input type="hidden" name="action" value="remove_movie">
-                    <button type="submit" class="btn btn-danger">Confirm Delete</button>
+                    <!--<button type="submit" class="btn btn-danger">Confirm Delete</button>-->
+                    <button class="btn btn-danger fw-bold" data-bs-toggle="modal" data-bs-target="#deleteModal-{{ review.id }}">Delete</button>
                 </form>
             </div>
         </div>
     </div>
 </div>
+{% endfor %}
 
 {% endblock content %}

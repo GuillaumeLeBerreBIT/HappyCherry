@@ -224,26 +224,15 @@
                         </span>
                         <span class="description fw-bold" style="font-size: 20px;">Happy Cherry</span>
                     </a>
-                    <a class="nav-link" href="#">
-                        <span class="icon">
-                            <i class="bi bi-clipboard-check"></i> 
-                        </span>
-                        <span class="description">Posts</span>
-                    </a>
-                    <a class="nav-link" href="#">
-                        <span class="icon">
-                            <i class="bi bi-bell"></i>
-                        </span>
-                        <span class="description">Notifications</span>
-                    </a>
+                    <div class="my-2"></div>
                     <!--Dropdown 1-->
-                    <a class="nav-link" href="#" data-bs-toggle="collapse" data-bs-target="#submenu1" aria-expanded="false" aria-controls="submenu1">
+                    <a class="nav-link" href="#">
                         <span class="icon">
                             <i class="bi bi-film"></i>
                         </span>
-                        <span class="description fw-bold">Movies <i class="bi bi-caret-down-fill"></i></span>
+                        <span class="description fw-bold">Movies</i></span>
                     </a>
-                    <div class="sub-menu collapse" id="submenu1">
+                    <div class="sub-menu">
                         <a class="nav-link" href="{% url 'happy_cherries:movies' %}">
                             <span class="icon">
                                 <i class="bi bi-book"></i>
@@ -262,15 +251,55 @@
                             </span>
                             <span class="description">Favorites</span>
                         </a>
+                        <!--Dropdown 1-->
+                        <a class="nav-link" href="#" data-bs-toggle="collapse" data-bs-target="#submenu1" aria-expanded="false" aria-controls="submenu1">
+                            <span class="icon">
+                                <i class="bi bi-list"></i>
+                            </span>
+                            <span class="description fw-bold">Browse Movies</span>
+                        </a>
+                        <div class="sub-menu collapse" id="submenu1">
+                            <a class="nav-link" href="{% url 'happy_cherries:movie_search' %}">
+                                <span class="icon">
+                                    <i class="bi bi-search"></i>
+                                </span>
+                                <span class="description">Search movies</span>
+                            </a>
+                            <a class="nav-link" href="{% url 'happy_cherries:top_rated_movies' %}" >
+                                <span class="icon">
+                                    <i class="bi bi-caret-right-fill"></i>
+                                </span>
+                                <span class="description">Top Rated</span>
+                            </a>
+                            <a class="nav-link" href="{% url 'happy_cherries:upcoming_movies' %}" >
+                                <span class="icon">
+                                    <i class="bi bi-caret-right-fill"></i>
+                                </span>
+                                <span class="description">Upcoming</span>
+                            </a>
+                            <a class="nav-link" href="{% url 'happy_cherries:now_playing_movies' %}" >
+                                <span class="icon">
+                                    <i class="bi bi-caret-right-fill"></i>
+                                </span>
+                                <span class="description">Now Playing</span>
+                            </a>
+                            <a class="nav-link" href="{% url 'happy_cherries:popular_movies' %}" >
+                                <span class="icon">
+                                    <i class="bi bi-caret-right-fill"></i>
+                                </span>
+                                <span class="description">Popular</span>
+                            </a>
+                        </div>
                     </div>
                     <!--Dropdown 2-->
-                    <a class="nav-link" href="#" data-bs-toggle="collapse" data-bs-target="#submenu2" aria-expanded="false" aria-controls="submenu2">
+                    <div class="my-3"></div>
+                    <a class="nav-link" href="#">
                         <span class="icon">
                             <i class="bi bi-tv"></i>
                         </span>
-                        <span class="description fw-bold">Tv Shows <i class="bi bi-caret-down-fill"></i></span>
+                        <span class="description fw-bold">Tv Shows</i></span>
                     </a>
-                    <div class="sub-menu collapse" id="submenu2">
+                    <div class="sub-menu">
                         <a class="nav-link" href="{% url 'happy_cherries:tvshows' %}">
                             <span class="icon">
                                 <i class="bi bi-book"></i>
@@ -289,13 +318,45 @@
                             </span>
                             <span class="description">Favorites</span>
                         </a>
+                        <a class="nav-link" href="#" data-bs-toggle="collapse" data-bs-target="#submenu2" aria-expanded="false" aria-controls="submenu2">
+                            <span class="icon">
+                                <i class="bi bi-list"></i>
+                            </span>
+                            <span class="description fw-bold">Browse Tv Shows</span>
+                        </a>
+                        <div class="sub-menu collapse" id="submenu2">
+                            <a class="nav-link" href="{% url 'happy_cherries:tvshow_search' %}">
+                                <span class="icon">
+                                    <i class="bi bi-search"></i>
+                                </span>
+                                <span class="description">Search Tv Shows</span>
+                            </a>
+                            <a class="nav-link" href="{% url 'happy_cherries:top_rated_tvshows' %}" >
+                                <span class="icon">
+                                    <i class="bi bi-caret-right-fill"></i>
+                                </span>
+                                <span class="description">Top Rated</span>
+                            </a>
+                            <a class="nav-link" href="{% url 'happy_cherries:upcoming_tvshows' %}" >
+                                <span class="icon">
+                                    <i class="bi bi-caret-right-fill"></i>
+                                </span>
+                                <span class="description">Upcoming</span>
+                            </a>
+                            <a class="nav-link" href="{% url 'happy_cherries:now_airing_tvshows' %}" >
+                                <span class="icon">
+                                    <i class="bi bi-caret-right-fill"></i>
+                                </span>
+                                <span class="description">Now Airing</span>
+                            </a>
+                            <a class="nav-link" href="{% url 'happy_cherries:popular_tvshows' %}" >
+                                <span class="icon">
+                                    <i class="bi bi-caret-right-fill"></i>
+                                </span>
+                                <span class="description">Popular</span>
+                            </a>
+                        </div> 
                     </div>
-                    <a class="nav-link" href="#" >
-                        <span class="icon">
-                            <i class="bi bi-gear"></i>
-                        </span>
-                        <span class="description">Settings</span>
-                    </a>    
                 </nav>
             </div>
             <!-- Content Area -->
@@ -304,11 +365,10 @@
                     <button class="navbar-toggler ms-auto me-2" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                         <span class="navbar-toggler-icon"></span>
                     </button>
+                    <!---->
                     <div class="collapse navbar-collapse ms-4" id="navbarSupportedContent">
+                        <!--
                         <ul class="navbar-nav mr-auto">
-                            <li class="nav-item">
-                                <a class="nav-link" href="{% url 'happy_cherries:movies' %}">Movies Home</a>
-                            </li>
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-expanded="false">
                                     Movie List
@@ -335,9 +395,6 @@
                                 <a class="nav-link" href="{% url 'happy_cherries:tvshows' %}">Tv Shows Home</a>
                             </li>
                             <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-expanded="false">
-                                    TV Shows List
-                                </a>
                                 <ul class="dropdown-menu">
                                     <li>
                                         <a class="dropdown-item" href="{% url 'happy_cherries:tvshow_search' %}">Search</a>
@@ -356,7 +413,7 @@
                                     </li>
                                 </ul>
                             </li>
-                        </ul>
+                        </ul>-->
                         <ul class="navbar-nav ms-auto me-4">
                             {% if user.is_authenticated %}
                             <li class="nav-item">
@@ -395,7 +452,25 @@
 </body>
 </html>
 
+<script>
+    // Ensure only one menu is open at a time
+    document.addEventListener('DOMContentLoaded', function () {
+        const collapsibles = document.querySelectorAll('.collapse');
 
+        collapsibles.forEach(collapse => {
+            collapse.addEventListener('show.bs.collapse', function () {
+                // Close any other open collapsibles
+                collapsibles.forEach(otherCollapse => {
+                    if (otherCollapse !== collapse && otherCollapse.classList.contains('show')) {
+                        new bootstrap.Collapse(otherCollapse, {
+                            toggle: false
+                        }).hide();
+                    }
+                });
+            });
+        });
+    });
+</script>
 
 <!--
     In the context of the navbar, using ms-auto on a <ul> element inside the navbar 

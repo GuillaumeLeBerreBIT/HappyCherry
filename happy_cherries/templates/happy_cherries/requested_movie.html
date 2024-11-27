@@ -33,13 +33,17 @@
                                 <form method="post">
                                     {% csrf_token %}
                                     <input type="hidden" name="action" value="save_watchlist">
-                                    <button type="submit" class="btn btn-danger">Add Watchlist</button>
+                                    <button type="submit" class="btn btn-danger">
+                                        <i class="bi bi-bookmark-plus" style="font-size: 24px;"></i>
+                                    </button>
                                 </form>
                     
                                 <form method="post">
                                     {% csrf_token %}
                                     <input type="hidden" name="action" value="save_favorite">
-                                    <button type="submit" class="btn btn-warning">Favorite</button>
+                                    <button type="submit" class="btn btn-warning">
+                                        <i class="bi bi-bookmark-star" style="font-size: 24px;"></i>
+                                    </button>
                                 </form>  
                     
                                 {% if saved == "Saved" %}
@@ -47,7 +51,9 @@
                                 <form method="post">
                                     {% csrf_token %}
                                     <input type="hidden" name="action" value="save_movie">
-                                    <button type="submit" class="btn btn-success">Save</button>
+                                    <button type="submit" class="btn btn-success">
+                                        <i class="bi bi-file-plus" style="font-size: 24px;"></i>
+                                    </button>
                                 </form>
                                 {% endif %}
                             </div>
