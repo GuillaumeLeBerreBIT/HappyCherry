@@ -4,9 +4,10 @@ from django.contrib.auth.decorators import login_required
 from django.http import Http404
 from django.forms.models import model_to_dict
 
-from .models import Movie, PublicReview, TvShow, Note, ExtendedTvShowReview, ExtendedMovieReview
-from .forms import ReviewForm, NoteForm, ExtendedMovieReviewForm, ExtendedTvShowReviewForm
-from .tmdb import fetch_movies, fetch_movies_list, fetch_detailed_movie, fetch_tvshow, fetch_detailed_tvshow, fetch_tvshows_list
+from .models import Movie, PublicReview, TvShow, ExtendedTvShowReview, ExtendedMovieReview
+from .forms import ReviewForm, ExtendedMovieReviewForm, ExtendedTvShowReviewForm
+
+from .TMDB_API import MovieDatabase
 from django.utils import timezone
 
 import json, requests # This is to send a request to the URLs defined (Not a Django request)
@@ -28,21 +29,20 @@ def check_user(request, media):
 # The welcome page. 
 def index(request):
     """Show the Home page for Happy Cherry."""
+    movie_api = MovieDatabase()
     # API_KEY
     headers = {
         "accept": "application/json",
         "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIwOTEwZTMzYzBiNzM5NWJhYWI2Nzg4MDJlOTkzMTJlYiIsInN1YiI6IjY2MjkxM2I5ZTI5NWI0MDE4NzllMTBiYSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.IwgWzjezREKj75fLbuLlK-Kp03z_yRyRcQaUJai68l0"
     }
     
-    url_now_playing = "https://api.themoviedb.org/3/movie/now_playing?language=en-US&page=1"
-    
     url_airing = "https://api.themoviedb.org/3/tv/airing_today?language=en-US&page=1"
 
     url_poster = "https://image.tmdb.org/t/p/w500/{}"
     
     # Return all the movies currently in the cinema
-    now_playing = fetch_movies_list(headers, url_now_playing, url_poster)[:5]
-    now_airing = fetch_tvshows_list(headers, url_airing, url_poster)[:5]
+    now_playing = movie_api.fetch_movies_list('NOW_PLAYING')[:5]
+    now_airing = movie_api.fetch_tvshows_list('NOW_AIRING')[:5]
     
     context = {'now_playing': now_playing,
                'now_airing': now_airing}
@@ -287,24 +287,14 @@ def movie_search(request):
     All relevant movies then are shown. 
     When clicked on a movie of interest then detailed information is shown.  
     """
-    # API_KEY
-    headers = {
-        "accept": "application/json",
-        "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIwOTEwZTMzYzBiNzM5NWJhYWI2Nzg4MDJlOTkzMTJlYiIsInN1YiI6IjY2MjkxM2I5ZTI5NWI0MDE4NzllMTBiYSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.IwgWzjezREKj75fLbuLlK-Kp03z_yRyRcQaUJai68l0"
-    }
-    # Query results for a movie search
-    url_movie_search = "https://api.themoviedb.org/3/search/movie?query={}&include_adult=false&language=en-US&page=1"
-    
-    url_trending = "https://api.themoviedb.org/3/trending/movie/week?language=en-US"
-    
-    url_poster = "https://image.tmdb.org/t/p/w500/{}"
+    movie_api = MovieDatabase()
     
     # If searching for a movie then get the name and view all movies related to search. 
     if request.method == 'POST':
         
         movie_search = request.POST['movie_query']
         # Get all the movies through Dynamic search. 
-        movie_list = fetch_movies(headers, movie_search, url_movie_search, url_poster)
+        movie_list = movie_api.fetch_movies(movie_search)
         
         for movie in movie_list:
             movie['release_date'] = convert_date(movie["release_date"])
@@ -317,7 +307,7 @@ def movie_search(request):
     # IF it is a GET request just loading page. 
     else: 
         # Get all the trending movies so the home page does not look empty. 
-        movie_list = fetch_movies_list(headers, url_trending, url_poster)
+        movie_list = movie_api.fetch_movies_list("TRENDING")
         
         for movie in movie_list:
             movie['release_date'] = convert_date(movie["release_date"])
@@ -334,15 +324,7 @@ def requested_movie(request, movie_id):
     Finally will also be able to add to the database/Movie page. 
     This does not show the reviews and a score yet!
     """
-    # Now I need to get access to the contents of the dictionary from movie_list based on the clicked movie
-    headers = {
-            "accept": "application/json",
-            "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIwOTEwZTMzYzBiNzM5NWJhYWI2Nzg4MDJlOTkzMTJlYiIsInN1YiI6IjY2MjkxM2I5ZTI5NWI0MDE4NzllMTBiYSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.IwgWzjezREKj75fLbuLlK-Kp03z_yRyRcQaUJai68l0"
-        }
-    # URLs
-    url_det_movie = "https://api.themoviedb.org/3/movie/{}?language=en-US"
-    url_credits_movie = "https://api.themoviedb.org/3/movie/{}/credits?language=en-US"
-    url_poster = "https://image.tmdb.org/t/p/w500/{}"
+    movie_api = MovieDatabase()
     
     is_owner = False 
     if request.user.is_authenticated:
@@ -352,11 +334,7 @@ def requested_movie(request, movie_id):
         
         # Using the Movie ID which has been saved from teh request response and parsed to the URL. 
         # Can use it to get the detailed information of a Tv Show
-        movie = fetch_detailed_movie(headers=headers, 
-                                     url_movie=url_det_movie, 
-                                     url_cast=url_credits_movie, 
-                                     url_poster=url_poster, 
-                                     movie_id=movie_id)
+        movie = movie_api.fetch_detailed_movie(movie_id=movie_id)
         # Because the Cast and Genres are saved in a long string splitted by ',' to save easily in the model direclty.
         # We split the string to then iterate over a list in the HTML file.  
         movie['cast'], movie['genres_spl'] = movie['cast'].split(','), movie['genres'].split(',')
@@ -404,11 +382,7 @@ def requested_movie(request, movie_id):
         action = request.POST.get('action')
         
         # Need to check of the current use is the owner or not.        
-        movie = fetch_detailed_movie(headers=headers, 
-                                     url_movie=url_det_movie, 
-                                     url_cast=url_credits_movie, 
-                                     url_poster=url_poster, 
-                                     movie_id=movie_id)
+        movie = movie_api.fetch_detailed_movie(movie_id=movie_id)
         
         # Create an instance of the model to save all the information directly into the database. 
         # No need to create Form since have the values predefined
@@ -457,18 +431,10 @@ def top_rated_movies(request):
     """
     Get a list of all the trending movies
     """
-    # API_KEY
-    headers = {
-        "accept": "application/json",
-        "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIwOTEwZTMzYzBiNzM5NWJhYWI2Nzg4MDJlOTkzMTJlYiIsInN1YiI6IjY2MjkxM2I5ZTI5NWI0MDE4NzllMTBiYSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.IwgWzjezREKj75fLbuLlK-Kp03z_yRyRcQaUJai68l0"
-    }
-    
-    url_top_rated = "https://api.themoviedb.org/3/movie/top_rated?language=en-US&page=1"
-    
-    url_poster = "https://image.tmdb.org/t/p/w500/{}"
+    movie_api = MovieDatabase()
     
     # Get all the trending movies so the home page does not look empty. 
-    movie_list = fetch_movies_list(headers, url_top_rated, url_poster)
+    movie_list = movie_api.fetch_movies_list('TOP_RATED')
     
     for movie in movie_list:
         movie['release_date'] = convert_date(movie["release_date"])
@@ -483,18 +449,10 @@ def upcoming_movies(request):
     """
     Get a list of all the trending movies
     """
-    # API_KEY
-    headers = {
-        "accept": "application/json",
-        "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIwOTEwZTMzYzBiNzM5NWJhYWI2Nzg4MDJlOTkzMTJlYiIsInN1YiI6IjY2MjkxM2I5ZTI5NWI0MDE4NzllMTBiYSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.IwgWzjezREKj75fLbuLlK-Kp03z_yRyRcQaUJai68l0"
-    }
-    
-    url_upcoming = "https://api.themoviedb.org/3/movie/upcoming?language=en-US&page=1"
-    
-    url_poster = "https://image.tmdb.org/t/p/w500/{}"
+    movie_api = MovieDatabase()
     
     # Get all the trending movies so the home page does not look empty. 
-    movie_list = fetch_movies_list(headers, url_upcoming, url_poster)
+    movie_list = movie_api.fetch_movies_list('UPCOMING')
     
     for movie in movie_list:
         movie['release_date'] = convert_date(movie["release_date"])
@@ -509,18 +467,10 @@ def now_playing_movies(request):
     """
     Get a list of all the now playing movies
     """
-    # API_KEY
-    headers = {
-        "accept": "application/json",
-        "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIwOTEwZTMzYzBiNzM5NWJhYWI2Nzg4MDJlOTkzMTJlYiIsInN1YiI6IjY2MjkxM2I5ZTI5NWI0MDE4NzllMTBiYSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.IwgWzjezREKj75fLbuLlK-Kp03z_yRyRcQaUJai68l0"
-    }
-    
-    url_playing = "https://api.themoviedb.org/3/movie/now_playing?language=en-US&page=1"
-    
-    url_poster = "https://image.tmdb.org/t/p/w500/{}"
+    movie_api = MovieDatabase()
     
     # Get all the trending movies so the home page does not look empty. 
-    movie_list = fetch_movies_list(headers, url_playing, url_poster)
+    movie_list = movie_api.fetch_movies_list('NOW_PLAYING')
     
     for movie in movie_list:
         movie['release_date'] = convert_date(movie["release_date"])
@@ -533,18 +483,10 @@ def now_playing_movies(request):
 
 def popular_movies(request):
     """List of all the popular movies"""
-    # API_KEY
-    headers = {
-        "accept": "application/json",
-        "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIwOTEwZTMzYzBiNzM5NWJhYWI2Nzg4MDJlOTkzMTJlYiIsInN1YiI6IjY2MjkxM2I5ZTI5NWI0MDE4NzllMTBiYSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.IwgWzjezREKj75fLbuLlK-Kp03z_yRyRcQaUJai68l0"
-    }
-    
-    url_popular = "https://api.themoviedb.org/3/movie/popular"
-    
-    url_poster = "https://image.tmdb.org/t/p/w500/{}"
+    movie_api = MovieDatabase()
     
     # Get all the trending movies so the home page does not look empty. 
-    movie_list = fetch_movies_list(headers, url_popular, url_poster)
+    movie_list = movie_api.fetch_movies_list('POPULAR')
     
     for movie in movie_list:
         movie['release_date'] = convert_date(movie["release_date"])
@@ -765,58 +707,6 @@ def tvshow(request, tvshow_id):
         }
     
     return render(request, 'happy_cherries/tvshow.html', context)
-    
-
-@login_required
-def add_note_tvshow(request, tvshow_id):
-    """The user can leave a Note behind on what episode/season he is currently at."""
-    tvshow = get_object_or_404(TvShow, id=tvshow_id)   
-    
-    if request.method != 'POST':
-        form = NoteForm()
-    
-    else:
-        form = NoteForm(data=request.POST)
-
-        if form.is_valid():
-            
-            # Delete the existing note if it exists
-            existing_note = tvshow.note_set.order_by('date_added').first()
-            if existing_note:
-                existing_note.delete()
-            # Do not save it direclty ito the database
-            new_note = form.save(commit=False)
-            
-            # Set the primary keys of the Model. 
-            new_note.tvshow = tvshow
-            new_note.owner = tvshow.owner   # request.user 
-            
-            new_note.save()
-            return redirect('happy_cherries:tvshow', tvshow_id = tvshow_id)
-        
-    context = {'form': form, 'tvshow': tvshow}
-    return render(request, 'happy_cherries/add_note_tvshow.html', context)
-
-@login_required
-def edit_note_tvshow(request, note_id):
-    """Edit the note the user left behind on the page."""
-    
-    note = get_object_or_404(Note, id=note_id)
-    tvshow = note.tvshow
-    
-    if request.method != 'POST':
-        form = NoteForm(instance=note)
-    
-    else: 
-        form = NoteForm(instance=note, data=request.POST)
-        
-        if form.is_valid():
-            
-            form.save()
-            return redirect('happy_cherries:tvshow', tvshow_id=tvshow.id)
-        
-    context = {'form': form, 'note': note, 'tvshow': tvshow}
-    return render(request, 'happy_cherries/edit_note_tvshow.html', context)
 
 @login_required
 def delete_tvshow(request, tvshow_id):
@@ -843,21 +733,13 @@ def tvshow_search(request):
     Show a list with all the movies matching the search query. 
     """
     
-    # Now I need to get access to the contents of the dictionary from movie_list based on the clicked movie
-    headers = {
-            "accept": "application/json",
-            "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIwOTEwZTMzYzBiNzM5NWJhYWI2Nzg4MDJlOTkzMTJlYiIsInN1YiI6IjY2MjkxM2I5ZTI5NWI0MDE4NzllMTBiYSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.IwgWzjezREKj75fLbuLlK-Kp03z_yRyRcQaUJai68l0"
-        }
-    
-    url_tvshow = "https://api.themoviedb.org/3/search/tv?query={}&include_adult=false&language=en-US&page=1"
-    url_trending_tvshows = "https://api.themoviedb.org/3/tv/popular?language=en-US&page=1"
-    url_poster = "https://image.tmdb.org/t/p/w500/{}"
+    movie_api = MovieDatabase()
     
     if request.method == 'POST':
         
         tvshow_search = request.POST['tvshow_query']
         
-        tvshow_list = fetch_tvshow(headers, url_tvshow, tvshow_search, url_poster)
+        tvshow_list = movie_api.fetch_tvshow(tvshow_search)
         
         for show in tvshow_list:
             show['first_air_date'] = convert_date(show["first_air_date"])
@@ -868,7 +750,7 @@ def tvshow_search(request):
         
     else: # GET request
         
-        tvshow_list = fetch_tvshows_list(headers, url_trending_tvshows, url_poster)
+        tvshow_list = movie_api.fetch_tvshows_list('POPULAR')
         
         for show in tvshow_list:
             show['first_air_date'] = convert_date(show["first_air_date"])
@@ -882,15 +764,7 @@ def requested_tvshow(request, tvshow_id):
     Want to show a detailed information of all the TvShow.
     This also having the user the option to save the information to his list.
     """
-    # Now I need to get access to the contents of the dictionary from movie_list based on the clicked movie
-    headers = {
-            "accept": "application/json",
-            "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIwOTEwZTMzYzBiNzM5NWJhYWI2Nzg4MDJlOTkzMTJlYiIsInN1YiI6IjY2MjkxM2I5ZTI5NWI0MDE4NzllMTBiYSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.IwgWzjezREKj75fLbuLlK-Kp03z_yRyRcQaUJai68l0"
-        }
-    # URLs
-    url_det_tvshow = "https://api.themoviedb.org/3/tv/{}?language=en-US"
-    url_credits_tvshow = "https://api.themoviedb.org/3/tv/{}/credits?language=en-US"
-    url_poster = "https://image.tmdb.org/t/p/w500/{}"
+    movie_api = MovieDatabase()
     
     is_owner = False 
     if request.user.is_authenticated:
@@ -900,11 +774,7 @@ def requested_tvshow(request, tvshow_id):
     if request.method != 'POST':
         # Want to get all the detailed information of a movie. 
         
-        tvshow = fetch_detailed_tvshow(headers, 
-                                       tvshow_id, 
-                                       url_det_tvshow,
-                                       url_credits_tvshow, 
-                                       url_poster)
+        tvshow = movie_api.fetch_detailed_tvshow(tvshow_id)
         
         # Because the Cast and Genres are saved in a long string splitted by ',' to save easily in the model direclty.
         # We split the string to then iterate over a list in the HTML file.  
@@ -951,12 +821,7 @@ def requested_tvshow(request, tvshow_id):
         # Get the current action given by entered Form
         action = request.POST.get('action')
         
-        tvshow = fetch_detailed_tvshow(headers, 
-                                       tvshow_id, 
-                                       url_det_tvshow, 
-                                       url_credits_tvshow, 
-                                       url_poster
-                                       )
+        tvshow = movie_api.fetch_detailed_tvshow(tvshow_id)
             
         # Create an instance of the model to save all the information directly into the database. 
         # No need to create Form since have the values predefined
@@ -1007,17 +872,9 @@ def top_rated_tvshows(request):
     """
     Get a list of all the trending tvshows
     """
-    # API_KEY
-    headers = {
-        "accept": "application/json",
-        "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIwOTEwZTMzYzBiNzM5NWJhYWI2Nzg4MDJlOTkzMTJlYiIsInN1YiI6IjY2MjkxM2I5ZTI5NWI0MDE4NzllMTBiYSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.IwgWzjezREKj75fLbuLlK-Kp03z_yRyRcQaUJai68l0"
-    }
+    movie_api = MovieDatabase()
     
-    url_top_rated = "https://api.themoviedb.org/3/tv/top_rated?language=en-US&page=1"
-    
-    url_poster = "https://image.tmdb.org/t/p/w500/{}"
-    
-    tvshow_list = fetch_tvshows_list(headers, url_top_rated, url_poster)
+    tvshow_list = movie_api.fetch_tvshows_list('TOP_RATED')
     
     for show in tvshow_list:
         show['first_air_date'] = convert_date(show["first_air_date"])
@@ -1032,17 +889,9 @@ def upcoming_tvshows(request):
     """
     Get a list of all the tvshows airing in the next seven days
     """
-    # API_KEY
-    headers = {
-        "accept": "application/json",
-        "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIwOTEwZTMzYzBiNzM5NWJhYWI2Nzg4MDJlOTkzMTJlYiIsInN1YiI6IjY2MjkxM2I5ZTI5NWI0MDE4NzllMTBiYSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.IwgWzjezREKj75fLbuLlK-Kp03z_yRyRcQaUJai68l0"
-    }
+    movie_api = MovieDatabase()
     
-    url_on_the_air = "https://api.themoviedb.org/3/tv/on_the_air?language=en-US&page=1"
-    
-    url_poster = "https://image.tmdb.org/t/p/w500/{}"
-    
-    tvshow_list = fetch_tvshows_list(headers, url_on_the_air, url_poster)
+    tvshow_list = movie_api.fetch_tvshows_list('UPCOMING')
     
     for show in tvshow_list:
         show['first_air_date'] = convert_date(show["first_air_date"])
@@ -1057,17 +906,9 @@ def now_airing_tvshows(request):
     """
     Get a list of all the tvshows airing today
     """
-    # API_KEY
-    headers = {
-        "accept": "application/json",
-        "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIwOTEwZTMzYzBiNzM5NWJhYWI2Nzg4MDJlOTkzMTJlYiIsInN1YiI6IjY2MjkxM2I5ZTI5NWI0MDE4NzllMTBiYSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.IwgWzjezREKj75fLbuLlK-Kp03z_yRyRcQaUJai68l0"
-    }
+    movie_api = MovieDatabase()
     
-    url_airing = "https://api.themoviedb.org/3/tv/airing_today?language=en-US&page=1"
-    
-    url_poster = "https://image.tmdb.org/t/p/w500/{}"
-    
-    tvshow_list = fetch_tvshows_list(headers, url_airing, url_poster)
+    tvshow_list = movie_api.fetch_tvshows_list('NOW_AIRING')
     
     for show in tvshow_list:
         show['first_air_date'] = convert_date(show["first_air_date"])
@@ -1082,20 +923,12 @@ def popular_tvshows(request):
     """
     Get a list of all the tvshows airing today
     """
-    # API_KEY
-    headers = {
-        "accept": "application/json",
-        "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIwOTEwZTMzYzBiNzM5NWJhYWI2Nzg4MDJlOTkzMTJlYiIsInN1YiI6IjY2MjkxM2I5ZTI5NWI0MDE4NzllMTBiYSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.IwgWzjezREKj75fLbuLlK-Kp03z_yRyRcQaUJai68l0"
-    }
+    movie_api = MovieDatabase()
     
-    url_popular = "https://api.themoviedb.org/3/tv/popular?language=en-US&page=1"
-    
-    url_poster = "https://image.tmdb.org/t/p/w500/{}"
+    tvshow_list = movie_api.fetch_tvshows_list('POPULAR')
     
     for show in tvshow_list:
         show['first_air_date'] = convert_date(show["first_air_date"])
-        
-    tvshow_list = fetch_tvshows_list(headers, url_popular, url_poster)
     
     context = {
         'tvshow_list': tvshow_list,

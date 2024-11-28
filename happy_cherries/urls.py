@@ -49,10 +49,6 @@ urlpatterns = [
     path('tvshows/<int:tvshow_id>/delete_tvshow/', views.delete_tvshow, name='delete_tvshow'),
     # Delete a review of a TvShow. 
     path('tvshows/<int:review_id>/delete_review_tvshow/', views.delete_review_tvshow, name='delete_review_tvshow'),
-    # Page for showing all the tvshows added to your list.
-    path('tvshows/<int:tvshow_id>/add_note_tvshow/', views.add_note_tvshow, name='add_note_tvshow'),
-    # Page for showing all the tvshows added to your list.
-    path('tvshows/<int:note_id>/edit_note_tvshow/', views.edit_note_tvshow, name='edit_note_tvshow'),
     # search for a specific TvShow.
     path('tvshows/search_tvshow/', views.tvshow_search, name='tvshow_search'),
     # Get the detailed information of a TV Show.
