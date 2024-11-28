@@ -30,15 +30,6 @@ def check_user(request, media):
 def index(request):
     """Show the Home page for Happy Cherry."""
     movie_api = MovieDatabase()
-    # API_KEY
-    headers = {
-        "accept": "application/json",
-        "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIwOTEwZTMzYzBiNzM5NWJhYWI2Nzg4MDJlOTkzMTJlYiIsInN1YiI6IjY2MjkxM2I5ZTI5NWI0MDE4NzllMTBiYSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.IwgWzjezREKj75fLbuLlK-Kp03z_yRyRcQaUJai68l0"
-    }
-    
-    url_airing = "https://api.themoviedb.org/3/tv/airing_today?language=en-US&page=1"
-
-    url_poster = "https://image.tmdb.org/t/p/w500/{}"
     
     # Return all the movies currently in the cinema
     now_playing = movie_api.fetch_movies_list('NOW_PLAYING')[:5]
