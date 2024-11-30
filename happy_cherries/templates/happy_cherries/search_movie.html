@@ -7,7 +7,7 @@
     <form class="row g-2" method="post">
         {% csrf_token %}
         <div class="mb-3 col-auto">
-            <input type="text" name="movie_query" class="form-control" placeholder="Search Movie">
+            <input type="text" name="movie_query" class="form-control" placeholder="Search Movie" {% if search_query %}value="{{ search_query }}"{% endif %}>
         </div>
         <div class="mb-3 col-auto">
             <button type="submit" class="btn btn-dark rounded-pill px-3">Search</button>
@@ -48,9 +48,44 @@
                         </a>
                     </div>
                 {% empty %}
-                    <p>No movies added yet</p>
                 {% endfor %}
             </div>
         </div> 
     {% endif %}    
+
+    <!-- Pagination controls -->
+    <nav aria-label="Page navigation">
+        <form method="post">
+            {% csrf_token %}
+            <ul class="pagination justify-content-center mt-4">
+                <!-- Previous Page -->
+                {% if pagination.current_page > 1 %}
+                    <li class="page-item">
+                        <button type="submit" name="page" value="{{ pagination.current_page|add:-1 }}" class="page-link">
+                            &laquo; Previous
+                        </button>
+                    </li>
+                {% endif %}
+                <li class="page-item mx-2">
+                    <button type="submit" name="page" value="{{ pagination.current_page }}" class="page-link">
+                        {{ pagination.current_page }}
+                    </button>
+                </li>
+                <!-- Next Page -->
+                {% if pagination.current_page < pagination.total_pages %}
+                    <li class="page-item">
+                        <button type="submit" name="page" value="{{ pagination.current_page|add:1 }}" class="page-link">
+                            Next &raquo;
+                        </button>
+                    </li>
+                {% endif %}
+            </ul>
+    
+            <!-- Retain Search Query -->
+            {% if search_query %}
+                <input type="hidden" name="movie_query" value="{{ search_query }}">
+            {% endif %}
+        </form>
+    </nav>
+
 {% endblock content %}

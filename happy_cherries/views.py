@@ -10,7 +10,6 @@ from .forms import ReviewForm, ExtendedMovieReviewForm, ExtendedTvShowReviewForm
 from .TMDB_API import MovieDatabase
 from django.utils import timezone
 
-import json, requests # This is to send a request to the URLs defined (Not a Django request)
 from datetime import datetime
 
 def convert_date(time_str):
@@ -283,18 +282,21 @@ def movie_search(request):
     # If searching for a movie then get the name and view all movies related to search. 
     if request.method == 'POST':
         
-        movie_search = request.POST['movie_query']
+        requested_page = int(request.POST.get('page')) or 1
+        movie_search = request.POST.get('movie_query')
+        
         # Get all the movies through Dynamic search. 
-        movie_list = movie_api.fetch_movies(movie_search)
+        movie_list, pagination = movie_api.fetch_movies(movie_search, requested_page)
         
         for movie in movie_list:
             movie['release_date'] = convert_date(movie["release_date"])
-        
+            
         context = {
-            'movie_list': movie_list
+            'movie_list': movie_list,
+            'pagination': pagination,
+            'search_query': request.POST.get('movie_query', '')
         }
 
-        return render(request, 'happy_cherries/search_movie.html', context)
     # IF it is a GET request just loading page. 
     else: 
         # Get all the trending movies so the home page does not look empty. 
@@ -306,7 +308,8 @@ def movie_search(request):
         context = {
             'movie_list': movie_list
         }
-        return render(request, 'happy_cherries/search_movie.html', context)
+    
+    return render(request, 'happy_cherries/search_movie.html', context)
 
 def requested_movie(request, movie_id):
     """

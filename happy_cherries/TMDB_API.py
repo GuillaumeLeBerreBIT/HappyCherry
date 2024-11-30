@@ -15,11 +15,11 @@ class MovieDatabase():
         self.base_url = "https://api.themoviedb.org/3/"
         self.url_poster = "https://image.tmdb.org/t/p/w500/{}"
         
-        self.search_movie_url = "search/movie?query={}&include_adult=false&language=en-US&page=1"
+        self.search_movie_url = "search/movie?query={}&include_adult=false&language=en-US&page={}"
         self.det_movie_url = "movie/{}?language=en-US"
         self.credits_movie_url = "movie/{}/credits?language=en-US"
         
-        self.search_tvshow_url = "search/tv?query={}&include_adult=false&language=en-US&page=1"
+        self.search_tvshow_url = "search/tv?query={}&include_adult=false&language=en-US&page={}"
         self.url_det_tvshow = "tv/{}?language=en-US"
         self.url_credits_tvshow = "tv/{}/credits?language=en-US"
         
@@ -66,13 +66,13 @@ class MovieDatabase():
         
         return genre_list
 
-    def fetch_movies(self, movie_query):
+    def fetch_movies(self, search, page=1):
         """
         Will show the movies through dynamic search on the page.
         """
         # Want the response to be in JSON format. 
-        response = requests.get(self.base_url + self.search_movie_url.format(movie_query), headers=self.headers).json() 
-
+        response = requests.get(self.base_url + self.search_movie_url.format(search, page), headers=self.headers).json() 
+        
         movie_list = []
         for sq in response['results']:
             
@@ -91,9 +91,13 @@ class MovieDatabase():
             
             # Add each movie to a list.
             movie_list.append(requested_data)
-        
+            
+        pagination = {
+            'current_page': page,
+            'total_pages': response.get('total_pages', 1),
+        }
         # Return the movie list.
-        return movie_list
+        return movie_list, pagination
     
     def fetch_movies_list(self, endpoint_type):
         """Get all the trending/upcoming/popular movies to show on the page when searching for a movie."""
@@ -158,10 +162,10 @@ class MovieDatabase():
         
         return movie_info
     
-    def fetch_tvshow(self, search):
+    def fetch_tvshow(self, search, page=1):
         """Want to get all the results from the search query."""
         # Using the input name, will return a Dynamic search with all Shows related to the name
-        response = requests.get(self.base_url + self.search_tvshow_url.format(search), headers=self.headers).json()
+        response = requests.get(self.base_url + self.search_tvshow_url.format(search, page), headers=self.headers).json()
         
         tvshow_list = []
         for sq in response['results']:
