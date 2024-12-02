@@ -282,7 +282,7 @@ def movie_search(request):
     # If searching for a movie then get the name and view all movies related to search. 
     if request.method == 'POST':
         
-        requested_page = int(request.POST.get('page')) or 1
+        requested_page = int(request.POST.get('page', 1))
         movie_search = request.POST.get('movie_query')
         
         # Get all the movies through Dynamic search. 
@@ -427,15 +427,20 @@ def top_rated_movies(request):
     """
     movie_api = MovieDatabase()
     
+    if request.method == 'POST':
+        requested_page = int(request.POST.get('page', 1))
+    else:
+        requested_page = 1
     # Get all the trending movies so the home page does not look empty. 
-    movie_list = movie_api.fetch_movies_list('TOP_RATED')
+    movie_list, pagination = movie_api.fetch_movies_list('TOP_RATED', requested_page)
     
     for movie in movie_list:
         movie['release_date'] = convert_date(movie["release_date"])
-    
+        
     context = {
         'movie_list': movie_list,
-        'title': "Top Rated Movies"
+        'title': "Top Rated Movies",
+        'pagination': pagination,
     }
     return render(request, 'happy_cherries/movies_list.html', context)
 
@@ -445,15 +450,21 @@ def upcoming_movies(request):
     """
     movie_api = MovieDatabase()
     
+    if request.method == 'POST':
+        requested_page = int(request.POST.get('page', 1))
+    else:
+        requested_page = 1
+    
     # Get all the trending movies so the home page does not look empty. 
-    movie_list = movie_api.fetch_movies_list('UPCOMING')
+    movie_list, pagination = movie_api.fetch_movies_list('UPCOMING', requested_page)
     
     for movie in movie_list:
         movie['release_date'] = convert_date(movie["release_date"])
     
     context = {
         'movie_list': movie_list,
-        'title': "Upcoming Movies"
+        'title': "Upcoming Movies",
+        'pagination': pagination,
     }
     return render(request, 'happy_cherries/movies_list.html', context)
 
@@ -463,15 +474,21 @@ def now_playing_movies(request):
     """
     movie_api = MovieDatabase()
     
+    if request.method == 'POST':
+        requested_page = int(request.POST.get('page', 1))
+    else:
+        requested_page = 1
+    
     # Get all the trending movies so the home page does not look empty. 
-    movie_list = movie_api.fetch_movies_list('NOW_PLAYING')
+    movie_list, pagination = movie_api.fetch_movies_list('NOW_PLAYING', requested_page)
     
     for movie in movie_list:
         movie['release_date'] = convert_date(movie["release_date"])
         
     context = {
         'movie_list': movie_list,
-        'title':'Now Playing Movies'
+        'title':'Now Playing Movies',
+        'pagination': pagination
     }
     return render(request, 'happy_cherries/movies_list.html', context)
 
@@ -479,15 +496,21 @@ def popular_movies(request):
     """List of all the popular movies"""
     movie_api = MovieDatabase()
     
+    if request.method == 'POST':
+        requested_page = int(request.POST.get('page', 1))
+    else:
+        requested_page = 1
+    
     # Get all the trending movies so the home page does not look empty. 
-    movie_list = movie_api.fetch_movies_list('POPULAR')
+    movie_list, pagination = movie_api.fetch_movies_list('POPULAR', requested_page)
     
     for movie in movie_list:
         movie['release_date'] = convert_date(movie["release_date"])
         
     context = {
         'movie_list': movie_list,
-        'title':'Popular Movies'
+        'title':'Popular Movies',
+        'pagination': pagination
     }
     return render(request, 'happy_cherries/movies_list.html', context)
    

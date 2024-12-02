@@ -26,32 +26,32 @@ class MovieDatabase():
         self.GENRES_MOVIES = GENRES_MOVIES
         self.GENRES_TVSHOWS = GENRES_TVSHOWS
     
-    def get_url_path(self, endpoint, media):
+    def get_url_path(self, endpoint, media, page):
         """Configure the correct URL endpoint."""
         
         if endpoint.upper() == "TRENDING":
             url = "trending/movie/day?language=en-US"
             
         elif endpoint.upper() == "TOP_RATED": 
-            url = f"{media}/top_rated?language=en-US&page=1"
+            url = f"{media}/top_rated?language=en-US&page={page}"
         
         elif endpoint.upper() == "UPCOMING": 
             if media == 'movie':
-                url = "movie/upcoming?language=en-US&page=1"
+                url = f"movie/upcoming?language=en-US&page={page}"
             else: 
-                url = "tv/on_the_air?language=en-US&page=1"
+                url = f"tv/on_the_air?language=en-US&page={page}"
         
         elif endpoint.upper() == "NOW_PLAYING": 
-            url = "movie/now_playing?language=en-US&page=1"
+            url = f"movie/now_playing?language=en-US&page={page}"
             
         elif endpoint.upper() == "NOW_AIRING":
-            url = "tv/airing_today?language=en-US&page=1"
+            url = f"tv/airing_today?language=en-US&page={page}"
         
         elif endpoint.upper() == "POPULAR": 
             if media == 'movie':
-                url = f"{media}/popular?language=en-US&page=1"
+                url = f"{media}/popular?language=en-US&page={page}"
             else: 
-                url = f"{media}/popular?language=en-US&page=1"
+                url = f"{media}/popular?language=en-US&page={page}"
                     
         return url
     
@@ -65,13 +65,13 @@ class MovieDatabase():
                     genre_list.append(genre["name"])
         
         return genre_list
-
+            
     def fetch_movies(self, search, page=1):
         """
         Will show the movies through dynamic search on the page.
         """
         # Want the response to be in JSON format. 
-        response = requests.get(self.base_url + self.search_movie_url.format(search, page), headers=self.headers).json() 
+        response = requests.get(self.base_url + self.search_movie_url.format(search, page), headers=self.headers).json()
         
         movie_list = []
         for sq in response['results']:
@@ -99,10 +99,10 @@ class MovieDatabase():
         # Return the movie list.
         return movie_list, pagination
     
-    def fetch_movies_list(self, endpoint_type):
+    def fetch_movies_list(self, endpoint_type, page=1):
         """Get all the trending/upcoming/popular movies to show on the page when searching for a movie."""
         
-        url = self.get_url_path(endpoint_type, 'movie')
+        url = self.get_url_path(endpoint_type, 'movie', page)
         response = requests.get(self.base_url + url , headers=self.headers).json()
         
         movie_list = []
@@ -120,7 +120,12 @@ class MovieDatabase():
             
             movie_list.append(requested_data)
         
-        return movie_list 
+        pagination = {
+            'current_page': page,
+            'total_pages': response.get('total_pages', 1),
+        }
+        
+        return movie_list, pagination 
     
     def fetch_detailed_movie(self, movie_id):
         """
