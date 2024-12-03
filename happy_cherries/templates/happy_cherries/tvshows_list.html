@@ -41,4 +41,50 @@
             </div>
         </div>  
     {% endif %}
+
+    <!-- Pagination controls -->
+    {% if pagination %}
+    <nav aria-label="Page navigation">
+        <form method="post">
+            {% csrf_token %}
+            <ul class="pagination justify-content-center mt-4">
+                <!-- Previous Page -->
+                {% if pagination.current_page|add:-2 >= 1 %}
+                    <li class="page-item">
+                        <button type="submit" name="page" value="{{ pagination.current_page|add:-2 }}" class="page-link">
+                            &laquo; {{ pagination.current_page|add:-2 }}
+                        </button>
+                    </li>
+                {% endif %}
+                {% if pagination.current_page|add:-1 >= 1 and pagination.current_page != 1 %}
+                    <li class="page-item">
+                        <button type="submit" name="page" value="{{ pagination.current_page|add:-1 }}" class="page-link">
+                            {{ pagination.current_page|add:-1 }}
+                        </button>
+                    </li>
+                {% endif %}
+                <li class="page-item active">
+                    <button type="submit" name="page" value="{{ pagination.current_page }}" class="page-link">
+                        {{ pagination.current_page }}
+                    </button>
+                </li>
+                {% if pagination.current_page <= pagination.total_pages and pagination.current_page != pagination.total_pages %}
+                    <li class="page-item">
+                        <button type="submit" name="page" value="{{ pagination.current_page|add:1 }}" class="page-link">
+                            {{ pagination.current_page|add:1 }}
+                        </button>
+                    </li>
+                {% endif %}
+                <!-- Next Page -->
+                {% if pagination.current_page < pagination.total_pages|add:-1  %}
+                    <li class="page-item">
+                        <button type="submit" name="page" value="{{ pagination.current_page|add:2 }}" class="page-link">
+                            {{ pagination.current_page|add:2 }} &raquo;
+                        </button>
+                    </li>
+                {% endif %}
+            </ul>
+        </form>
+    </nav>
+    {% endif %}
 {% endblock content %}

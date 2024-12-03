@@ -167,7 +167,7 @@ class MovieDatabase():
         
         return movie_info
     
-    def fetch_tvshow(self, search, page=1):
+    def fetch_tvshows(self, search, page=1):
         """Want to get all the results from the search query."""
         # Using the input name, will return a Dynamic search with all Shows related to the name
         response = requests.get(self.base_url + self.search_tvshow_url.format(search, page), headers=self.headers).json()
@@ -187,12 +187,17 @@ class MovieDatabase():
             
             tvshow_list.append(requested_data)
         
-        return tvshow_list
+        pagination = {
+            'current_page': page,
+            'total_pages': response.get('total_pages', 1),
+        }
+        
+        return tvshow_list, pagination
 
-    def fetch_tvshows_list(self, endpoint_type):
+    def fetch_tvshows_list(self, endpoint_type, page=1):
         """Get a list of all the trending Tv Shows to show on the search page."""
         
-        url = self.get_url_path(endpoint_type, 'tv')
+        url = self.get_url_path(endpoint_type, 'tv', page)
         response = requests.get(self.base_url + url, headers=self.headers).json()
         
         tvshow_list = []
@@ -210,7 +215,12 @@ class MovieDatabase():
             
             tvshow_list.append(tvshow)
         
-        return tvshow_list
+        pagination = {
+            'current_page': page,
+            'total_pages': response.get('total_pages', 1),
+        }
+        
+        return tvshow_list, pagination
         
 
     def fetch_detailed_tvshow(self, tvshow_id):

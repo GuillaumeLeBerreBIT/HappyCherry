@@ -31,11 +31,14 @@ def index(request):
     movie_api = MovieDatabase()
     
     # Return all the movies currently in the cinema
-    now_playing = movie_api.fetch_movies_list('NOW_PLAYING')[:5]
-    now_airing = movie_api.fetch_tvshows_list('NOW_AIRING')[:5]
+    now_playing, pagination = movie_api.fetch_movies_list('NOW_PLAYING', 1)[:5]
+    now_airing, pagination = movie_api.fetch_tvshows_list('NOW_AIRING', 1)[:5]
+    
+    print(now_playing)
     
     context = {'now_playing': now_playing,
                'now_airing': now_airing}
+    
     return render(request, 'happy_cherries/index.html', context)
 
 # MOVIES
@@ -282,11 +285,11 @@ def movie_search(request):
     # If searching for a movie then get the name and view all movies related to search. 
     if request.method == 'POST':
         
-        requested_page = int(request.POST.get('page', 1))
         movie_search = request.POST.get('movie_query')
         
         # Get all the movies through Dynamic search. 
-        movie_list, pagination = movie_api.fetch_movies(movie_search, requested_page)
+        movie_list, pagination = movie_api.fetch_movies(movie_search, 
+                                                        int(request.POST.get('page', 1)))
         
         for movie in movie_list:
             movie['release_date'] = convert_date(movie["release_date"])
@@ -300,7 +303,7 @@ def movie_search(request):
     # IF it is a GET request just loading page. 
     else: 
         # Get all the trending movies so the home page does not look empty. 
-        movie_list = movie_api.fetch_movies_list("TRENDING")
+        movie_list, pagination = movie_api.fetch_movies_list("TRENDING")
         
         for movie in movie_list:
             movie['release_date'] = convert_date(movie["release_date"])
@@ -754,25 +757,28 @@ def tvshow_search(request):
     
     if request.method == 'POST':
         
-        tvshow_search = request.POST['tvshow_query']
-        
-        tvshow_list = movie_api.fetch_tvshow(tvshow_search)
+        tvshow_list, pagination = movie_api.fetch_tvshows(request.POST.get('tvshow_query'), 
+                                                          int(request.POST.get('page', 1)))
         
         for show in tvshow_list:
             show['first_air_date'] = convert_date(show["first_air_date"])
         
-        context = {'tvshow_list': tvshow_list}
+        context = {'tvshow_list': tvshow_list,
+                   'pagination': pagination,
+                   'search_query': request.POST.get('tvshow_query')
+                   }
         
         return render(request, 'happy_cherries/search_tvshow.html', context)
         
     else: # GET request
         
-        tvshow_list = movie_api.fetch_tvshows_list('POPULAR')
+        tvshow_list, pagination = movie_api.fetch_tvshows_list('POPULAR')
         
         for show in tvshow_list:
             show['first_air_date'] = convert_date(show["first_air_date"])
         
-        context = {'tvshow_list': tvshow_list,}
+        context = {'tvshow_list': tvshow_list
+                   }
         
         return render(request, 'happy_cherries/search_tvshow.html', context)
         
@@ -891,14 +897,21 @@ def top_rated_tvshows(request):
     """
     movie_api = MovieDatabase()
     
-    tvshow_list = movie_api.fetch_tvshows_list('TOP_RATED')
+    if request.method == 'POST':
+        requested_page = int(request.POST.get('page', 1))
+    else:
+        requested_page = 1
+        
+    tvshow_list, pagination = movie_api.fetch_tvshows_list('TOP_RATED', 
+                                                            requested_page)
     
     for show in tvshow_list:
         show['first_air_date'] = convert_date(show["first_air_date"])
     
     context = {
         'tvshow_list': tvshow_list,
-        'title': "Top Rated TV Shows"
+        'title': "Top Rated TV Shows",
+        'pagination': pagination
     }
     return render(request, 'happy_cherries/tvshows_list.html', context)
 
@@ -908,14 +921,20 @@ def upcoming_tvshows(request):
     """
     movie_api = MovieDatabase()
     
-    tvshow_list = movie_api.fetch_tvshows_list('UPCOMING')
+    if request.method == 'POST':
+        requested_page = int(request.POST.get('page', 1))
+    else:
+        requested_page = 1
+        
+    tvshow_list, pagination = movie_api.fetch_tvshows_list('UPCOMING', requested_page)
     
     for show in tvshow_list:
         show['first_air_date'] = convert_date(show["first_air_date"])
         
     context = {
         'tvshow_list': tvshow_list,
-        'title': "On The Air TV Shows"
+        'title': "On The Air TV Shows",
+        'pagination': pagination
     }
     return render(request, 'happy_cherries/tvshows_list.html', context)
 
@@ -925,14 +944,20 @@ def now_airing_tvshows(request):
     """
     movie_api = MovieDatabase()
     
-    tvshow_list = movie_api.fetch_tvshows_list('NOW_AIRING')
+    if request.method == 'POST':
+        requested_page = int(request.POST.get('page', 1))
+    else:
+        requested_page = 1
+    
+    tvshow_list, pagination = movie_api.fetch_tvshows_list('NOW_AIRING', requested_page)
     
     for show in tvshow_list:
         show['first_air_date'] = convert_date(show["first_air_date"])
         
     context = {
         'tvshow_list': tvshow_list,
-        'title': "TV Shows Airing Today"
+        'title': "TV Shows Airing Today",
+        'pagination': pagination
     }
     return render(request, 'happy_cherries/tvshows_list.html', context)
 
@@ -942,14 +967,20 @@ def popular_tvshows(request):
     """
     movie_api = MovieDatabase()
     
-    tvshow_list = movie_api.fetch_tvshows_list('POPULAR')
+    if request.method == 'POST':
+        requested_page = int(request.POST.get('page', 1))
+    else:
+        requested_page = 1
+    
+    tvshow_list, pagination = movie_api.fetch_tvshows_list('POPULAR', requested_page)
     
     for show in tvshow_list:
         show['first_air_date'] = convert_date(show["first_air_date"])
     
     context = {
         'tvshow_list': tvshow_list,
-        'title': "Popular TV Shows"
+        'title': "Popular TV Shows",
+        'pagination': pagination
     }
     return render(request, 'happy_cherries/tvshows_list.html', context)
 
