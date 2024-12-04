@@ -1,9 +1,23 @@
 {% extends "happy_cherries/base.html" %}
 
 {% block page_header %}
-
-    <h2 class="display-5 fw-bold mb-3 text-center text-warning border-bottom border-warning p-2">{{ title }}</h2>
-
+<div class="d-flex align-items-center justify-content-center border-bottom border-warning position-relative">
+    <h2 class="display-5 fw-bold text-warning">
+        {{ title }}
+    </h2>
+</div>
+<div class="my-2 d-flex justify-content-end"> 
+    <form class="d-flex align-items-center me-2 w-25" method="post" action="{% url 'happy_cherries:movie_search' %}"> 
+        {% csrf_token %} 
+        <div class="input-group"> 
+            <input type="text" name="search_query" class="form-control" placeholder="Search Movie" 
+            style="max-width: 400px;" {% if search_query %}value="{{ search_query }}"{% endif %}> 
+            <button class="btn btn-primary"> 
+                <i class="bi bi-search"></i> 
+            </button> 
+        </div> 
+    </form>
+</div>
 {% endblock page_header %}
 
 {% block content %}

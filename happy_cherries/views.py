@@ -102,7 +102,8 @@ def movies(request):
     context = {
         'movies': movies, 
         'title': 'Library Movies',
-        'is_delete': is_delete
+        'is_delete': is_delete,
+        'search_query': query
         }
     
     return render(request, 'happy_cherries/movies.html', context)
@@ -154,7 +155,8 @@ def movies_watchlist(request):
     context = {
         'movies': movies, 
         'title': 'Watchlist Movies',
-        'is_delete': is_delete
+        'is_delete': is_delete,
+        'search_query': query
         }
 
     return render(request, 'happy_cherries/movies.html', context)
@@ -206,7 +208,8 @@ def movies_favorites(request):
     context = {
         'movies': movies, 
         'title': 'Favorite Movies',
-        'is_delete': is_delete
+        'is_delete': is_delete,
+        'search_query': query
         }
     
     return render(request, 'happy_cherries/movies.html', context)
@@ -344,10 +347,10 @@ def movie_search(request):
     # If searching for a movie then get the name and view all movies related to search. 
     if request.method == 'POST':
         
-        movie_search = request.POST.get('movie_query')
+        query = request.POST.get('search_query', '')
         
         # Get all the movies through Dynamic search. 
-        movie_list, pagination = movie_api.fetch_movies(movie_search, 
+        movie_list, pagination = movie_api.fetch_movies(query, 
                                                         int(request.POST.get('page', 1)))
         
         for movie in movie_list:
@@ -356,7 +359,7 @@ def movie_search(request):
         context = {
             'movie_list': movie_list,
             'pagination': pagination,
-            'search_query': request.POST.get('movie_query', '')
+            'search_query': query
         }
 
     # IF it is a GET request just loading page. 

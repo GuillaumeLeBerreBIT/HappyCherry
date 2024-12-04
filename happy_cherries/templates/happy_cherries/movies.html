@@ -1,42 +1,39 @@
 {% extends "happy_cherries/base.html" %}
 
 {% block page_header %}
-<div class="d-flex align-items-center border-bottom border-warning p-2 position-relative">
-    <!-- Title centered in the middle of the screen -->
-    <h2 class="display-5 fw-bold mb-0 text-warning position-absolute start-50 translate-middle-x">
+<div class="d-flex align-items-center justify-content-center border-bottom border-warning position-relative">
+    <h2 class="display-5 fw-bold text-warning">
         {{ title }}
     </h2>
-    <!-- Buttons aligned to the right -->
-    <div class="d-flex gap-2 ms-auto">
-        {% if is_delete %}
-            <form method='post'>
-                {% csrf_token %}
-                <input type="hidden" name="action" value="save_movies">
-                <button type="submit" class="btn btn-success">
-                    <i class="bi bi-check-circle" style="font-size: 24px;"></i>
-                </button>
-            </form>
-        {% else %}
-            <form method='post'>
-                {% csrf_token %}
-                <input type="hidden" name="action" value="delete_movies">
-                <button type="submit" class="btn btn-danger">
-                    <i class="bi bi-dash-circle" style="font-size: 24px;"></i>
-                </button>
-            </form>
-        {% endif %}
-    </div>
 </div>
 <div class="my-2 d-flex justify-content-end"> 
-    <form class="d-flex align-items-center w-25" method="post"> 
+    <form class="d-flex align-items-center me-2 w-25" method="post"> 
         {% csrf_token %} 
         <div class="input-group"> 
-            <input type="text" name="search_query" class="form-control" placeholder="Search Movie" style="max-width: 400px;"> 
+            <input type="text" name="search_query" class="form-control" placeholder="Search Movie" 
+            style="max-width: 400px;" {% if search_query %}value="{{ search_query }}"{% endif %}> 
             <button class="btn btn-primary"> 
                 <i class="bi bi-search"></i> 
             </button> 
         </div> 
     </form>
+    {% if is_delete %}
+        <form method='post'>
+            {% csrf_token %}
+            <input type="hidden" name="action" value="save_movies">
+            <button type="submit" class="btn btn-success">
+                <i class="bi bi-check-circle" ></i>
+            </button>
+        </form>
+    {% else %}
+        <form method='post'>
+            {% csrf_token %}
+            <input type="hidden" name="action" value="delete_movies">
+            <button type="submit" class="btn btn-danger">
+                <i class="bi bi-dash-circle"></i>
+            </button>
+        </form>
+    {% endif %}
 </div>
 {% endblock page_header %}
 
