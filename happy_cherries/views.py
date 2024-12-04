@@ -3,6 +3,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.http import Http404
 from django.forms.models import model_to_dict
+from django.db.models import Q
 
 from .models import Movie, PublicReview, TvShow, ExtendedTvShowReview, ExtendedMovieReview
 from .forms import ReviewForm, ExtendedMovieReviewForm, ExtendedTvShowReviewForm
@@ -53,6 +54,11 @@ def movies(request):
     # Retrieve only the objects from database whose owner attribute matches the current user.
     movies = Movie.objects.filter(owner=request.user).order_by('date_added')
     
+    query = request.POST.get('search_query', '')
+        
+    if query:
+        movies = movies.filter(Q(title__icontains=query))
+    
     # This will take all the movies for each specific owner. 
     for movie in movies:
         # Gets all the reviews per movie
@@ -80,7 +86,8 @@ def movies(request):
     # Initialize is_delete based on session data
     is_delete = request.session.get('is_delete', False)
         
-    if request.method == 'POST':
+    if request.method == 'POST':           
+        
         if request.POST.get('action') == 'delete_movies':
             # Toggle is_delete in the session
             request.session['is_delete'] = True
@@ -106,6 +113,11 @@ def movies_watchlist(request):
     
     movies = Movie.objects.filter(owner=request.user, watchlist=True).order_by('date_added')
     
+    query = request.POST.get('search_query', '')
+        
+    if query:
+        movies = movies.filter(Q(title__icontains=query))
+        
     for movie in movies:
         
         identical_movies = Movie.objects.filter(id_movie=movie.id_movie)    # Get all the movies with the same ID. 
@@ -122,8 +134,29 @@ def movies_watchlist(request):
         
         movie.genres = movie.genre.split(',')
         movie.genres.sort()
+        
+    # Initialize is_delete based on session data
+    is_delete = request.session.get('is_delete', False)
+        
+    if request.method == 'POST':           
+        
+        if request.POST.get('action') == 'delete_movies':
+            # Toggle is_delete in the session
+            request.session['is_delete'] = True
+            return redirect('happy_cherries:movies_watchlist')
+        
+        if request.POST.get('action') == 'save_movies':
+            # Toggle is_delete in the session
+            request.session['is_delete'] = False
+            return redirect('happy_cherries:movies_watchlist')
+        
     
-    context = {'movies': movies, 'title': 'Watchlist Movies'}
+    context = {
+        'movies': movies, 
+        'title': 'Watchlist Movies',
+        'is_delete': is_delete
+        }
+
     return render(request, 'happy_cherries/movies.html', context)
  
 @login_required
@@ -132,6 +165,11 @@ def movies_favorites(request):
     
     movies = Movie.objects.filter(owner= request.user, favorites=True).order_by('date_added')
     
+    query = request.POST.get('search_query', '')
+        
+    if query:
+        movies = movies.filter(Q(title__icontains=query))
+        
     for movie in movies:
         
         identical_movies = Movie.objects.filter(id_movie=movie.id_movie)
@@ -148,8 +186,29 @@ def movies_favorites(request):
         
         movie.genres = movie.genre.split(',')
         movie.genres.sort()
+        
+    # Initialize is_delete based on session data
+    is_delete = request.session.get('is_delete', False)
+        
+    if request.method == 'POST':           
+        
+        if request.POST.get('action') == 'delete_movies':
+            # Toggle is_delete in the session
+            request.session['is_delete'] = True
+            return redirect('happy_cherries:movies_favorites')
+        
+        if request.POST.get('action') == 'save_movies':
+            # Toggle is_delete in the session
+            request.session['is_delete'] = False
+            return redirect('happy_cherries:movies_favorites')
+        
     
-    context = {'movies': movies, 'title': 'Favorite Movies'}
+    context = {
+        'movies': movies, 
+        'title': 'Favorite Movies',
+        'is_delete': is_delete
+        }
+    
     return render(request, 'happy_cherries/movies.html', context)
 
 @login_required

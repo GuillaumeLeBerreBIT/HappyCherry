@@ -8,9 +8,6 @@
     </h2>
     <!-- Buttons aligned to the right -->
     <div class="d-flex gap-2 ms-auto">
-        <a class="btn btn-dark rounded-pill px-3" href="{% url 'happy_cherries:movie_search' %}">
-            <i class="bi bi-search" style="font-size: 24px;"></i>
-        </a>
         {% if is_delete %}
             <form method='post'>
                 {% csrf_token %}
@@ -29,6 +26,17 @@
             </form>
         {% endif %}
     </div>
+</div>
+<div class="my-2 d-flex justify-content-end"> 
+    <form class="d-flex align-items-center w-25" method="post"> 
+        {% csrf_token %} 
+        <div class="input-group"> 
+            <input type="text" name="search_query" class="form-control" placeholder="Search Movie" style="max-width: 400px;"> 
+            <button class="btn btn-primary"> 
+                <i class="bi bi-search"></i> 
+            </button> 
+        </div> 
+    </form>
 </div>
 {% endblock page_header %}
 
