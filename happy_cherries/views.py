@@ -591,6 +591,11 @@ def tvshows(request):
     tv_shows = TvShow.objects.filter(owner=request.user).order_by('date_added')
     # Note is linked to the user so do not need to filter the note by user. 
     
+    query = request.POST.get('search_query', '')
+    
+    if query:
+        tv_shows = tv_shows.filter(Q(title__icontains=query))
+    
     for tv_show in tv_shows:
         
         identical_tv_shows = TvShow.objects.filter(id_tvshow=tv_show.id_tvshow)    # Get all the movies with the same ID. 
@@ -631,19 +636,26 @@ def tvshows(request):
             request.session['is_delete'] = False
             return redirect('happy_cherries:tvshows')
     
-    context = {'tv_shows': tv_shows, 
-               'title': 'Library Tv Shows',
-               'is_delete': is_delete
-               }
+    context = {
+        'tv_shows': tv_shows, 
+        'title': 'Library Tv Shows',
+        'is_delete': is_delete,
+        'search_query': query
+        }
     
     return render(request, 'happy_cherries/tvshows.html', context)
 
 @login_required
 def tvshows_watchlist(request):
-    """Show all the movies added to your watchlist."""
+    """Show all the Tv Shows added to your watchlist."""
     
     tv_shows = TvShow.objects.filter(owner=request.user, watchlist=True).order_by('date_added')
     
+    query = request.POST.get('search_query', '')
+        
+    if query:
+        tv_shows = tv_shows.filter(Q(title__icontains=query))
+        
     for tv_show in tv_shows:
         
         identical_tv_shows = TvShow.objects.filter(id_tvshow=tv_show.id_tvshow)    # Get all the movies with the same ID. 
@@ -665,16 +677,41 @@ def tvshows_watchlist(request):
         
         tv_show.genres = tv_show.genre.split(',')
         tv_show.genres.sort()
+        
+    # Initialize is_delete based on session data
+    is_delete = request.session.get('is_delete', False)
+        
+    if request.method == 'POST':
+        if request.POST.get('action') == 'delete_tvshows':
+            # Toggle is_delete in the session
+            request.session['is_delete'] = True
+            return redirect('happy_cherries:tvshows_watchlist')
+        
+        if request.POST.get('action') == 'save_tvshows':
+            # Toggle is_delete in the session
+            request.session['is_delete'] = False
+            return redirect('happy_cherries:tvshows_watchlist')
     
-    context = {'tv_shows': tv_shows, 'title': 'Watchlist Tv Shows'}
+    context = {
+        'tv_shows': tv_shows, 
+        'title': 'Watchlist Tv Shows',
+        'is_delete': is_delete,
+        'search_query': query
+        }
+    
     return render(request, 'happy_cherries/tvshows.html', context)
  
 @login_required
 def tvshows_favorites(request):
-    """Show all the movies add to your favorites list."""
+    """Show all the Tv Shows add to your favorites list."""
     
     tv_shows = TvShow.objects.filter(owner=request.user, favorites=True).order_by('date_added')
     
+    query = request.POST.get('search_query', '')
+        
+    if query:
+        tv_shows = tv_shows.filter(Q(title__icontains=query))
+        
     for tv_show in tv_shows:
         
         identical_tv_shows = TvShow.objects.filter(id_tvshow=tv_show.id_tvshow)    # Get all the movies with the same ID. 
@@ -697,10 +734,27 @@ def tvshows_favorites(request):
         tv_show.genres = tv_show.genre.split(',')
         tv_show.genres.sort()
     
+    # Initialize is_delete based on session data
+    is_delete = request.session.get('is_delete', False)
+        
+    if request.method == 'POST':
+        if request.POST.get('action') == 'delete_tvshows':
+            # Toggle is_delete in the session
+            request.session['is_delete'] = True
+            return redirect('happy_cherries:tvshows_watchlist')
+        
+        if request.POST.get('action') == 'save_tvshows':
+            # Toggle is_delete in the session
+            request.session['is_delete'] = False
+            return redirect('happy_cherries:tvshows_watchlist')
+    
     context = {
         'tv_shows': tv_shows, 
-        'title': 'Favorite Tv Shows'
+        'title': 'Favorite Tv Shows',
+        'is_delete': is_delete,
+        'search_query': query
         }
+    
     return render(request, 'happy_cherries/tvshows.html', context)
 
 @login_required
@@ -819,7 +873,9 @@ def tvshow_search(request):
     
     if request.method == 'POST':
         
-        tvshow_list, pagination = movie_api.fetch_tvshows(request.POST.get('tvshow_query'), 
+        query = request.POST.get('search_query', '')
+        
+        tvshow_list, pagination = movie_api.fetch_tvshows(query, 
                                                           int(request.POST.get('page', 1)))
         
         for show in tvshow_list:
@@ -827,10 +883,8 @@ def tvshow_search(request):
         
         context = {'tvshow_list': tvshow_list,
                    'pagination': pagination,
-                   'search_query': request.POST.get('tvshow_query')
+                   'search_query': query
                    }
-        
-        return render(request, 'happy_cherries/search_tvshow.html', context)
         
     else: # GET request
         
@@ -841,8 +895,8 @@ def tvshow_search(request):
         
         context = {'tvshow_list': tvshow_list
                    }
-        
-        return render(request, 'happy_cherries/search_tvshow.html', context)
+    print(tvshow_list)
+    return render(request, 'happy_cherries/search_tvshow.html', context)
         
 def requested_tvshow(request, tvshow_id):
     """

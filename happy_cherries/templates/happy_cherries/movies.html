@@ -105,17 +105,22 @@
                 </div>
             </div>
         {% empty %}
-        <div class="card w-100 mb-3 text-center p-0">
-            <div class="card text-center">
-                <div class="card-header">
-                    <h5 class="card-title">No Movies Added</h5>
-                </div>
-            <div class="card-body">
-                <p class="card-text">It seems like your list is empty. Start exploring and adding movies to see them here!</p>
-                <a href="{% url 'happy_cherries:movie_search' %}" class="btn btn-warning btn-lg text-dark fw-semibold">
-                    <i class="bi bi-plus-circle"></i> Add a Movie
-                </a>
-            </div>
+        <div class="d-flex justify-content-center align-items-center w-100"> 
+            <div class="card w-50 mb-3 text-center p-0"> 
+                <div class="card text-center"> 
+                    <div class="card-header"> 
+                        <h5 class="card-title">No Shows Added</h5> 
+                    </div> 
+                    <div class="card-body"> 
+                        <p class="card-text">
+                            It seems like your list is empty. Start exploring and adding shows to see them here!
+                        </p> 
+                        <a href="{% url 'happy_cherries:tvshow_search' %}" class="btn btn-warning btn-lg text-dark fw-semibold"> 
+                            Search Tv Shows 
+                        </a> 
+                    </div> 
+                </div> 
+            </div> 
         </div>
         {% endfor %}
     </div>
