@@ -434,20 +434,18 @@
 
         <hr class="text-light">
         </nav>
+    </div>
+    <!-- Content Area -->
+    <div id="content" class="col content-area px-0 mt-5">
+        <!-- Main Content -->
+        <main role="main" class="container-xxl">
+            <div class="mb-2 pb-2">
+                {% block page_header %}{% endblock page_header %}
             </div>
-            <!-- Content Area -->
-            <div id="content" class="col content-area px-0 mt-5">
-                <!-- Main Content -->
-                <main role="main" class="container-xxl">
-                    <div class="mb-2 pb-2">
-                        {% block page_header %}{% endblock page_header %}
-                    </div>
-                    <div>
-                        {% block content %}{% endblock content %}
-                    </div>
-                </main>
+            <div>
+                {% block content %}{% endblock content %}
             </div>
-        </div>
+        </main>
     </div>
 </body>
 </html>
