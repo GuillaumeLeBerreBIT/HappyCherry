@@ -1,5 +1,20 @@
 {% extends "happy_cherries/base.html" %}
 
 {% block content %}
-    <p>You have been logged out Thanks for visiting.</p>
+<div class="container mt-5">
+    <div class="jumbotron bg-dark text-light py-5 px-4 rounded-3">
+        <h1 class="display-4 text-center">Goodbye!</h1>
+        <p class="lead text-center">
+            You have been successfully logged out. Thanks for visiting Happy Cherries!
+        </p>
+        <hr class="my-4 text-light">
+        <p class="text-center">
+            Looking forward to seeing you again soon!
+        </p>
+        <div class="d-flex justify-content-center">
+            <a class="btn btn-warning btn-lg mx-2" href="{% url 'users:login' %}" role="button">Log In Again</a>
+            <a class="btn btn-secondary btn-lg mx-2" href="{% url 'happy_cherries:index' %}" role="button">Go to Home</a>
+        </div>
+    </div>
+</div>
 {% endblock content %}
