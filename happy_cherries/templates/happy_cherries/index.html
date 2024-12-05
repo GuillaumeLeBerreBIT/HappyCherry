@@ -1,20 +1,22 @@
 {% extends "happy_cherries/base.html" %}
 
 {% block page_header %}
-
 <div class="row align-items-md-stretch">
     <div class="col-md-10 container-fluid">
-        <div class="h-100 p-5 text-bg-dark rounded-3">
-            <h2>Happy Cherry</h2>
-                <p>
-                    This is the home page for Happy Cherry. You can add a movie you have seen, leave a Review behind,
-                    indicate a score for the movie.
-                </p>
-            <a class="btn btn-outline-light" role="button" 
-            href="{% url 'users:register' %}">Register &raquo;</a>
+        <div class="h-100 p-5 text-bg-dark rounded-3 shadow-lg position-relative">
+            <h1 class="display-4 fw-bold text-warning">Welcome to Happy Cherry!</h1>
+            <p class="lead">
+                Your personal Movie and TV Show companion. Discover, save, and share your favorite movies and shows. 
+                Build your watchlist, mark favorites, and write detailed reviews just for you or share your thoughts with the community!
+            </p>
+            <a class="btn btn-warning btn-lg text-dark fw-semibold mt-3" role="button" href="{% url 'users:register' %}">
+                Join Now &raquo;
+            </a>
         </div>
     </div>
+</div>
 {% endblock page_header %}
+
 
 {% block content %}
 

@@ -129,6 +129,10 @@
             padding-left: 3%;
         }
 
+        .sidebar-form:hover {
+            background-color: #f39c12;
+        }
+
         .page-link {
             background-color: #f39c12;
             color: white;
@@ -382,86 +386,57 @@
                             </a>
                         </div> 
                     </div>
-                </nav>
+                    <hr class="text-light">
+
+        <!-- User Account Section -->
+        {% if user.is_authenticated %}
+        <div class="sidebar-user-section">
+            <!-- Username Link -->
+            <a class="nav-link d-flex align-items-center ms-1 sidebar-form" href="#">
+                <span class="icon">
+                    <i class="bi bi-person-circle"></i>
+                </span>
+                <span class="description fw-bold ms-1">{{ user.username }}</span>
+            </a>
+            <!-- Logout Button Form -->
+            <form action="{% url 'users:logout' %}" method="post" class="d-flex align-items-center nav-link">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-link text-white d-flex align-items-center p-0 w-100">
+                    <span class="icon" style="margin-left: 6px;">
+                        <i class="bi bi-box-arrow-right"></i>
+                    </span>
+                    <span class="description fw-bold ms-4">Log out</span>
+                </button>
+            </form>
+        </div>
+        {% else %}
+        <a class="nav-link" href="#" data-bs-toggle="collapse" data-bs-target="#authMenu" aria-expanded="false" aria-controls="authMenu">
+            <span class="icon">
+                <i class="bi bi-person"></i>
+            </span>
+            <span class="description fw-bold">Account</span>
+        </a>
+        <div class="collapse ms-3" id="authMenu">
+            <a class="nav-link" href="{% url 'users:login' %}">
+                <span class="icon">
+                    <i class="bi bi-box-arrow-in-right"></i>
+                </span>
+                <span class="description">Log in</span>
+            </a>
+            <a class="nav-link" href="{% url 'users:register' %}">
+                <span class="icon">
+                    <i class="bi bi-pencil-square"></i>
+                </span>
+                <span class="description">Register</span>
+            </a>
+        </div>
+        {% endif %}
+
+        <hr class="text-light">
+        </nav>
             </div>
             <!-- Content Area -->
-            <div id="content" class="col content-area px-0">
-                <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4 w-100">
-                    <button class="navbar-toggler ms-auto me-2" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-                    <!---->
-                    <div class="collapse navbar-collapse ms-4" id="navbarSupportedContent">
-                        <!--
-                        <ul class="navbar-nav mr-auto">
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-expanded="false">
-                                    Movie List
-                                </a>
-                                <ul class="dropdown-menu">
-                                    <li>
-                                        <a class="dropdown-item" href="{% url 'happy_cherries:movie_search' %}">Search</a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item" href="{% url 'happy_cherries:top_rated_movies' %}">Top Rated Movies</a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item" href="{% url 'happy_cherries:upcoming_movies' %}">Upcoming Movies</a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item" href="{% url 'happy_cherries:now_playing_movies' %}">Now Playing Movies</a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item" href="{% url 'happy_cherries:popular_movies' %}">Popular Movies</a>
-                                    </li>
-                                </ul>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="{% url 'happy_cherries:tvshows' %}">Tv Shows Home</a>
-                            </li>
-                            <li class="nav-item dropdown">
-                                <ul class="dropdown-menu">
-                                    <li>
-                                        <a class="dropdown-item" href="{% url 'happy_cherries:tvshow_search' %}">Search</a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item" href="{% url 'happy_cherries:top_rated_tvshows' %}">Top Rated TV Shows</a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item" href="{% url 'happy_cherries:upcoming_tvshows' %}">Upcoming TV Shows</a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item" href="{% url 'happy_cherries:now_airing_tvshows' %}">Now Airing TV Shows</a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item" href="{% url 'happy_cherries:popular_tvshows' %}">Popular TV Shows</a>
-                                    </li>
-                                </ul>
-                            </li>
-                        </ul>-->
-                        <ul class="navbar-nav ms-auto me-4">
-                            {% if user.is_authenticated %}
-                            <li class="nav-item">
-                                <div class="navbar-text">{{ user.username }}</div>
-                            </li>
-                            <li class="nav-item">
-                                <form action="{% url 'users:logout' %}" method='post'>
-                                    {% csrf_token %}
-                                    <button type="submit" class="btn btn-link nav-link">Log out</button>
-                                </form>
-                            </li>
-                            {% else %}
-                            <li class="nav-item">
-                                <a class="nav-link" href="{% url 'users:login' %}">Log in</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="{% url 'users:register' %}">Register</a>
-                            </li>
-                            {% endif %}
-                        </ul>
-                    </div>
-                </nav>    
-                
+            <div id="content" class="col content-area px-0 mt-5">
                 <!-- Main Content -->
                 <main role="main" class="container-xxl">
                     <div class="mb-2 pb-2">
