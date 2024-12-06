@@ -146,7 +146,7 @@ class ExtendedMovieReview(ExtendedReview):
 class ExtendedTvShowReview(ExtendedReview):
     
     tvshow = models.ForeignKey(TvShow, on_delete=models.CASCADE)
-    episodes_watched = models.IntegerField()
+    episodes_watched = models.IntegerField(default=0)
     
     start_date = models.DateField(null=True, blank=True)
     

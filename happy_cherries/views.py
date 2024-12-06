@@ -1270,7 +1270,16 @@ def create_extended_review_movie(request, movie_id):
         
     else: 
         
-        form = ExtendedMovieReviewForm(data=request.POST)
+        post_data = request.POST.copy()
+
+        # Handle date fields specifically
+        for date_field in ['first_time_watched', 'last_time_watched', 'finish_date']:
+            if post_data.get(date_field) == "None":
+                post_data[date_field] = None
+                
+        form = ExtendedMovieReviewForm(data=post_data)
+        
+        # print(form)
         
         if form.is_valid():
             # Do not save it directly
@@ -1287,6 +1296,9 @@ def create_extended_review_movie(request, movie_id):
             extended_review.save()
             
             return redirect('happy_cherries:movie', movie_id=movie.id)
+
+        else:
+            print(form.errors)
     
     # Reformat the dates from "Nov. 4, 2024" to "11/04/2024"
     
@@ -1325,7 +1337,14 @@ def create_extended_review_tvshow(request, tvshow_id):
         
     elif request.method == 'POST':
         
-        form = ExtendedTvShowReviewForm(data=request.POST)
+        post_data = request.POST.copy()
+
+        # Handle date fields specifically
+        for date_field in ['start_date', 'finish_date']:
+            if post_data.get(date_field) == "None":
+                post_data[date_field] = None
+        
+        form = ExtendedTvShowReviewForm(data=post_data)
         
         if form.is_valid():
             
