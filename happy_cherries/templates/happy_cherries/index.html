@@ -30,7 +30,7 @@
         <!--When on xsmall screen only one col, small 2 col, medium 3 columns, ... -->
         <div class="row row-cols-auto">
             {% for movie in now_playing %}
-                <div class="col mb-2 mt-4 card-responsive">
+                <div class="col row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 g-4">
                     <!--Remove the blue underline from the link as well as give it the same text color as original-->
                     <a href="{% url 'happy_cherries:requested_movie' movie.id %}" class="text-decoration-none text-reset">
                         <div class="card h-100" style="max-width: 220px;">
