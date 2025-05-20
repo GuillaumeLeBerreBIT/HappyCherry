@@ -107,7 +107,7 @@ def movies(request):
         'media_type': 'movie',
         }
     
-    return render(request, 'happy_cherries/movies.html', context)
+    return render(request, 'happy_cherries/media.html', context)
 
 @login_required
 def movies_watchlist(request):
@@ -161,7 +161,7 @@ def movies_watchlist(request):
         'media_type': 'movie',
         }
 
-    return render(request, 'happy_cherries/movies.html', context)
+    return render(request, 'happy_cherries/media.html', context)
  
 @login_required
 def movies_favorites(request):
@@ -215,7 +215,7 @@ def movies_favorites(request):
         'media_type': 'movie',
         }
     
-    return render(request, 'happy_cherries/movies.html', context)
+    return render(request, 'happy_cherries/media.html', context)
 
 @login_required
 def movie(request, movie_id):
@@ -640,13 +640,13 @@ def tvshows(request):
             return redirect('happy_cherries:tvshows')
     
     context = {
-        'tv_shows': tv_shows, 
+        'media': tv_shows, 
         'title': 'Library Tv Shows',
         'is_delete': is_delete,
         'search_query': query
         }
     
-    return render(request, 'happy_cherries/tvshows.html', context)
+    return render(request, 'happy_cherries/media.html', context)
 
 @login_required
 def tvshows_watchlist(request):
@@ -696,13 +696,13 @@ def tvshows_watchlist(request):
             return redirect('happy_cherries:tvshows_watchlist')
     
     context = {
-        'tv_shows': tv_shows, 
+        'media': tv_shows, 
         'title': 'Watchlist Tv Shows',
         'is_delete': is_delete,
         'search_query': query
         }
     
-    return render(request, 'happy_cherries/tvshows.html', context)
+    return render(request, 'happy_cherries/media.html', context)
  
 @login_required
 def tvshows_favorites(request):
@@ -752,13 +752,13 @@ def tvshows_favorites(request):
             return redirect('happy_cherries:tvshows_watchlist')
     
     context = {
-        'tv_shows': tv_shows, 
+        'media': tv_shows, 
         'title': 'Favorite Tv Shows',
         'is_delete': is_delete,
         'search_query': query
         }
     
-    return render(request, 'happy_cherries/tvshows.html', context)
+    return render(request, 'happy_cherries/media.html', context)
 
 @login_required
 def tvshow(request, tvshow_id):

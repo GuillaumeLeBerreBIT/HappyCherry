@@ -46,7 +46,9 @@
         {% for m in media %}
             <div class="col mb-2">
                 <div class="card h-100 d-flex flex-column" style="max-width: 220px;">
-                    <a href="{% url 'happy_cherries:movie' m.id %}" class="text-decoration-none text-reset d-flex flex-column h-100">
+                    <a {% if media_type == "movie" %}href="{% url 'happy_cherries:movie' m.id %}"
+                    {% else %}href="{% url 'happy_cherries:tvshow' m.id %}"{% endif %}
+                    class="text-decoration-none text-reset d-flex flex-column h-100">
                         {% if m.avg_score %}
                             {% if m.avg_score < 50 %}
                                 <span class="badge text-bg-danger" style="position: absolute; top: 10px; left: 10px; font-size: 12px;">
@@ -99,7 +101,8 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                            <form method="post" action="{% url 'happy_cherries:delete_movie' m.id %}">
+                            <form method="post" {% if media_type == "movie" %}action="{% url 'happy_cherries:delete_movie' m.id %}"
+                            {% else %}action="{% url 'happy_cherries:delete_tvshow' m.id %}"{% endif %}>
                                 {% csrf_token %}
                                 <button type="submit" class="btn btn-danger">Confirm Delete</button>
                             </form>
@@ -112,14 +115,17 @@
             <div class="card w-50 mb-3 text-center p-0"> 
                 <div class="card text-center"> 
                     <div class="card-header"> 
-                        <h5 class="card-title">No Shows Added</h5> 
+                        <h5 class="card-title">No Media has been added yet ...</h5> 
                     </div> 
                     <div class="card-body"> 
                         <p class="card-text">
-                            It seems like your list is empty. Start exploring and adding shows to see them here!
+                            It seems like your list is empty. Start exploring and add movies and show to see them appear in your list!
                         </p> 
-                        <a href="{% url 'happy_cherries:movies_search' %}" class="btn btn-warning btn-lg text-dark fw-semibold"> 
-                            Search Tv Shows 
+                        <a {% if media_type == "movie" %}href="{% url 'happy_cherries:movies_search' %}" 
+                        {% else %}href="{% url 'happy_cherries:tvshow_search' %}"{% endif %}
+                        class="btn btn-warning btn-lg text-dark fw-semibold"> 
+                            {% if media_type == "movie" %}Search Movies 
+                            {% else %}Search Tv Shows{% endif %} 
                         </a> 
                     </div> 
                 </div> 
