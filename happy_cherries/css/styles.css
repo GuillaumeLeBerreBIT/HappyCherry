@@ -1,0 +1,126 @@
+.navbar-dark .navbar-nav .nav-link {
+    color: #fff; /* Example text color */
+}
+.navbar-dark .navbar-nav .dropdown-menu {
+    background-color: #343a40; /* Same as .bg-dark */
+}
+.navbar-dark .navbar-nav .dropdown-item {
+    color: #fff; /* Example text color */
+}
+.navbar-dark .navbar-nav .dropdown-item:hover,
+.navbar-dark .navbar-nav .dropdown-item:focus {
+    background-color: #495057; /* Slightly lighter than .bg-dark for hover */
+}
+
+.dropdown:hover>.dropdown-menu {
+    display: block;
+}
+  
+.dropdown>.dropdown-toggle:active {
+    /*Without this, clicking will make it sticky*/
+      pointer-events: none;
+}
+
+/* Ensures the sidebar takes up the full viewport height and sticks during scrolling */
+.sticky {
+    position: sticky;
+    top: 0;
+    height: 100vh; /* Full viewport height */
+}
+
+.sidebar {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 250px;
+    background-color: #343a40;
+    padding-top: 20px;
+    transform: translateX(-250px);
+    transition: transform 0.3s ease;
+}
+
+.sidebar.show {
+    transform: translateX(0);
+}
+
+/* Sidebar adjustments */
+.sidebar-next {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 250px; /* Fixed width */
+    background-color: #343a40;
+    padding-top: 20px;
+}
+
+/* Content area adjustment to align with sidebar */
+#content {
+    margin-left: 250px; /* Same width as the sidebar */
+    width: calc(100% - 250px);
+    transition: margin-left 0.3s ease;
+}
+
+/* Remove padding/margin for tight alignment */
+
+
+.sidebar-next .nav-link {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 10px 20px;
+    color: white;
+}
+
+.sidebar-next .description {
+    font-size: 14px;
+}
+
+.sidebar-next .nav-link:hover {
+    background-color: #f39c12;
+}
+
+.navbar-dark .navbar-nav .nav-link:hover {
+    color: #f39c12;
+}
+
+.navbar-dark .navbar-nav .dropdown-item:hover {
+    color: #f39c12;
+}
+
+.sidebar-next .sub-menu {
+    padding-left: 3%;
+}
+
+.sidebar-form:hover {
+    background-color: #f39c12;
+}
+
+.page-link {
+    background-color: #f39c12;
+    color: white;
+    border: 1px solid #f39c12;
+}
+
+.page-link:hover {
+    background-color: #933B3D;
+    color: white;
+    border: 1px solid #933B3D;
+}
+
+.page-item.active .page-link {
+    background-color: #7D1422;
+    color: white;
+    border: 1px solid #7D1422;
+}
+
+.page-item.active .page-link:hover {
+    background-color: #933B3D;
+    color: white;
+    border: 1px solid #933B3D;
+}
+
+.nav-fill .nav-item .nav-link, .nav-justified .nav-item .nav-link:hover {
+    background-color: #f39c12;
+}

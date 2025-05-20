@@ -6,3 +6,9 @@ db.sqlite3
 
 # Compiled python files
 *.pyc
+
+# Pycache
+__pycache__
+
+# Migrations
+migrations/*

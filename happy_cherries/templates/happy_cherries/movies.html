@@ -10,7 +10,10 @@
     <form class="d-flex align-items-center me-2 w-25" method="post"> 
         {% csrf_token %} 
         <div class="input-group"> 
-            <input type="text" name="search_query" class="form-control" placeholder="Search Movie" 
+            <input type="text" name="search_query" class="form-control" 
+            {% if media_type == "movie" %}placeholder="Search Movie"
+            {% else %}placeholder="Search Show"
+            {% endif %}
             style="max-width: 400px;" {% if search_query %}value="{{ search_query }}"{% endif %}> 
             <button class="btn btn-primary"> 
                 <i class="bi bi-search"></i> 
@@ -20,7 +23,7 @@
     {% if is_delete %}
         <form method='post'>
             {% csrf_token %}
-            <input type="hidden" name="action" value="save_movies">
+            <input type="hidden" name="action" value="save_media">
             <button type="submit" class="btn btn-success">
                 <i class="bi bi-check-circle" ></i>
             </button>
@@ -28,7 +31,7 @@
     {% else %}
         <form method='post'>
             {% csrf_token %}
-            <input type="hidden" name="action" value="delete_movies">
+            <input type="hidden" name="action" value="delete_media">
             <button type="submit" class="btn btn-danger">
                 <i class="bi bi-dash-circle"></i>
             </button>
@@ -40,33 +43,33 @@
 {% block content %}
 <div class="container">
     <div class="row row-cols-auto">
-        {% for movie in movies %}
+        {% for m in media %}
             <div class="col mb-2">
                 <div class="card h-100 d-flex flex-column" style="max-width: 220px;">
-                    <a href="{% url 'happy_cherries:movie' movie.id %}" class="text-decoration-none text-reset d-flex flex-column h-100">
-                        {% if movie.avg_score %}
-                            {% if movie.avg_score < 50 %}
+                    <a href="{% url 'happy_cherries:movie' m.id %}" class="text-decoration-none text-reset d-flex flex-column h-100">
+                        {% if m.avg_score %}
+                            {% if m.avg_score < 50 %}
                                 <span class="badge text-bg-danger" style="position: absolute; top: 10px; left: 10px; font-size: 12px;">
-                                    {{ movie.avg_score }} %
+                                    {{ m.avg_score }} %
                                 </span>
                             {% else %}
                                 <span class="badge text-bg-success" style="position: absolute; top: 10px; left: 10px; font-size: 12px;">
-                                    {{ movie.avg_score }} %
+                                    {{ m.avg_score }} %
                                 </span>
                             {% endif %}
                         {% endif %}
-                        <img src="{{ movie.poster_path }}" class="card-img-top" alt="poster_image">
+                        <img src="{{ m.poster_path }}" class="card-img-top" alt="poster_image">
                         <div class="card-body d-flex flex-column flex-grow-1">
                             <h5 class="card-title">
-                                {{ movie.title }}
+                                {{ m.title }}
                             </h5>
                             <p class="card-text">
-                                <span class="fw-lighter fst-italic">{{ movie.tagline }}</span>
+                                <span class="fw-lighter fst-italic">{{ m.tagline }}</span>
                             </p>
                         </div>
                         <!-- Footer inside the link and always at the bottom -->
                         <div class="card-footer mt-auto">
-                            {% for genre in movie.genres %}
+                            {% for genre in m.genres %}
                                 <span class="badge rounded-pill text-bg-dark">{{ genre }}</span>
                             {% endfor %}
                         </div>
@@ -75,7 +78,7 @@
                     {% if is_delete %}
                         <button class="btn btn-danger btn-sm rounded-pill fw-bold"
                             style="position: absolute; top: 10px; right: 10px; font-size: 12px;"
-                            data-bs-toggle="modal" data-bs-target="#deleteModalLabel-{{ movie.id }}"
+                            data-bs-toggle="modal" data-bs-target="#deleteModalLabel-{{ m.id }}"
                             onclick="event.stopPropagation();">
                             X
                         </button>
@@ -84,19 +87,19 @@
             </div>
 
             <!-- Modal for Movie Deletion -->
-            <div class="modal fade" id="deleteModalLabel-{{ movie.id }}" tabindex="-1" aria-labelledby="deleteModalLabelReview-{{ movie.id }}" aria-hidden="true">
+            <div class="modal fade" id="deleteModalLabel-{{ m.id }}" tabindex="-1" aria-labelledby="deleteModalLabelReview-{{ m.id }}" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="deleteModalLabel-{{ movie.id }}">Confirm Deletion</h5>
+                            <h5 class="modal-title" id="deleteModalLabel-{{ m.id }}">Confirm Deletion</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
-                            Are you sure you want to delete this Movie "<strong>{{ movie.title }}</strong>"?
+                            Are you sure you want to delete this Movie "<strong>{{ m.title }}</strong>"?
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                            <form method="post" action="{% url 'happy_cherries:delete_movie' movie.id %}">
+                            <form method="post" action="{% url 'happy_cherries:delete_movie' m.id %}">
                                 {% csrf_token %}
                                 <button type="submit" class="btn btn-danger">Confirm Delete</button>
                             </form>
@@ -115,7 +118,7 @@
                         <p class="card-text">
                             It seems like your list is empty. Start exploring and adding shows to see them here!
                         </p> 
-                        <a href="{% url 'happy_cherries:tvshow_search' %}" class="btn btn-warning btn-lg text-dark fw-semibold"> 
+                        <a href="{% url 'happy_cherries:movies_search' %}" class="btn btn-warning btn-lg text-dark fw-semibold"> 
                             Search Tv Shows 
                         </a> 
                     </div> 

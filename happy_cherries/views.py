@@ -88,22 +88,23 @@ def movies(request):
         
     if request.method == 'POST':           
         
-        if request.POST.get('action') == 'delete_movies':
+        if request.POST.get('action') == 'delete_media':
             # Toggle is_delete in the session
             request.session['is_delete'] = True
             return redirect('happy_cherries:movies')
         
-        if request.POST.get('action') == 'save_movies':
+        if request.POST.get('action') == 'save_media':
             # Toggle is_delete in the session
             request.session['is_delete'] = False
             return redirect('happy_cherries:movies')
         
     
     context = {
-        'movies': movies, 
+        'media': movies, 
         'title': 'Library Movies',
         'is_delete': is_delete,
-        'search_query': query
+        'search_query': query,
+        'media_type': 'movie',
         }
     
     return render(request, 'happy_cherries/movies.html', context)
@@ -141,22 +142,23 @@ def movies_watchlist(request):
         
     if request.method == 'POST':           
         
-        if request.POST.get('action') == 'delete_movies':
+        if request.POST.get('action') == 'delete_media':
             # Toggle is_delete in the session
             request.session['is_delete'] = True
             return redirect('happy_cherries:movies_watchlist')
         
-        if request.POST.get('action') == 'save_movies':
+        if request.POST.get('action') == 'save_media':
             # Toggle is_delete in the session
             request.session['is_delete'] = False
             return redirect('happy_cherries:movies_watchlist')
         
     
     context = {
-        'movies': movies, 
+        'media': movies, 
         'title': 'Watchlist Movies',
         'is_delete': is_delete,
-        'search_query': query
+        'search_query': query,
+        'media_type': 'movie',
         }
 
     return render(request, 'happy_cherries/movies.html', context)
@@ -194,22 +196,23 @@ def movies_favorites(request):
         
     if request.method == 'POST':           
         
-        if request.POST.get('action') == 'delete_movies':
+        if request.POST.get('action') == 'delete_media':
             # Toggle is_delete in the session
             request.session['is_delete'] = True
             return redirect('happy_cherries:movies_favorites')
         
-        if request.POST.get('action') == 'save_movies':
+        if request.POST.get('action') == 'save_media':
             # Toggle is_delete in the session
             request.session['is_delete'] = False
             return redirect('happy_cherries:movies_favorites')
         
     
     context = {
-        'movies': movies, 
+        'media': movies, 
         'title': 'Favorite Movies',
         'is_delete': is_delete,
-        'search_query': query
+        'search_query': query,
+        'media_type': 'movie',
         }
     
     return render(request, 'happy_cherries/movies.html', context)

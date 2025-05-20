@@ -25,6 +25,7 @@
     
     <!-- Dark Theme -->
     <link rel="stylesheet" type="text/css" href="https://bootswatch.com/5/darkly/bootstrap.min.css"/>
+    <link rel="stylesheet" href="./css/styles.css">
     <!--Bootstrap Icons-->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
 
@@ -186,51 +187,6 @@
             background-color: #f39c12;
         }
 
-        /* Base Rule: Show only the first card by default */
-        .card-responsive:nth-child(n+2) {
-            display: none;
-        }
-
-        /* Small Screens (592px and up): Show up to 2 cards */
-        @media (min-width: 592px) {
-            .card-responsive:nth-child(n+3) {
-                display: none;
-            }
-            .card-responsive:nth-child(-n+2) {
-                display: block;
-            }
-        }
-
-        /* Medium Screens (1036px and up): Show up to 3 cards */
-        @media (min-width: 1036px) {
-            .card-responsive:nth-child(n+4) {
-                display: none;
-            }
-            .card-responsive:nth-child(-n+3) {
-                display: block;
-            }
-        }
-
-        /* Large Screens (992px and up): Show up to 4 cards */
-        @media (min-width: 1284px) {
-            .card-responsive:nth-child(n+5) {
-                display: none;
-            }
-            .card-responsive:nth-child(-n+4) {
-                display: block;
-            }
-        }
-
-        /* Extra-Large Screens (1200px and up): Show all cards */
-        @media (min-width: 1560px) {
-            .card-responsive:nth-child(n+6) {
-                display: none;
-            }
-            .card-responsive:nth-child(-n+5) {
-                display: block;
-            }
-        }
-        
         /*Make sure the text is black on the Datepicker*/
         .datepicker-top-left, .datepicker-top-right, .datepicker-bottom-left, .datepicker-bottom-right {
             color: black;
