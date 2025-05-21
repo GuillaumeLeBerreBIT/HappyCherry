@@ -506,11 +506,12 @@ def top_rated_movies(request):
         movie['release_date'] = convert_date(movie["release_date"])
         
     context = {
-        'movie_list': movie_list,
+        'media_list': movie_list,
         'title': "Top Rated Movies",
         'pagination': pagination,
+        'media_type': 'movie',
     }
-    return render(request, 'happy_cherries/movies_list.html', context)
+    return render(request, 'happy_cherries/media_list.html', context)
 
 def upcoming_movies(request):
     """
@@ -530,11 +531,12 @@ def upcoming_movies(request):
         movie['release_date'] = convert_date(movie["release_date"])
     
     context = {
-        'movie_list': movie_list,
+        'media_list': movie_list,
         'title': "Upcoming Movies",
         'pagination': pagination,
+        'media_type': 'movie',
     }
-    return render(request, 'happy_cherries/movies_list.html', context)
+    return render(request, 'happy_cherries/media_list.html', context)
 
 def now_playing_movies(request):
     """
@@ -554,11 +556,12 @@ def now_playing_movies(request):
         movie['release_date'] = convert_date(movie["release_date"])
         
     context = {
-        'movie_list': movie_list,
+        'media_list': movie_list,
         'title':'Now Playing Movies',
-        'pagination': pagination
+        'pagination': pagination,
+        'media_type': 'movie',
     }
-    return render(request, 'happy_cherries/movies_list.html', context)
+    return render(request, 'happy_cherries/media_list.html', context)
 
 def popular_movies(request):
     """List of all the popular movies"""
@@ -576,11 +579,12 @@ def popular_movies(request):
         movie['release_date'] = convert_date(movie["release_date"])
         
     context = {
-        'movie_list': movie_list,
+        'media_list': movie_list,
         'title':'Popular Movies',
-        'pagination': pagination
+        'pagination': pagination,
+        'media_type': 'movie',
     }
-    return render(request, 'happy_cherries/movies_list.html', context)
+    return render(request, 'happy_cherries/media_list.html', context)
    
     
 # TV SHOWS
@@ -1028,11 +1032,11 @@ def top_rated_tvshows(request):
         show['first_air_date'] = convert_date(show["first_air_date"])
     
     context = {
-        'tvshow_list': tvshow_list,
+        'media_list': tvshow_list,
         'title': "Top Rated TV Shows",
         'pagination': pagination
     }
-    return render(request, 'happy_cherries/tvshows_list.html', context)
+    return render(request, 'happy_cherries/media_list.html', context)
 
 def upcoming_tvshows(request):
     """
@@ -1051,11 +1055,11 @@ def upcoming_tvshows(request):
         show['first_air_date'] = convert_date(show["first_air_date"])
         
     context = {
-        'tvshow_list': tvshow_list,
+        'media_list': tvshow_list,
         'title': "On The Air TV Shows",
         'pagination': pagination
     }
-    return render(request, 'happy_cherries/tvshows_list.html', context)
+    return render(request, 'happy_cherries/media_list.html', context)
 
 def now_airing_tvshows(request):
     """
@@ -1074,11 +1078,11 @@ def now_airing_tvshows(request):
         show['first_air_date'] = convert_date(show["first_air_date"])
         
     context = {
-        'tvshow_list': tvshow_list,
+        'media_list': tvshow_list,
         'title': "TV Shows Airing Today",
         'pagination': pagination
     }
-    return render(request, 'happy_cherries/tvshows_list.html', context)
+    return render(request, 'happy_cherries/media_list.html', context)
 
 def popular_tvshows(request):
     """
@@ -1097,11 +1101,11 @@ def popular_tvshows(request):
         show['first_air_date'] = convert_date(show["first_air_date"])
     
     context = {
-        'tvshow_list': tvshow_list,
+        'media_list': tvshow_list,
         'title': "Popular TV Shows",
         'pagination': pagination
     }
-    return render(request, 'happy_cherries/tvshows_list.html', context)
+    return render(request, 'happy_cherries/media_list.html', context)
 
 # REVIEW - MOVIES
 @login_required

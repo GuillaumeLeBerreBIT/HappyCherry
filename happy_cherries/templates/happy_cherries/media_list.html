@@ -7,10 +7,13 @@
     </h2>
 </div>
 <div class="my-2 d-flex justify-content-end"> 
-    <form class="d-flex align-items-center me-2 w-25" method="post" action="{% url 'happy_cherries:movie_search' %}"> 
+    <form class="d-flex align-items-center me-2 w-25" method="post" 
+    {% if media_type == 'movie' %}action="{% url 'happy_cherries:movie_search' %}"
+    {% else %}action="{% url 'happy_cherries:tvshow_search' %}"{% endif %}> 
         {% csrf_token %} 
         <div class="input-group"> 
-            <input type="text" name="search_query" class="form-control" placeholder="Search Movie" 
+            <input type="text" name="search_query" class="form-control" 
+            {% if media_type == 'movie' %}placeholder="Search Movie"{% else %}placeholder="Search Show"{% endif %}
             style="max-width: 400px;" {% if search_query %}value="{{ search_query }}"{% endif %}> 
             <button class="btn btn-primary"> 
                 <i class="bi bi-search"></i> 
@@ -22,28 +25,29 @@
 
 {% block content %}
 
-    {% if movie_list %}
+    {% if media_list %}
         <div class="container">
             <!--When on xsmall screen only one col, small 2 col, medium 3 columns, ... -->
             <div class="row row-cols-auto">
-                {% for movie in movie_list %}
+                {% for media in media_list %}
                     <div class="col mb-2">
                         <!--Remove the blue underline from the link as well as give it the same text color as original-->
-                        <a href="{% url 'happy_cherries:requested_movie' movie.id %}" class="text-decoration-none text-reset">
+                        <a {% if media_type == 'movie' %}href="{% url 'happy_cherries:requested_movie' media.id %}" 
+                        {% else %}href="{% url 'happy_cherries:requested_tvshow' media.id %}" {% endif %} class="text-decoration-none text-reset">
                             <div class="card h-100" style="max-width: 220px;">
-                                <img src="{{ movie.poster }}" class="card-img-top" alt="poster">
+                                <img src="{{ media.poster }}" class="card-img-top" alt="poster">
                                 <div class="card-body d-flex flex-column">
                                     <h5 class="card-title">
-                                        {{ movie.title }}
+                                        {{ media.title }}
                                     </h5>
                                     <p class="card-text">
-                                        <span class="fw-lighter fst-italic">{{ movie.release_date }}</span>
+                                        <span class="fw-lighter fst-italic">{{ media.release_date }}</span>
                                     </p>
                                 </div>
                                 <!--Set the margin top auto-->
                                 <div class="mt-auto">
                                     <div class="card-footer">
-                                        {% for genre in movie.genres %}
+                                        {% for genre in media.genres %}
                                             <span class="badge rounded-pill text-bg-dark">{{ genre }}</span>
                                         {% endfor %}
                                     </div>
